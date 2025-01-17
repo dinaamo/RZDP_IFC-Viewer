@@ -1,0 +1,187 @@
+﻿<Window
+    x:Class="IFC_Table_View.View.Windows.TableWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:fa="http://schemas.fontawesome.io/icons/"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:IFC_Table_View.ViewModels"
+    xmlns:cnv="clr-namespace:IFC_Table_View.Infracrucrure.Converter"
+    Name="Win"
+    Title="{Binding Path=Title}"
+    SizeToContent="WidthAndHeight"
+    mc:Ignorable="d" MinWidth="800" MinHeight="300">
+
+    <Window.Resources>
+        <Style  TargetType="GroupBox">
+            <Setter Property="Margin" Value="0,0,5,0" />
+            <Setter Property="Padding" Value="0,3,0,0" />
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="641*" />
+            <ColumnDefinition Width="200*" />
+        </Grid.ColumnDefinitions>
+        <DockPanel Grid.ColumnSpan="2">
+            <Grid
+                Margin="10,5,10,0"
+                DockPanel.Dock="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <GroupBox Header="Размер текста" Grid.Column="0" Margin="0,0,0,0">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" Margin="0,0,0,0">
+                    <Button
+                            Width="20"
+                            Height="20"
+                            Margin="0,0,0,0"
+                            VerticalAlignment="Center"
+                            Command="{Binding LessSizeFontCommand}"
+                            Click="Button_Click">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="10" />
+                            </Style>
+                        </Button.Resources>
+                        <fa:ImageAwesome
+                                Width="15"
+                                Height="15"
+                                Margin="0,1,1,0"
+                                Foreground="Black"
+                                Icon="ArrowLeft" />
+                    </Button>
+                    <TextBox
+                    Margin="10,0,10,0"
+                    BorderThickness="0"
+                    VerticalAlignment="Center"
+                    Text="{Binding Path=FontSizeTable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Button
+                        Width="20"
+                        Height="20"
+                        Command="{Binding MoreSizeFontCommand}"
+                        Click="Button_Click">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="10" />
+                            </Style>
+                        </Button.Resources>
+                        <fa:ImageAwesome
+                            Width="15"
+                            Height="15"
+                            Margin="0,1,1,0"
+                            Foreground="Black"
+                            Icon="ArrowRight" />
+                    </Button>
+                </StackPanel>
+                        </GroupBox>
+
+                <GroupBox Header="Наименование таблицы" Grid.Column="1" Margin="0,0,0,0">
+                    <TextBox Text="{Binding Path=NameTable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Height="22" Width="150" Margin="5,0,5,0" HorizontalAlignment="Left"/>
+                </GroupBox>
+
+                    <GroupBox Header="Поиск" Grid.Column="2" Margin="5,0,5,0" Padding="5,0,5,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,0">
+                    <StackPanel Orientation="Vertical">
+                        <CheckBox Name="CHBСonditionsFilter" Content="Текст целиком"  HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,5,5,0" />
+                        <CheckBox Name="CHBIgnorRegister" Content="Учитывать регистр"  HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,5,5,0" />
+                    </StackPanel>
+                    <TextBox x:Name="TBСonditionsSearch" Height="22" Width="200" Margin="5,0,5,0" HorizontalAlignment="Left" />
+
+                    <Button Width="60"
+                        Height="22"
+                        Content="Найти"
+                        Margin="5,0,5,0"
+                        Command="{Binding SearchCellsCommand}">
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource ConvertParametersMultibuilding}">
+                                <Binding ElementName="dgTable" />
+                                <Binding Path="IsChecked" ElementName="CHBСonditionsFilter" />
+                                <Binding Path="IsChecked" ElementName="CHBIgnorRegister" />
+                                <Binding Path="Text" ElementName="TBСonditionsSearch" />
+                                <Binding ElementName="TBCountFound" />
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
+
+                    <Button Width="60"
+                            Height="22"
+                            Content="Сброс"
+                            Margin="5,0,5,0"
+                            Command="{Binding ResetSearchCommand}">
+                            <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource ConvertParametersMultibuilding}">
+                                <Binding ElementName="dgTable" />
+                                <Binding ElementName="CHBСonditionsFilter" />
+                                <Binding ElementName="CHBIgnorRegister" />
+                                <Binding ElementName="TBСonditionsSearch" />
+                                <Binding ElementName="TBCountFound" />
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
+                        <TextBlock x:Name="TBCountFound" HorizontalAlignment="Left" Margin="5,0,5,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Экспорт в Excel" Grid.Column="4" Margin="5,0,0,0">
+                    <StackPanel Orientation="Vertical" Grid.Column="2" Grid.Row="1">
+
+                    <Button
+                        Width="30"
+                        Height="30"
+                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                        Margin="0,0,0,0"
+                        Command="{Binding ExportToExcelCommand}">
+                        <fa:ImageAwesome
+                            Width="25"
+                            Height="25"
+                            Margin="0,0,0,0"
+                            Foreground="DarkGreen"
+                            Icon="FileExcelOutline" />
+                    </Button>
+                </StackPanel>
+                </GroupBox>
+            </Grid>
+
+            <GroupBox
+                x:Name="grBox"
+                Margin="5"
+                DockPanel.Dock="Top"
+                Header="Таблица">
+                <DataGrid
+                    Name="dgTable"
+                    Margin="0"
+                    VerticalAlignment="Stretch"
+                    AutoGenerateColumns="True"
+                    CanUserSortColumns="False"
+
+                    DockPanel.Dock="Top"
+                    FontSize="{Binding Path=FontSizeTable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    HorizontalGridLinesBrush="#FFC8C8C8"
+                    IsReadOnly="True"
+                    ItemsSource="{Binding Path=dataTable}"
+                    SelectionMode="Extended"
+                    SelectionUnit="FullRow"
+                    VerticalGridLinesBrush="#FFC9C9C9"
+
+                    LoadingRow="dgTable_LoadingRow">
+                    <DataGrid.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </DataGrid.ItemsPanel>
+                </DataGrid>
+            </GroupBox>
+        </DockPanel>
+    </Grid>
+</Window>

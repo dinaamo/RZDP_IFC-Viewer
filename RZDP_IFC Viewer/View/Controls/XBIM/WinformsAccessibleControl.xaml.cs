@@ -1,0 +1,64 @@
+﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using Xbim.Common;
+using Xbim.Ifc;
+
+namespace Xbim.WinformsSample
+{
+    /// <summary>
+    /// Interaction logic for XplorerUserControl.xaml
+    /// </summary>
+    public partial class WinformsAccessibleControl
+    {
+        public static readonly DependencyProperty ModelProviderProperty = DependencyProperty.Register("ModelProvider", typeof(ObjectDataProvider), typeof(WinformsAccessibleControl));
+
+        #region DataContext
+
+        public ObjectDataProvider ModelProvider
+        {
+            get { return (ObjectDataProvider)GetValue(ModelProviderProperty); }
+            private set { SetValue(ModelProviderProperty, value); }
+        }
+
+        #endregion DataContext
+
+        public IfcStore Model
+        {
+            get { return ModelProvider.ObjectInstance as IfcStore; }
+        }
+
+        public IPersistEntity SelectedElement
+        {
+            get => DrawingControl.SelectedEntity;
+            set => DrawingControl.SelectedEntity = value;
+        }
+
+        public Presentation.DrawingControl3D.SelectionBehaviours SelectionBehaviour
+        {
+            get => DrawingControl.SelectionBehaviour;
+            set => DrawingControl.SelectionBehaviour = value;
+        }
+
+        public Presentation.EntitySelection Selection
+        {
+            get => DrawingControl.Selection;
+            set => DrawingControl.Selection = value;
+        }
+
+        public delegate void SelectionChangedHandler(object sender, System.Windows.Controls.SelectionChangedEventArgs e);
+
+        public event SelectionChangedEventHandler SelectionChanged;
+
+        public WinformsAccessibleControl()
+        {
+            InitializeComponent();
+            ModelProvider = new ObjectDataProvider { IsInitialLoadEnabled = false };
+        }
+
+        private void DrawingControl_SelectedEntityChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            SelectionChanged?.Invoke(this, e);
+        }
+    }
+}

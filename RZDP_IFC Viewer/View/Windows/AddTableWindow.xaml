@@ -1,0 +1,65 @@
+﻿<Window x:Class="IFC_Viewer.View.Windows.AddTableWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:IFC_Table_View.ViewModels"
+        mc:Ignorable="d"
+        Title="Добавить таблицу" Height="450" Width="800" KeyDown="Window_KeyDown">
+    <Window.DataContext>
+        <vm:AddTableWindowViewModel />
+    </Window.DataContext>
+
+    <Grid Margin="5">
+        <DockPanel>
+            <GroupBox DockPanel.Dock="Top" Padding="5" Header="Действия">
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Вставить из буфера обмена"
+                            Margin="0,0,5,0"
+                            Padding="5,0,5,0"
+                            Command="{Binding PasteFromClipboardCommand}">
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource ConvertParametersMultibuilding}">
+                                <Binding ElementName="dataGridTable" />
+                                <Binding ElementName="textBoxTable" />
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
+                    <Button Content="Очистить"
+                            Margin="5,0,0,0"
+                            Padding="5,0,5,0"
+                            Command="{Binding ClearCommand}">
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource ConvertParametersMultibuilding}">
+                                <Binding ElementName="dataGridTable" />
+                                <Binding ElementName="textBoxTable" />
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
+                    <TextBlock Text="Имя таблицы: " VerticalAlignment="Center" Margin="5,0,5,0" />
+                    <TextBox x:Name="textBoxTable" Width="300" Margin="0,0,10,0" />
+                    <Button Content="Добавить в файл"
+                            Margin="5,0,0,0"
+                            Padding="5,0,5,0"
+                            Command="{Binding AddTableCommand}">
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource ConvertParametersMultibuilding}">
+                                <Binding ElementName="dataGridTable" />
+                                <Binding ElementName="textBoxTable" />
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox DockPanel.Dock="Bottom" Padding="5" Header="Таблица">
+                <DataGrid
+                    Name="dataGridTable"
+                    Style="{StaticResource NoStyleDataGrid}"
+                    CanUserSortColumns="False"
+                    AutoGenerateColumns="True"
+                    IsReadOnly="True"
+                    LoadingRow="dgTable_LoadingRow" />
+            </GroupBox>
+        </DockPanel>
+    </Grid>
+</Window>

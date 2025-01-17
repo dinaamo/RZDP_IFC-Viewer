@@ -1,0 +1,93 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <LangVersion>latest</LangVersion>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <RootNamespace>RZDP_IFC_Viewer</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>spreadsheet.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Infracrucrure\Images\RZDP_Image.PNG" />
+    <None Remove="Infracrucrure\Images\Search_Image.png" />
+    <None Remove="Infracrucrure\Images\spreadsheet.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>8</VersionMinor>
+      <VersionMajor>2</VersionMajor>
+      <Guid>2df8d04c-5bfa-101b-bde5-00aa0044de52</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Excel">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>9</VersionMinor>
+      <VersionMajor>1</VersionMajor>
+      <Guid>00020813-0000-0000-c000-000000000046</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="spreadsheet.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
+    <PackageReference Include="Xbim.Geometry" Version="5.1.796" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\XbimEssentials-master\Xbim.Common\Xbim.Common.csproj" />
+    <ProjectReference Include="..\..\..\XbimEssentials-master\Xbim.Essentials.NetCore.Tests\Xbim.Essentials.NetCore.Tests.csproj" />
+    <ProjectReference Include="..\..\..\XbimEssentials-master\Xbim.Ifc2x3\Xbim.Ifc2x3.csproj" />
+    <ProjectReference Include="..\..\..\XbimEssentials-master\Xbim.Ifc4x3\Xbim.Ifc4x3.csproj" />
+    <ProjectReference Include="..\..\..\XbimEssentials-master\Xbim.Ifc4\Xbim.Ifc4.csproj" />
+    <ProjectReference Include="..\..\..\XbimEssentials-master\Xbim.Ifc\Xbim.Ifc.csproj" />
+    <ProjectReference Include="..\..\..\XbimEssentials-master\Xbim.IO.Esent\Xbim.IO.Esent.csproj" />
+    <ProjectReference Include="..\..\..\XbimEssentials-master\Xbim.IO.MemoryModel\Xbim.IO.MemoryModel.csproj" />
+    <ProjectReference Include="..\..\..\XbimEssentials-master\Xbim.Tessellator\Xbim.Tessellator.csproj" />
+    <ProjectReference Include="..\..\..\XBimToolKit\XbimWindowsUI-master\Xbim.Presentation\Xbim.Presentation.csproj" />
+    <ProjectReference Include="..\..\..\XBimToolKit\XbimWindowsUI-master\Xbim.WinformsSample\Xbim.WinformsSample.csproj" />
+    <ProjectReference Include="..\..\..\XBimToolKit\XbimWindowsUI-master\XbimXplorer\XbimXplorer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Infracrucrure\Images\RZDP_Image.PNG" />
+    <Resource Include="Infracrucrure\Images\Search_Image.png" />
+    <Resource Include="Infracrucrure\Images\spreadsheet.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="View\Windows\AddTableWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Windows\MainWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Windows\SelectReferenceObjectWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Controls\XBIM\WinformsAccessibleControl.xaml.cs">
+      <SubType>Designer</SubType>
+      <DependentUpon>%(Filename)</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="View\Controls\XBIM\WinformsAccessibleControl.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </Page>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,69 @@
+﻿<Window x:Class="IFC_Table_View.View.Windows.AddDocumentWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:IFC_Table_View.ViewModels"
+        mc:Ignorable="d"
+        Title="Добавить документ" Height="650" Width="1200" x:Name="AddDocWindow">
+    <Window.DataContext>
+        <vm:AddDocumentWindowViewModel />
+    </Window.DataContext>
+    <Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.ColumnSpan="2" Margin="10,5,0,0">
+                <TextBlock Text="Путь к файлу ifc: " />
+                <TextBlock Text="{Binding Path=IFCPath}" />
+            </StackPanel>
+            <StackPanel Grid.Column="0" Orientation="Vertical" Margin="10" Grid.Row="1">
+                <Button Content="Выбрать файлы" Margin="10" Command="{Binding SelectDocumentCommand}" />
+                <Button Content="Очистить" Margin="10" Command="{Binding ClearCommand}" />
+                <Button Content="Удалить" Margin="10" Command="{Binding DeleteDocumentCommand}" CommandParameter="{Binding ElementName=dgDocument, Path=SelectedItem}" />
+                <Button Content="Добавить в файл" Margin="10" Command="{Binding AddReferenceDocumentCommand}" />
+            </StackPanel>
+            <GroupBox Header="Документы" Grid.Column="1" Grid.Row="1">
+                <DataGrid
+                    x:Name="dgDocument"
+                    AutoGenerateColumns="False"
+                    IsReadOnly="True"
+                    ItemsSource="{Binding Path=DocumentCollection, UpdateSourceTrigger=PropertyChanged}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding Path=NameDocument}"
+                            Header="Имя" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding Path=FullPath}"
+                            Header="Полный путь" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding Path=RelativePath}"
+                            Header="Относительный путь" />
+                        <DataGridTextColumn
+                            Width="0.9*"
+                            Binding="{Binding Path=StringCreationTime}"
+                            Header="Дата создания" />
+                        <DataGridTextColumn
+                            Width="0.9*"
+                            Binding="{Binding Path=StringLastRevisionTime}"
+                            Header="Дата последнего изменения" />
+                        <DataGridTextColumn
+                            Width="0.5*"
+                            Binding="{Binding Path=ElectronicFormat}"
+                            Header="Расширение">
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+        </Grid>
+    </Grid>
+</Window>
