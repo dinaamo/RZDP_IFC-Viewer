@@ -36,8 +36,8 @@ namespace IFC_Table_View.View.Windows
             CBClassElementValue.ItemsSource = searchWindowViewModel.SearchItems.Select(it => it.IFCClass).Distinct();
             CBNameElementValue.ItemsSource = searchWindowViewModel.SearchItems.Select(it => it.IFCObjectName).Distinct();
             CBPropertySetValue.ItemsSource = searchWindowViewModel.SearchItems.SelectMany(it => it.CollectionPropertySet).Select(it => it.NamePropertySet).Distinct();
-            //CBPropertyNameValue.ItemsSource = searchWindowViewModel.SearchItems.Where(it => it.PropertiesName != null).SelectMany(it => it.PropertiesName).Cast<string>().Distinct();
-            //CBPropertyValue.ItemsSource = searchWindowViewModel.SearchItems.Where(it => it.Values != null).SelectMany(it => it.Values).Cast<string>().Distinct();
+            CBPropertyNameValue.ItemsSource = searchWindowViewModel.SearchItems.SelectMany(it => it.CollectionPropertySet).SelectMany(it => it.PropertyCollection).Select(it => it.NameProperty).Distinct();
+            CBPropertyValue.ItemsSource = searchWindowViewModel.SearchItems.SelectMany(it => it.CollectionPropertySet).SelectMany(it => it.PropertyCollection).Select(it => it.ValueString).Distinct();
         }
 
         private void OnComboboxTextChanged(object sender, RoutedEventArgs e)

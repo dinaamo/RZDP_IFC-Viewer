@@ -1,11 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows.Input;
+using System.Windows;
 using IFC_Table_View.IFC.Model;
 using IFC_Table_View.IFC.ModelItem;
-using IFC_Table_View.Infracrucrure.Commands;
 using RZDP_IFC_Viewer.IFC.Editor.Base;
 using RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base;
+using Xbim.Ifc2x3.PropertyResource;
 using Xbim.Ifc4.Interfaces;
 
 namespace Editor_IFC
@@ -16,32 +16,6 @@ namespace Editor_IFC
         public IIfcPropertySetDefinition IFCPropertySetDefinition { get; }
         protected ModelItemIFCObject ModelObject { get; }
 
-
-
-        //#region Показать элемент
-
-        //public ICommand DeletePropertySetCommand { get; }
-
-        //private void OnDeletePropertySetCommandExecuted(object o)
-        //{
-        //    if (ModelObject.DeletePropertySet(this))
-        //    {
-
-        //    }
-        //}
-
-        //private bool CanDeletePropertySetCommandExecute(object o)
-        //{
-        //    return true;
-        //}
-
-        //#endregion Показать элемент
-
-
-        //public bool DeletePropertySet()
-        //{
-            
-        //}
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -58,27 +32,13 @@ namespace Editor_IFC
             this.ifcObjectDefinition = ifcObjectDefinition;
             this.IFCPropertySetDefinition = ifcPropertySetDef;
             this.ModelObject = modelObject;
-
-            //DeletePropertySetCommand = new ActionCommand(
-            //       OnDeletePropertySetCommandExecuted,
-            //       CanDeletePropertySetCommandExecute);
         }
 
         protected abstract IEnumerable<IPropertyModel<IIfcResourceObjectSelect>> FillCollectionProperty();
 
-        //private ObservableCollection<IPropertyModel<IIfcResourceObjectSelect>> _PropertyCollection;
 
-        public List<IPropertyModel<IIfcResourceObjectSelect>> PropertyCollection => FillCollectionProperty().ToList();
-        //{
-        //    get
-        //    {
-        //        if (_PropertyCollection is null)
-        //        {
-        //            _PropertyCollection = new ObservableCollection<IPropertyModel<IIfcResourceObjectSelect>>(FillCollectionProperty());
-        //        }
-        //        return _PropertyCollection;
-        //    }
-        //}
+        public ObservableCollection<IPropertyModel<IIfcResourceObjectSelect>> PropertyCollection => new ObservableCollection<IPropertyModel<IIfcResourceObjectSelect>>(FillCollectionProperty());
+
 
         public void UnpinPropertySet()
         {
@@ -87,6 +47,13 @@ namespace Editor_IFC
                 RelDef.RelatedObjects.Remove(ifcObjectDefinition);
             }
         }
+
+        public void DeletePropertyModel(IPropertyModel<IIfcResourceObjectSelect> propertyModel)
+        {
+            ModelObject.ModelIFC.DeleteIFCEntity(propertyModel.Property);
+            OnPropertyChanged("PropertyCollection");
+        }
+
 
         private int DeterminingRelatedObjectsCount()
         {

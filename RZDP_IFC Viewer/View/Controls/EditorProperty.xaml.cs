@@ -5,6 +5,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Editor_IFC;
 using IFC_Table_View.IFC.ModelItem;
+using RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base;
+using Xbim.Ifc4.Interfaces;
 
 namespace RZDP_IFC_Viewer.View.Controls
 {
@@ -53,16 +55,39 @@ namespace RZDP_IFC_Viewer.View.Controls
 
         private void MenuItemDelete_Click(object sender, RoutedEventArgs e)
         {
+            //Получаем контекст ячейки datagrid
             MenuItem menuItem = sender as MenuItem;
-
-            if (menuItem.DataContext is BasePropertySetDefinition PropertySetDefinition)
+            //Если набор
+            if (menuItem.DataContext is BasePropertySetDefinition propertySetDefinitionModel) 
             {
-                if (((ModelItemIFCObject)DataContext).DeletePropertySet(PropertySetDefinition))
+                if (propertySetDefinitionModel.IFCPropertySetDefinition is IIfcPropertySet ifcPropertySet)
                 {
-                    List<BasePropertySetDefinition> tempCollection = ((List<BasePropertySetDefinition>)(dgPropertySet.ItemsSource)).Where(it => !it.Equals(PropertySetDefinition)).ToList();
-                    dgPropertySet.ItemsSource = null;
-                    dgPropertySet.ItemsSource = tempCollection;
-                } 
+                    if (ifcPropertySet.HasProperties.Any(pr => pr is IIfcPropertyReferenceValue))
+                    {
+                        MessageBoxResult result = MessageBox.Show("Удалить набор характеристик с ссылками?\n" +
+                            "Удаление следует производить через инструменты.", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        if (result == MessageBoxResult.No)
+                        { return; }
+                    }
+                }
+                //Удаляем
+                ((ModelItemIFCObject)DataContext).DeletePropertySet(propertySetDefinitionModel);
+
+            }
+            //Если свойство
+            else if (menuItem.DataContext is IPropertyModel<IIfcResourceObjectSelect> propertyModel) 
+            {
+                if (propertyModel.Property is IIfcPropertyReferenceValue ifcProperty)
+                {
+                    MessageBoxResult result = MessageBox.Show("Удалить ссылку?\n" +
+                        "Удаление следует производить через инструменты.", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (result == MessageBoxResult.No)
+                    { return; }
+                }
+                //Удаляем
+                propertyModel.PropertySetDefinition.DeletePropertyModel(propertyModel);
+
+
             }
         }
     }

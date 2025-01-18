@@ -75,7 +75,7 @@
     <Compile Update="View\Windows\MainWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\Windows\SelectReferenceObjectWindow.xaml.cs">
+    <Compile Update="View\Windows\SetReferenceToObjectWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="View\Controls\XBIM\WinformsAccessibleControl.xaml.cs">

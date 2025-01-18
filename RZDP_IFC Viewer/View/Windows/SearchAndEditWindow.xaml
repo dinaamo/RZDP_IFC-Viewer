@@ -14,6 +14,8 @@
     Icon="{StaticResource ResourceKey=Search_Image}"
     mc:Ignorable="d" DataContext="vm:SearchWindowViewModel" Closing="Window_Closing">
 
+
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.5*" MinWidth="350" />
@@ -88,7 +90,7 @@
                                         IsEditable="True" IsTextSearchEnabled="False">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding}" ToolTip="{Binding}" />
+                                <TextBlock Text="{Binding}" ToolTip="{Binding}" MaxWidth="200"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
@@ -100,7 +102,7 @@
                                         IsEditable="True" IsTextSearchEnabled="False">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding}" ToolTip="{Binding}" />
+                                <TextBlock Text="{Binding}" ToolTip="{Binding}" MaxWidth="200"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
@@ -108,11 +110,12 @@
                     <TextBlock HorizontalAlignment="Left" Text="Значение" Grid.Row="6" Grid.Column="0" />
                     <ComboBox Grid.Row="6" Grid.Column="1" Style="{StaticResource ConditionsSearch}" Name="CBPropertyValueFilter" />
                     <ComboBox Grid.Row="6" Grid.Column="2"
+                                            MaxWidth="300"
                                             Name="CBPropertyValue"
                                             IsEditable="True" IsTextSearchEnabled="False">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding}" ToolTip="{Binding}" />
+                                <TextBlock Text="{Binding}" ToolTip="{Binding}" MaxWidth="200"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
@@ -187,6 +190,43 @@
                                 Command="{Binding PaintElements}" />
                 </StackPanel>
             </DockPanel>
+            
+            <GroupBox Header="Групповое редактирование" Padding="2" Grid.Column="0" Margin="5">
+                <DockPanel>
+
+                    <StackPanel DockPanel.Dock="Left" HorizontalAlignment="Left">
+                        <StackPanel.Resources>
+                            <Style TargetType="Button">
+                                <Setter Property="Margin" Value="5,5,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+                        <Button Width="230"
+                            Height="20"
+                            Content="Удаление и переименование наборов"
+                            />
+                        <Button Width="60"
+                            Height="20"
+                            Content="Добавление"
+                            />
+
+                    </StackPanel>
+
+                    <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right">
+                        <StackPanel.Resources>
+                            <Style TargetType="Button">
+                                <Setter Property="Margin" Value="5,5,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+                        <Button Width="60"
+                                     Height="20"
+                                     Content="Удаление и переименование наборов"/>
+                        <Button Width="60"
+                                     Height="20"
+                                     Content="Найти"/>
+
+                    </StackPanel>
+                </DockPanel>
+            </GroupBox>
         </StackPanel>
 
         <GridSplitter

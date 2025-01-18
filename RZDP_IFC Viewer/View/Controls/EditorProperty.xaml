@@ -6,7 +6,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Height="auto"
-    MinWidth="600"
+    MinWidth="700"
+    
     Loaded="UserControl_Loaded"
     mc:Ignorable="d">
     <UserControl.Resources>
@@ -15,22 +16,27 @@
             <Setter Property="Padding" Value="1" />
         </Style>
         
-        <Style TargetType="{x:Type DataGridCell}">
+        <!--<Style TargetType="{x:Type DataGridCell}">
             <Style.Triggers>
                 <Trigger Property="DataGridCell.IsSelected" Value="True">
                     <Setter Property="BorderBrush" Value="DarkBlue"/>
                     <Setter Property="BorderThickness" Value="2"/>
                 </Trigger>
             </Style.Triggers>
-        </Style>
-
-        <!--<Style TargetType="{x:Type TextBox}">
-            <Style.Triggers>
-                <Trigger Property="ContextMenu" Value="">
-                    <Setter Property="BorderBrush" Value="DarkBlue"/>
-                </Trigger>
-            </Style.Triggers>
         </Style>-->
+
+        <ContextMenu x:Key="TextBoxMenu">
+            <MenuItem Header="Удалить"
+                            Click="MenuItemDelete_Click">
+                        <MenuItem.Icon>
+                        <fa:ImageAwesome
+                                    Height="12"
+                                    Margin="0,0,3,0"
+                                    Foreground="DarkRed"
+                                    Icon="Remove" />    
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
 
 
     </UserControl.Resources>
@@ -97,6 +103,7 @@
                     x:Name="dgPropertySet"
                     Grid.Row="1"
                     Width="auto"
+                    SelectionMode="Single" 
                     AutoGenerateColumns="False"
                     ItemsSource="{Binding Path=CollectionPropertySet}">
                     <DataGrid.Columns>
@@ -116,21 +123,8 @@
                                         Focusable="False"
                                         Foreground="Black"
                                         MouseDoubleClick="TextBox_MouseDoubleClick"
-                                        LostFocus="tbName_LostFocus">
-                                        <TextBox.ContextMenu>
-                                            <ContextMenu>
-                                                <MenuItem Header="Удалить"
-                                                    Click="MenuItemDelete_Click">
-                                                    <MenuItem.Icon>
-                                                        <fa:ImageAwesome
-                                                            Height="12"
-                                                            Margin="0,0,3,0"
-                                                            Foreground="DarkRed"
-                                                            Icon="Remove" />
-                                                    </MenuItem.Icon>
-                                                </MenuItem>
-                                            </ContextMenu>
-                                        </TextBox.ContextMenu>
+                                        LostFocus="tbName_LostFocus" 
+                                        ContextMenu="{StaticResource TextBoxMenu}">
                                     </TextBox>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -174,9 +168,11 @@
                     x:Name="dgProperty"
                     Grid.Row="1"
                     Width="auto"
+                    
+                    SelectionMode="Single" 
                     SelectionUnit="Cell"
                     AutoGenerateColumns="False"
-                    ItemsSource="{Binding ElementName=dgPropertySet, Path=SelectedItem, Converter={StaticResource ConvertItemGetCollectionProperty}}">
+                    ItemsSource="{Binding ElementName=dgPropertySet, Path=SelectedItem.PropertyCollection, UpdateSourceTrigger=PropertyChanged}">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn
                             Width="*"
@@ -192,7 +188,8 @@
                                             Focusable="False"
                                             Foreground="Black"
                                             MouseDoubleClick="TextBox_MouseDoubleClick"
-                                            LostFocus="tbName_LostFocus" />
+                                            LostFocus="tbName_LostFocus" 
+                                            ContextMenu="{StaticResource TextBoxMenu}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -210,17 +207,32 @@
                                             Focusable="False"
                                             Foreground="Black"
                                             MouseDoubleClick="TextBox_MouseDoubleClick"
-                                            LostFocus="tbName_LostFocus" />
+                                            LostFocus="tbName_LostFocus" 
+                                            ContextMenu="{StaticResource TextBoxMenu}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTextColumn
+
+                        <DataGridTemplateColumn
                             Width="*"
                             MinWidth="100"
-                            CanUserSort="False"
                             IsReadOnly="True"
-                            Binding="{Binding Path=DataType}"
-                            Header="Тип данных" />
+                            CanUserSort="False"
+                            SortMemberPath="{Binding Path=DataType}"
+                            Header="Тип данных">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox
+                                            Text="{Binding Path=DataType, Mode=OneTime}"
+                                            Focusable="False"
+                                            Foreground="Black"
+                                            MouseDoubleClick="TextBox_MouseDoubleClick"
+                                            LostFocus="tbName_LostFocus" 
+                                            ContextMenu="{StaticResource TextBoxMenu}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>

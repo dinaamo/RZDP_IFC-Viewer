@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows;
 using IFC_Table_View.IFC.Model;
 using IFC_Table_View.IFC.ModelItem;
 using RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base;
@@ -43,6 +44,19 @@ namespace Editor_IFC
             ifcPropertySet.HasProperties.Add(ifcProp);
             //PropertyCollection.Add(new EditorProperty2x3<IfcPropertySingleValue>(ifcProp, ModelIFC, this));
         }
+
+        //public override bool DeletePropertyModel(IPropertyModel<IIfcResourceObjectSelect> propertyModel)
+        //{
+        //    if(propertyModel.Property is IIfcPropertyReferenceValue ifcProperty)
+        //    {
+        //        MessageBoxResult result = MessageBox.Show("Удалить ссылку?\n" +
+        //            "Удаление следует производить через инструменты.", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
+        //        if (result == MessageBoxResult.No)
+        //        { return false; }    
+        //    }
+        //    ModelObject.ModelIFC.DeleteIFCEntity(propertyModel.Property);
+        //    return true;
+        //}
 
         public override IfcPropertySet GetCopyPropertySet()
         {
@@ -112,6 +126,12 @@ namespace Editor_IFC
             ElementQuantity.Quantities.Add(ifcProp);
             //PropertyCollection.Add(new EditorQuantity2x3(ifcProp, ModelIFC, this));
         }
+
+        //public override bool DeletePropertyModel(IPropertyModel<IIfcResourceObjectSelect> propertyModel)
+        //{
+        //    ModelObject.ModelIFC.DeleteIFCEntity(propertyModel.Property);
+        //    return true;
+        //}
 
         protected override IEnumerable<IPropertyModel<IIfcResourceObjectSelect>> FillCollectionProperty()
         {

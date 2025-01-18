@@ -212,23 +212,10 @@ namespace IFC_Table_View.IFC.ModelItem
 
         #endregion Выделить элемент
 
-        public bool DeletePropertySet(BasePropertySetDefinition PropertySet)
+        public void DeletePropertySet(BasePropertySetDefinition PropertySet)
         {
-            var ifcPropertySetDefinition = PropertySet.IFCPropertySetDefinition;
-            
-            if (ifcPropertySetDefinition is IIfcPropertySet ifcPropertySet)
-            {
-                if (ifcPropertySet.HasProperties.Any(pr => pr is IIfcPropertyReferenceValue))
-                {
-                    MessageBoxResult result = MessageBox.Show("Удалить набор характеристик с ссылками?\n" +
-                        "Удаление следует производить через инструменты.", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (result == MessageBoxResult.No)
-                    { return false; }
-                }
-            }
-
-            Model.DeleteIFCEntity(ifcPropertySetDefinition);
-            return true;
+            Model.DeleteIFCEntity(PropertySet.IFCPropertySetDefinition);
+            OnPropertyChanged("CollectionPropertySet");
         }
 
 
@@ -556,7 +543,7 @@ namespace IFC_Table_View.IFC.ModelItem
         ///// <summary>
         ///// Наборы характеристик
         ///// </summary>
-        public List<BasePropertySetDefinition> CollectionPropertySet => modelEditor.FillCollectionPropertySet().ToList();
+        public ObservableCollection<BasePropertySetDefinition> CollectionPropertySet => new ObservableCollection<BasePropertySetDefinition>(modelEditor.FillCollectionPropertySet());
         //{
             //get
             //{

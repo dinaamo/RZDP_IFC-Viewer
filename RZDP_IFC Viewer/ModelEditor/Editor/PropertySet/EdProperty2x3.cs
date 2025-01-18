@@ -200,6 +200,7 @@ namespace Editor_IFC
         {
             try
             {
+                newValueString = newValueString.Replace(',', '.');
                 if (ifcPhisSimpQuantity is IfcQuantityArea ifcQuantityArea)
                 {
                     ifcQuantityArea.AreaValue = new IfcAreaMeasure(newValueString);

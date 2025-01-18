@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows;
 using IFC_Table_View.IFC.Model;
 using IFC_Table_View.IFC.ModelItem;
 using RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base;
@@ -110,7 +111,13 @@ namespace Editor_IFC
             ElementQuantity.Quantities.Add(ifcProp);
         }
 
-        protected override IEnumerable<IPropertyModel<IIfcResourceObjectSelect>> FillCollectionProperty()
+        //public override bool DeletePropertyModel(IPropertyModel<IIfcResourceObjectSelect> propertyModel)
+        //{
+        //    ModelObject.ModelIFC.DeleteIFCEntity(propertyModel.Property);
+        //    return true;
+        //}
+
+protected override IEnumerable<IPropertyModel<IIfcResourceObjectSelect>> FillCollectionProperty()
         {
             //ObservableCollection<IPropertyModel<IIfcResourceObjectSelect>> CollectionProperty = new ObservableCollection<IPropertyModel<IIfcResourceObjectSelect>>();
 

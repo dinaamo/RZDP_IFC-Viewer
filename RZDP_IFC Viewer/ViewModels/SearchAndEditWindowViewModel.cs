@@ -117,14 +117,15 @@ namespace IFC_Table_View.ViewModels
 
             dataGrid.ItemsSource = null;
 
+
             var col1 = SearchItems.Where(it => IsFilterString(new List<string>() { it.IFCObjectGUID }, textGUID, FilterSearchValueGUID));
             var col2 = col1.Where(it => IsFilterString(new List<string>() { it.IFCClass }, textClassElement, FilterSearchValueClassElement));
             var col3 = col2.Where(it => IsFilterString(new List<string>() { it.IFCObjectName }, textNameElement, FilterSearchValueNameElement));
-            var col4 = col3.Where(it => IsFilterString(it.CollectionPropertySet.Select(it => Convert.ToString(it.NamePropertySet)), textPropertySet, FilterSearchValuePropertySet));
-            //var col5 = col4.Where(it => IsFilterString(it.CollectionPropertySet.Select(it => Convert.ToString(it.)), textPropertyName, FilterSearchValuePropertyValue));
-            //var col6 = col5.Where(it => IsFilterString(it.Values, textPropertyValue, FilterSearchValuePropertyValue));
+            var col4 = col3.Where(it => IsFilterString(it.CollectionPropertySet.Select(it => it.NamePropertySet), textPropertySet, FilterSearchValuePropertySet));
+            var col5 = col4.Where(it => IsFilterString(it.CollectionPropertySet.SelectMany(it => it.PropertyCollection).Select(it => it.NameProperty), textPropertyName, FilterSearchValuePropertyValue));
+            var col6 = col5.Where(it => IsFilterString(it.CollectionPropertySet.SelectMany(it => it.PropertyCollection).Select(it => it.ValueString), textPropertyValue, FilterSearchValuePropertyValue));
 
-            FilteredSearchItems = new ObservableCollection<ModelItemIFCObject>(col4);
+            FilteredSearchItems = new ObservableCollection<ModelItemIFCObject>(col6);
 
             dataGrid.ItemsSource = FilteredSearchItems;
         }
@@ -176,10 +177,6 @@ namespace IFC_Table_View.ViewModels
         public SearchAndEditWindowViewModel(IEnumerable<ModelItemIFCObject> modelElementsForSearch)
         {
             SearchItems = new ObservableCollection<ModelItemIFCObject>(modelElementsForSearch);
-            //foreach (ModelItemIFCObject modelItem in modelElementsForSearch)
-            //{
-            //    SearchItems.Add(new SearchItem(modelItem));
-            //}
 
             FilteredSearchItems = new ObservableCollection<ModelItemIFCObject>(modelElementsForSearch);
 
