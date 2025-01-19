@@ -15,7 +15,14 @@ namespace IFC_Table_View.IFC.ModelItem
             DeleteReferenceCommand = new ActionCommand(
                         OnDeleteReferenceCommandExecuted,
                         CanDeleteReferenceCommandExecute);
+
+            OpenCommand = new ActionCommand(
+                        OnOpenCommandExecuted,
+                        CanOpenCommandExecute);
+
             this.ifcObjectReferenceSelect = ifcObjectReferenceSelect;
+
+
         }
 
         private IIfcObjectReferenceSelect ifcObjectReferenceSelect;
@@ -23,30 +30,32 @@ namespace IFC_Table_View.IFC.ModelItem
         public ICommand DeleteReferenceCommand { get; }
 
         protected abstract void OnDeleteReferenceCommandExecuted(object o);
-        //{
-            //using (ITransaction trans = ModelIFC.IfcStore.Model.BeginTransaction("DeleteReference"))
-            //{
-            //    IEnumerable<ModelItemIFCObject> referenceToDelete = PropertyElement?.
-            //                            Where(it => it.Key == "Ссылки на объекты")?.
-            //                            SelectMany(it => it.Value).
-            //                            Cast<ModelItemIFCObject>();
 
-            //    if (referenceToDelete == null)
-            //    {
-            //        return;
-            //    }
-
-            //    foreach (ModelItemIFCObject modelObject in referenceToDelete.ToArray())
-            //    {
-            //        modelObject.DeleteReferenceToTheObject(new List<BaseModelReferenceIFC>() { this });
-            //        DeleteReferenceToTheElement(modelObject);
-            //    }
-
-            //    trans.Commit();
-            //}
-        //}
-
+        
         protected bool CanDeleteReferenceCommandExecute(object o)
+        {
+            if (Model == null)
+            {
+                return false;
+            }
+            else if (o is BaseModelReferenceIFC)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
+
+        public ICommand OpenCommand { get; }
+
+        protected abstract void OnOpenCommandExecuted(object o);
+
+
+        protected bool CanOpenCommandExecute(object o)
         {
             if (Model == null)
             {

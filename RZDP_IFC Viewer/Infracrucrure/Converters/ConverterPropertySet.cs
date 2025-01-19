@@ -86,50 +86,50 @@ namespace IFC_Table_View.Infracrucrure.Converter
         }
     }
 
-    public class ConvertItemPropertiesIFC : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            //if (value is IIfcPropertySet PropertySet)
-            //{
-            //    return PropertySet.HasProperties;
-            //}
-            //else if (value is IIfcElementQuantity PropertySetQuantity)
-            //{
-            //    return PropertySetQuantity.Quantities;
-            //}
-            //else
-            //{
-            //    return null;
-            //}
-            return null;
-        }
+    //public class ConvertItemPropertiesIFC : IValueConverter
+    //{
+    //    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        //if (value is IIfcPropertySet PropertySet)
+    //        //{
+    //        //    return PropertySet.HasProperties;
+    //        //}
+    //        //else if (value is IIfcElementQuantity PropertySetQuantity)
+    //        //{
+    //        //    return PropertySetQuantity.Quantities;
+    //        //}
+    //        //else
+    //        //{
+    //        //    return null;
+    //        //}
+    //        return null;
+    //    }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
-        }
-    }
+    //    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        return null;
+    //    }
+    //}
 
-    public class ConvertItemPropSetIFC : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is ModelItemIFCObject element)
-            {
-                return element.CollectionPropertySet;
-            }
-            else
-            {
-                return null;
-            }
-        }
+    //public class ConvertItemPropSetIFC : IValueConverter
+    //{
+    //    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        if (value is ModelItemIFCObject element)
+    //        {
+    //            return element.CollectionPropertySet;
+    //        }
+    //        else
+    //        {
+    //            return null;
+    //        }
+    //    }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
-        }
-    }
+    //    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        return null;
+    //    }
+    //}
 
     public class ConvertItemStatusClassIFC : IValueConverter
     {

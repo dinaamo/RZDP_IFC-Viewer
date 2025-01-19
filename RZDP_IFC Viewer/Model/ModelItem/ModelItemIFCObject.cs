@@ -17,15 +17,17 @@ namespace IFC_Table_View.IFC.ModelItem
 {
     public class ModelItemIFCObject : BaseModelItemIFC
     {
+        public BaseModelItemIFC TopElement {  get; set; }
         /// <summary>
         /// Конструктор
         /// </summary>
-        public ModelItemIFCObject(IIfcObjectDefinition IFCObject, ModelItemIFCObject TopElement, ModelIFC modelIFC) : base(modelIFC, IFCObject, TopElement)
+        public ModelItemIFCObject(IIfcObjectDefinition IFCObject, BaseModelItemIFC TopElement, ModelIFC modelIFC) : base(modelIFC, IFCObject, TopElement)
         {
             //Если есть элемент выше по дереву то подключаем к нему обработчик события изменения состояния элемента
-            if (TopElement != null)
+            this.TopElement = TopElement;
+            if (TopElement is ModelItemIFCObject modelItemIFCObject)
             {
-                PropertyReferenceChanged += TopElement.ChangePropertyReference;
+                PropertyReferenceChanged += modelItemIFCObject.ChangePropertyReference;
             }
 
             IFCObjectDefinition = IFCObject;
@@ -57,6 +59,10 @@ namespace IFC_Table_View.IFC.ModelItem
             DeleteReferenceToTheTable = new ActionCommand(
                 OnDeleteReferenceToTheTable,
                 CanDeleteReferenceToTheTable);
+
+            DeleteModelObject = new ActionCommand(
+                OnDeleteModelObject,
+                CanDeleteModelObject);
 
             InitializationModelObject();
         }
@@ -103,7 +109,7 @@ namespace IFC_Table_View.IFC.ModelItem
         {
             if (o is ModelItemIFCObject modelItem)
             {
-                SearchAndEditWindow.CreateWindowSearch(SelectionElements(modelItem));
+                SearchAndEditWindow.CreateWindowSearch(SelectionNestedItems(modelItem));
             }
         }
 
@@ -141,7 +147,7 @@ namespace IFC_Table_View.IFC.ModelItem
         {
             if (o is ModelItemIFCObject modelItem)
             {
-                SelectionElements(modelItem).ForEach(it => it.IsPaint = false);
+                SelectionNestedItems(modelItem).ForEach(it => it.IsPaint = false);
             }
         }
 
@@ -163,10 +169,9 @@ namespace IFC_Table_View.IFC.ModelItem
                 List<BaseModelReferenceIFC> collectionModelReference = Model.ModelItems[0].ModelItems.
                                                     OfType<BaseModelReferenceIFC>().
                                                     ToList();
+                
+                SelectReferenceObjectWindow.CreateSelectReferenceObjectWindow(new List<ModelItemIFCObject> { this }, collectionModelReference, Model.AddReferenceToTheObject);
 
-                SelectReferenceObjectWindow window_Add_Reference_To_Table = new SelectReferenceObjectWindow(new List<ModelItemIFCObject> { this }, collectionModelReference, Model.AddReferenceToTheObject);
-
-                window_Add_Reference_To_Table.ShowDialog();
             }
         }
 
@@ -187,9 +192,8 @@ namespace IFC_Table_View.IFC.ModelItem
                                                 OfType<BaseModelReferenceIFC>().
                                                 ToList();
 
-            SelectReferenceObjectWindow window_Add_Reference_To_Table = new SelectReferenceObjectWindow(new List<ModelItemIFCObject> { this }, collectionModelReference, Model.DeleteReferenceToTheObject);
+            SelectReferenceObjectWindow.CreateSelectReferenceObjectWindow(new List<ModelItemIFCObject> { this }, collectionModelReference, Model.DeleteReferenceToTheObject);
 
-            window_Add_Reference_To_Table.ShowDialog();
         }
 
         private bool CanDeleteReferenceToTheTable(object o)
@@ -199,6 +203,36 @@ namespace IFC_Table_View.IFC.ModelItem
 
         #endregion Удалить ссылки на документ или таблицу
 
+        #region Удалить элемент
+
+        public ICommand DeleteModelObject { get; }
+
+        private void OnDeleteModelObject(object o)
+        {
+            
+            if(IFCObjectDefinition is IIfcProject)
+            {
+                MessageBox.Show($"Нельзя удалить IfcProject\n ", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                return;
+            }
+
+            List<ModelItemIFCObject> CollectionNestedItems = SelectionNestedItems(this);
+
+            MessageBoxResult result = MessageBox.Show($"Удалить элемент?\n" +
+                $"Будет удалено элементов: {CollectionNestedItems.Count}.", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.No)
+            { return; }
+
+            Model.DeleteModelObjects(CollectionNestedItems);
+        }
+
+        private bool CanDeleteModelObject(object o)
+        {
+            return true;
+        }
+
+        #endregion Удалить элемент
+
         #endregion Комманды
 
         #region Методы
@@ -207,10 +241,11 @@ namespace IFC_Table_View.IFC.ModelItem
 
         public void SelectElements()
         {
-            Model.SelectObject(this);
+            Model.SelectObject(IFCObjectDefinition);
         }
 
         #endregion Выделить элемент
+
 
         public void DeletePropertySet(BasePropertySetDefinition PropertySet)
         {
@@ -263,7 +298,7 @@ namespace IFC_Table_View.IFC.ModelItem
             else if (!e.IsContainPropertyDownTreeReference)
             {
                 //Проверка наличия ниже по дереву ссылок
-                bool searchResult = SelectionElements(this)
+                bool searchResult = SelectionNestedItems(this)
                                         .Where(it => it != this)
                                         .Any(it => it.IsContainPropertyReference);
 
@@ -303,8 +338,12 @@ namespace IFC_Table_View.IFC.ModelItem
                     IsContainPropertyReference = false;
                 }
 
+
                 //Прокидываем наверх по дереву состояние флага
                 PropertyReferenceChanged?.Invoke(this, new PropertyReferenceChangedEventArg(IsContainPropertyReference));
+
+                //Обновляем коллекцию во вьюшке
+                OnPropertyChanged("CollectionPropertySet");
             }
             catch (ArgumentNullException)
             {
@@ -344,6 +383,9 @@ namespace IFC_Table_View.IFC.ModelItem
 
             //Прокидываем наверх по дереву событие добавления ссылки
             PropertyReferenceChanged?.Invoke(this, new PropertyReferenceChangedEventArg(IsContainPropertyReference));
+
+            //Обновляем коллекцию во вьюшке
+            OnPropertyChanged("CollectionPropertySet");
         }
 
         /// <summary>
@@ -373,7 +415,7 @@ namespace IFC_Table_View.IFC.ModelItem
         /// <param name="foundObjects"></param>
         public static List<ModelItemIFCObject> FindPaintObjects(ModelItemIFCObject topElement)
         {
-            return topElement.SelectionElements(topElement).Where(it => it.IsPaint).ToList();
+            return topElement.SelectionNestedItems(topElement).Where(it => it.IsPaint).ToList();
         }
 
         /// <summary>
@@ -402,16 +444,13 @@ namespace IFC_Table_View.IFC.ModelItem
         /// </summary>
         /// <param name="modelItem"></param>
         /// <returns></returns>
-        private List<ModelItemIFCObject> SelectionElements(ModelItemIFCObject modelItem)
+        private List<ModelItemIFCObject> SelectionNestedItems(ModelItemIFCObject modelItem)
         {
-            List<ModelItemIFCObject> list = new List<ModelItemIFCObject>
-            {
-                modelItem
-            };
+            List<ModelItemIFCObject> list = new List<ModelItemIFCObject>{modelItem};
 
             foreach (ModelItemIFCObject nestModelItem in modelItem.ModelItems)
             {
-                list.AddRange(SelectionElements(nestModelItem));
+                list.AddRange(SelectionNestedItems(nestModelItem));
             }
 
             return list;

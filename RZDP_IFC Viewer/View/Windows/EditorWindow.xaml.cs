@@ -26,6 +26,9 @@ namespace RZDP_IFC_Viewer.View.Windows
         private EditorWindow(ModelItemIFCObject ModelObject)
         {
             this.ModelObject = ModelObject;
+
+
+
             InitializeComponent();
         }
 
@@ -35,5 +38,10 @@ namespace RZDP_IFC_Viewer.View.Windows
         }
 
         public ModelItemIFCObject ModelObject { get; }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            ModelObject.OnPropertyChanged("CollectionPropertySet");
+        }
     }
 }

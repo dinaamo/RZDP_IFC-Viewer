@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using IFC_Table_View.IFC.Model;
+using IFC_Table_View.View.Windows;
 using Xbim.Ifc;
 using Xbim.Ifc4.Interfaces;
 
@@ -150,6 +151,13 @@ namespace IFC_Table_View.IFC.ModelItem
 
         #endregion Удалить_ссылку на документ
 
+
+        #region Открыть_документ
+        protected override void OnOpenCommandExecuted(object o)
+        {
+            OpenDocument();
+        }
+        #endregion Открыть_документ
         #endregion Комманды
     }
 }

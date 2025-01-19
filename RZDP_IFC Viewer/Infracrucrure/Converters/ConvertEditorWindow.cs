@@ -61,21 +61,21 @@ namespace IFC_Table_View.Infracrucrure.Converter
     //    }
     //}
 
-    public class ConvertItemGetCollectionProperty : IValueConverter
-    {
-        public object Convert(object valueObject, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (valueObject is BasePropertySetDefinition propertySetDefinition)
-            {
-                return propertySetDefinition.PropertyCollection;
-            }
+    //public class ConvertItemGetCollectionProperty : IValueConverter
+    //{
+    //    public object Convert(object valueObject, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        if (valueObject is BasePropertySetDefinition propertySetDefinition)
+    //        {
+    //            return propertySetDefinition.PropertyCollection;
+    //        }
 
-            return null;
-        }
+    //        return null;
+    //    }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
-        }
-    }
+    //    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        return null;
+    //    }
+    //}
 }

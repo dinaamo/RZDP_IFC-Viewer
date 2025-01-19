@@ -114,12 +114,6 @@ namespace IFC_Viewer.IFC.Base
                 throw new ArgumentNullException("ifcObjectDefinition is null. Property set filling error");
             }
 
-            //if (CollectionPropertySet is null)
-            //{
-            //    CollectionPropertySet = new ObservableCollection<BasePropertySetDefinition>();
-            //}
-            //CollectionPropertySet.Clear();
-
             if (ifcObjectDefinition is IIfcObject ifcObject)
             {
                 var collectionProperty = ifcObject.IsDefinedBy.Select(it => it.RelatingPropertyDefinition)
@@ -127,8 +121,7 @@ namespace IFC_Viewer.IFC.Base
 
                 foreach (IIfcPropertySetDefinition ifcPropSetIsObj in collectionProperty)
                 {
-                    //CollectionPropertySet.Add(
-                        yield return BasePropertySetDefinition.CreateEditorPropertySet(ifcObject, ifcPropSetIsObj, ModelIFC, modelItemIFCObject);
+                    yield return BasePropertySetDefinition.CreateEditorPropertySet(ifcObject, ifcPropSetIsObj, ModelIFC, modelItemIFCObject);
                 }
 
                 IEnumerable<IIfcPropertySetDefinition> collectionTypeProperty = ifcObject.IsTypedBy.SelectMany(it => it.RelatingType.HasPropertySets)
@@ -138,7 +131,6 @@ namespace IFC_Viewer.IFC.Base
                 {
                     foreach (IIfcPropertySetDefinition propSetIsType in collectionTypeProperty)
                     {
-                        //CollectionPropertySet.Add(
                         yield return BasePropertySetDefinition.CreateEditorPropertySet(ifcObject, propSetIsType, ModelIFC, modelItemIFCObject);
                     }
                 }
@@ -149,7 +141,6 @@ namespace IFC_Viewer.IFC.Base
 
                 foreach (IIfcPropertySetDefinition propSetIsObj in collectionProperty)
                 {
-                    //CollectionPropertySet.Add(
                     yield return BasePropertySetDefinition.CreateEditorPropertySet(ifcContext, propSetIsObj, ModelIFC, modelItemIFCObject);
                 }
             }

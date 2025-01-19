@@ -264,7 +264,7 @@
                             Margin="0,0,0,0"
                             Background="Transparent"
                             BorderThickness="0"
-                            ItemsSource="{Binding ElementName=treeViewIFC, Path=SelectedItem, Converter={StaticResource ConvItemIFC}, UpdateSourceTrigger=PropertyChanged}">
+                            ItemsSource="{Binding ElementName=treeViewIFC, Path=SelectedItem.PropertyElement, UpdateSourceTrigger=PropertyChanged}">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
 
@@ -364,7 +364,7 @@
                             Margin="0"
                             Background="Transparent"
                             BorderThickness="0"
-                            ItemsSource="{Binding ElementName=treeViewIFC, Path=SelectedItem, Converter={StaticResource ConvPropSet}, UpdateSourceTrigger=PropertyChanged}">
+                            ItemsSource="{Binding ElementName=treeViewIFC, Path=SelectedItem.CollectionPropertySet, UpdateSourceTrigger=PropertyChanged}">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
 

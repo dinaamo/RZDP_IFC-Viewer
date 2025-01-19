@@ -23,8 +23,7 @@ namespace RZDP_IFC_Viewer.View.Controls
 
         private void EditorProperty_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            //Dispatcher.BeginInvoke(
-            //    new Action(() => dgPropertySet.SelectedIndex = 0), DispatcherPriority.DataBind);
+            
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -65,13 +64,13 @@ namespace RZDP_IFC_Viewer.View.Controls
                     if (ifcPropertySet.HasProperties.Any(pr => pr is IIfcPropertyReferenceValue))
                     {
                         MessageBoxResult result = MessageBox.Show("Удалить набор характеристик с ссылками?\n" +
-                            "Удаление следует производить через инструменты.", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                            "Удаление следует производить через панель инструментов", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
                         if (result == MessageBoxResult.No)
                         { return; }
                     }
                 }
                 //Удаляем
-                ((ModelItemIFCObject)DataContext).DeletePropertySet(propertySetDefinitionModel);
+                 (DataContext as ModelItemIFCObject)?.DeletePropertySet(propertySetDefinitionModel);
 
             }
             //Если свойство
@@ -80,7 +79,7 @@ namespace RZDP_IFC_Viewer.View.Controls
                 if (propertyModel.Property is IIfcPropertyReferenceValue ifcProperty)
                 {
                     MessageBoxResult result = MessageBox.Show("Удалить ссылку?\n" +
-                        "Удаление следует производить через инструменты.", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        "Удаление следует производить через панель инструментов.", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
                     if (result == MessageBoxResult.No)
                     { return; }
                 }

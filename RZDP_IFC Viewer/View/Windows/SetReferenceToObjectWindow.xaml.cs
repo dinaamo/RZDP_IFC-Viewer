@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using IFC_Table_View.IFC.ModelItem;
 using IFC_Table_View.ViewModels;
+using RZDP_IFC_Viewer.View.Windows;
 
 namespace IFC_Viewer.View.Windows
 {
@@ -9,15 +10,42 @@ namespace IFC_Viewer.View.Windows
     /// </summary>
     public partial class SelectReferenceObjectWindow : Window
     {
-        public SelectReferenceObjectWindow(List<ModelItemIFCObject> collectionObject, List<BaseModelReferenceIFC> collectionModelReference, Action<List<ModelItemIFCObject>, List<BaseModelReferenceIFC>> createNewModelReference)
+        private static SelectReferenceObjectWindow instance;
+
+        public static void CreateSelectReferenceObjectWindow(List<ModelItemIFCObject> collectionObject, List<BaseModelReferenceIFC> collectionModelReference, Action<List<ModelItemIFCObject>, List<BaseModelReferenceIFC>> createNewModelReference)
         {
+            if (instance == null)
+            {
+                instance = new SelectReferenceObjectWindow(collectionObject, collectionModelReference, createNewModelReference);
+                instance.Show();
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        //List<ModelItemIFCObject> collectionObject;
+        private SelectReferenceObjectWindow(List<ModelItemIFCObject> collectionObject, List<BaseModelReferenceIFC> collectionModelReference, Action<List<ModelItemIFCObject>, List<BaseModelReferenceIFC>> createNewModelReference)
+        {
+            //this.collectionObject = collectionObject;
             DataContext = new SelectReferenceObjectWindowViewModel(collectionObject, collectionModelReference, createNewModelReference);
             InitializeComponent();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            //foreach (var item in collectionObject)
+            //{
+            //    item.OnPropertyChanged("CollectionPropertySet");
+            //}
+
             this.Close();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            instance = null;
         }
     }
 }

@@ -11,12 +11,12 @@
     <cnv:ConvertItemName x:Key="ConvertItemName" />
     <cnv:ConvStatusName x:Key="ConvStatusName" />
     <cnv:ConvertItemStatusClassIFC x:Key="ConvStatusClassIFC" />
-    <cnv:ConvertItemPropSetIFC x:Key="ConvPropSet" />
-    <cnv:ConvertItemPropertiesIFC x:Key="ConvProperties" />
+    <!--<cnv:ConvertItemPropSetIFC x:Key="ConvPropSet" />-->
+    <!--<cnv:ConvertItemPropertiesIFC x:Key="ConvProperties" />-->
     <cnv:ConvertItemIFCValue x:Key="ConvIFCValue" />
     <cnv:ConvertItemTable x:Key="ConvIFCTable" />
     <cnv:ConvertItemTypeClassIFC x:Key="ConvIFCType" />
-    <cnv:ConvertItemIFC x:Key="ConvItemIFC" />
+    <!--<cnv:ConvertItemIFC x:Key="ConvItemIFC" />-->
     <cnv:ConvertConvPropertyItem x:Key="ConvPropertyesItem" />
     <cnv:ConvertConvReferenceToObject x:Key="ConvertConvReferenceToObject" />
     <cnv:ConvertItemIFCNameProperty x:Key="ConvertItemIFCNameProperty" />
@@ -25,7 +25,7 @@
     <cnv:ConverterImageVisibilityInverse x:Key="ConverterImageVisibilityInverse" />
     <cnv:ConvertTest x:Key="ConvertTest" />
     <cnv:ConvertParametersMultibuilding x:Key="ConvertParametersMultibuilding" />
-    <cnv:ConvertItemGetCollectionProperty x:Key="ConvertItemGetCollectionProperty" />
+    <!--<cnv:ConvertItemGetCollectionProperty x:Key="ConvertItemGetCollectionProperty" />-->
 
     <Style TargetType="{x:Type DataGrid}">
         <Setter Property="ColumnWidth" Value="300" />
@@ -288,6 +288,19 @@
                             Height="12"
                             Margin="0,0,3,0"
                             Foreground="DarkRed"
+                            Icon="ExternalLinkSquare" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem
+                            Command="{Binding DeleteModelObject}"
+                            CommandParameter="{Binding}"
+                            Header="Удалить элемент">
+                        <MenuItem.Icon>
+                          <fa:ImageAwesome
+                            Height="12"
+                            Margin="0,0,3,0"
+                            Foreground="DarkRed"
                             Icon="Remove" />
                         </MenuItem.Icon>
                     </MenuItem>
@@ -327,11 +340,23 @@
             </TextBlock>
             <StackPanel.ContextMenu>
                 <ContextMenu>
-                    <!--ooooooooooooooooooooooooooooooooooooooooooo-->
+                    
                     <MenuItem
-                                Command="{Binding DeleteReferenceCommand}"
-                                CommandParameter="{Binding}"
-                                Header="Удалить таблицу">
+                             Command="{Binding OpenCommand}"
+                             CommandParameter="{Binding}"
+                             Header="Открыть">
+                        <MenuItem.Icon>
+                            <fa:ImageAwesome
+                             Height="12"
+                             Margin="0,0,3,0"
+                             Foreground="DarkBlue"
+                             Icon="Table"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem
+                            Command="{Binding DeleteReferenceCommand}"
+                            CommandParameter="{Binding}"
+                            Header="Удалить таблицу">
                         <MenuItem.Icon>
                             <fa:ImageAwesome
                                 Height="12"
@@ -340,7 +365,6 @@
                                 Icon="Close" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <!--ooooooooooooooooooooooooooooooooooooooooooooooooo-->
                 </ContextMenu>
             </StackPanel.ContextMenu>
         </StackPanel>
@@ -390,6 +414,18 @@
             </TextBlock>
             <StackPanel.ContextMenu>
                 <ContextMenu>
+                    <MenuItem
+                            Command="{Binding OpenCommand}"
+                            CommandParameter="{Binding}"
+                            Header="Открыть">
+                        <MenuItem.Icon>
+                            <fa:ImageAwesome
+                            Height="12"
+                            Margin="0,0,3,0"
+                            Foreground="DarkBlue"
+                            Icon="FileText"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                     <MenuItem
                                 Command="{Binding DeleteReferenceCommand}"
                                 CommandParameter="{Binding}"

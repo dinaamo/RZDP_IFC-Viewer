@@ -1,6 +1,9 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Data;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks.Dataflow;
+using System.Windows;
 using System.Windows.Documents;
 using IFC_Table_View.IFC.ModelItem;
 using IFC_Table_View.ViewModels;
@@ -72,12 +75,18 @@ namespace IFC_Table_View.IFC.Model
         /// <summary>
         /// Делегат для выделения объекта
         /// </summary>
-        public Action<ModelItemIFCObject> SelectObject;
+        public Action<IPersistEntity> SelectObject;
 
         /// <summary>
         /// Процесс загрузки
         /// </summary>
-        private Action<int, object> ReportProcess;
+        private BackgroundWorker backgroundWorker;
+
+
+        /// <summary>
+        /// Процесс загрузки
+        /// </summary>
+        private Action<IEnumerable<IPersistEntity>> DrawingControlRefresh;
 
         /// <summary>
         /// ///////////////
@@ -85,9 +94,9 @@ namespace IFC_Table_View.IFC.Model
         /// <param name="filePath"></param>
         /// <returns></returns>
         //Загружаем базу данных
-        public static ModelIFC Create(IfcStore ifcStore, Action<ModelItemIFCObject> ZoomObject, Action<ModelItemIFCObject> SelectObject, Action<int, object> ReportProcess)
+        public static ModelIFC Create(IfcStore ifcStore, Action<ModelItemIFCObject> ZoomObject, Action<IPersistEntity> SelectObject, BackgroundWorker ReportProcess, Action<IEnumerable<IPersistEntity>> DrawingControlRefresh)
         {
-            return new ModelIFC().LoadDataBase(ifcStore, ZoomObject, SelectObject, ReportProcess);
+            return new ModelIFC().LoadDataBase(ifcStore, ZoomObject, SelectObject, ReportProcess, DrawingControlRefresh);
         }
 
         private BaseEditorModel baseEditorModel;
@@ -96,13 +105,15 @@ namespace IFC_Table_View.IFC.Model
         /// Открываем файл
         /// </summary>
         /// <param name="filePath"></param>
-        private ModelIFC LoadDataBase(IfcStore ifcStore, Action<ModelItemIFCObject> ZoomObject, Action<ModelItemIFCObject> SelectObject, Action<int, object> ReportProcess)
+        private ModelIFC LoadDataBase(IfcStore ifcStore, Action<ModelItemIFCObject> ZoomObject, Action<IPersistEntity> SelectObject, BackgroundWorker ReportProcess, Action<IEnumerable<IPersistEntity>> DrawingControlRefresh)
         {
             this.ZoomObject = ZoomObject;
 
             this.SelectObject = SelectObject;
 
-            this.ReportProcess = ReportProcess;
+            this.backgroundWorker = ReportProcess;
+
+            this.DrawingControlRefresh = DrawingControlRefresh;
 
             IfcStore = ifcStore;
 
@@ -168,27 +179,27 @@ namespace IFC_Table_View.IFC.Model
                 for (int i = 0; i < referenceObjectSet.Count(); i++)
                 {
                     tempReferenceObjectSet.Add(CreateNewModelReference(referenceObjectSet[i]));
-                    UpdateProgress((int)countToPresent * i);
+                    UpdateProgress((int)countToPresent * i, "Составление дерева элементов");
                 }
             }
 
             //Составляем дерево объектов модели
-            CreationHierarchyIFCObjects(FileItem.Project, FileItem.ModelItems, null);
+            CreationHierarchyIFCObjects(FileItem.Project, FileItem.ModelItems, FileItem);
 
             //После того как составили дерево объектов к нему добавляем таблицы
             foreach (BaseModelReferenceIFC tableItem in tempReferenceObjectSet)
             {
                 FileItem.ModelItems.Add(tableItem);
             }
-            UpdateProgress(100);
+            UpdateProgress(100, "Составление дерева элементов");
         }
 
         private double countToPresent;
         private int counter = 0;
 
-        private void UpdateProgress(int present)
+        private void UpdateProgress(int present, string message = null)
         {
-            ReportProcess.Invoke(present, "Составление дерева элементов");
+            backgroundWorker.ReportProgress(present, message);
         }
 
         /// <summary>
@@ -197,7 +208,7 @@ namespace IFC_Table_View.IFC.Model
         /// <param name="objDef"></param>
         /// <param name="collection"></param>
         /// <param name="topElement"></param>
-        private void CreationHierarchyIFCObjects(IIfcObjectDefinition objDef, ObservableCollection<BaseModelItemIFC> collection, ModelItemIFCObject topElement)
+        private void CreationHierarchyIFCObjects(IIfcObjectDefinition objDef, ObservableCollection<BaseModelItemIFC> collection, BaseModelItemIFC topElement)
         {
             ModelItemIFCObject nestItem = new ModelItemIFCObject(objDef, topElement, this);
 
@@ -206,11 +217,9 @@ namespace IFC_Table_View.IFC.Model
 
             collection.Add(nestItem);
 
-            UpdateProgress((int)(countToPresent * ++counter));
+            UpdateProgress((int)(countToPresent * ++counter), "Составление дерева элементов");
 
-            IIfcSpatialStructureElement spatialElement = objDef as IIfcSpatialStructureElement;
-
-            if (spatialElement != null)
+            if (objDef is IIfcSpatialStructureElement spatialElement)
             {
                 foreach (IIfcObjectDefinition obj in spatialElement.ContainsElements.SelectMany(it => it.RelatedElements).OfType<IIfcObjectDefinition>())
                 {
@@ -271,29 +280,6 @@ namespace IFC_Table_View.IFC.Model
                 }
                 #endregion
 
-                //#region Удаляем из наборов характеристики которые ссылаются на ObjectReferenceSelect
-                ////IEnumerable<IIfcPropertySet> PropertySetCollection = IfcStore.Instances.OfType<IIfcObject>().
-                ////SelectMany(it => it.IsDefinedBy.
-                ////Select(obj => obj.RelatingPropertyDefinition).
-                ////OfType<IIfcPropertySet>()).
-                ////Where(it => it.HasProperties.Select(pr => pr.GetType() == typeof(IIfcPropertyReferenceValue)) != null).
-                ////Where(it => it.HasProperties.Select(pr => ((IIfcPropertyReferenceValue)pr).PropertyReference == modelReference.GetReference()) != null);
-
-                ////foreach (IIfcPropertySet PropertySet in PropertySetCollection.ToArray())
-                ////{
-                ////    IIfcProperty deletedPoperty = PropertySet.HasProperties.
-                ////        Where(it => it.GetType() == typeof(IIfcPropertyReferenceValue)).
-                ////        FirstOrDefault(pr => ((IIfcPropertyReferenceValue)pr).PropertyReference == modelReference.GetReference());
-                ////    PropertySet.HasProperties.Remove(deletedPoperty);
-
-                ////    //Если в наборе больше нет свойств то удаляем его
-                ////    if (PropertySet.HasProperties.Count() == 0)
-                ////    {
-                ////        IfcStore.Delete(PropertySet);
-                ////    }
-                ////}
-                //#endregion
-
                 #region Удаляем объект из дерева
                 BaseModelReferenceIFC modelItemToDelete = ModelItems[0].ModelItems.OfType<BaseModelReferenceIFC>().FirstOrDefault(it =>
                 {
@@ -315,43 +301,11 @@ namespace IFC_Table_View.IFC.Model
             }
         }
 
-        ///// <summary>
-        ///// Удаляем ссылку на документ
-        ///// </summary>
-        ///// <param name="documentReference"></param>
-        //public void DeleteReferenceToDocument(IIfcDocumentReference documentReference)
-        //{
-        //    using (ITransaction trans = IfcStore.Model.BeginTransaction("DeleteReferenceToDocument"))
-        //    {
 
-
-
-
-
-        //        baseEditorModel.DeleteReferenceToDocument(documentReference);
-
-        //        BaseModelReferenceIFC modelItemToDelete = ModelItems[0].ModelItems.OfType<BaseModelReferenceIFC>().FirstOrDefault(it =>
-        //        {
-        //            if (it.GetReference() != null)
-        //            {
-        //                return it.GetReference().Equals(documentReference);
-        //            }
-        //            return false;
-        //        });
-
-        //        ModelItems[0].ModelItems.Remove(modelItemToDelete);
-
-        //        trans.Commit();
-        //    }
-        //}
 
         public void DeleteIFCEntity(IPersistEntity persistEntity)
         {
-            if (!IfcStore.Model.IsTransactional)
-            {
-                IfcStore.Delete(persistEntity);
-            }
-            else
+            if (IfcStore.Model.CurrentTransaction is null)
             {
                 using (ITransaction trans = IfcStore.Model.BeginTransaction("DeleteIFCEntity"))
                 {
@@ -360,7 +314,43 @@ namespace IFC_Table_View.IFC.Model
                     trans.Commit();
                 }
             }
+            else
+            {
+                IfcStore.Delete(persistEntity);
+
+            }
         }
+
+        public void DeleteModelObjects(List<ModelItemIFCObject> modelItemIFCObjectSet)
+        {
+            var tt = DeleteModelObjectsBackground;
+            backgroundWorker.DoWork += DeleteModelObjectsBackground;
+            backgroundWorker.RunWorkerAsync(modelItemIFCObjectSet);
+        }
+
+
+        void DeleteModelObjectsBackground(object sender, DoWorkEventArgs args)
+        {
+            if (args.Argument is List<ModelItemIFCObject> modelItemIFCObjectSet)
+            {
+                var entityToDelete = modelItemIFCObjectSet.Select(it => it.GetIFCObject());
+                countToPresent = 100d / modelItemIFCObjectSet.Count;
+                counter = 0;
+                foreach (var modelItemIFCObject in modelItemIFCObjectSet)
+                {
+                    UpdateProgress((int)(countToPresent * ++counter), "Удаление элементов");
+                    DeleteIFCEntity(modelItemIFCObject.GetIFCObject());
+                    Application.Current.Dispatcher.BeginInvoke(() =>
+                    {
+                        modelItemIFCObject.TopElement.ModelItems.Remove(modelItemIFCObject);
+                    });
+                }
+                DrawingControlRefresh(entityToDelete);
+                UpdateProgress(0);
+            }
+            backgroundWorker.DoWork -= DeleteModelObjectsBackground;
+        }
+
 
         public void DeleteReferenceCommand(BaseModelReferenceIFC ModelReference)
         {

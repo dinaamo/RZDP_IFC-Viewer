@@ -14,7 +14,7 @@ namespace Editor_IFC
     {
         private IIfcObjectDefinition ifcObjectDefinition;
         public IIfcPropertySetDefinition IFCPropertySetDefinition { get; }
-        protected ModelItemIFCObject ModelObject { get; }
+        public ModelItemIFCObject ModelObject { get; }
 
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -76,6 +76,7 @@ namespace Editor_IFC
             {
                 ModelIFC.ChangeName(new List<(IIfcRoot, string)> { (IFCPropertySetDefinition, value) });
                 OnPropertyChanged("NamePropertySet");
+                ModelObject.OnPropertyChanged("CollectionPropertySet");
             }
         }
 

@@ -6,7 +6,7 @@
         xmlns:ep="clr-namespace:RZDP_IFC_Viewer.View.Controls"
         mc:Ignorable="d"
         Name="editorWindow"
-        
+        Closed="Window_Closed"
         Title="Редактор" Height="400" MinHeight="400" MinWidth="750" Width="800" Closing="Window_Closing"
         DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1,AncestorType=UserControl}}">
     <Grid>

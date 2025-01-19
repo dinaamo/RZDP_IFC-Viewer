@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.CodeDom;
+using System.Windows;
 using IFC_Table_View.IFC.ModelItem;
 using IFC_Table_View.ViewModels;
 
@@ -24,9 +25,12 @@ namespace IFC_Table_View.View.Windows
             }
         }
 
+        IEnumerable<ModelItemIFCObject> _modelElementsForSearch;
+
         private SearchAndEditWindow(IEnumerable<ModelItemIFCObject> ModelElementsForSearch)
         {
             InitializeComponent();
+            _modelElementsForSearch = ModelElementsForSearch;
 
             SearchAndEditWindowViewModel searchWindowViewModel = new SearchAndEditWindowViewModel(ModelElementsForSearch);
 
@@ -47,6 +51,19 @@ namespace IFC_Table_View.View.Windows
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             instance = null;
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            foreach (var modelObject in _modelElementsForSearch)
+            {
+                modelObject.OnPropertyChanged("CollectionPropertySet");
+            }
+        }
+
+        private void dgSearchElements_CurrentCellChanged(object sender, EventArgs e)
+        {
+            (dgSearchElements?.SelectedItem as ModelItemIFCObject)?.OnPropertyChanged("CollectionPropertySet");
         }
     }
 }

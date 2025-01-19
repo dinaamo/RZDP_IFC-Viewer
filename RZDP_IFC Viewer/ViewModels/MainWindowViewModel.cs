@@ -8,8 +8,12 @@ using IFC_Table_View.Infracrucrure.Commands;
 using IFC_Table_View.View.Windows;
 using IFC_Table_View.ViewModels.Base;
 using IFC_Viewer.View.Windows;
+using NuGet;
+using Xbim.Common;
 using Xbim.Ifc;
 using Xbim.ModelGeometry.Scene;
+using Xbim.Presentation;
+using static Xbim.Presentation.DrawingControl3D;
 
 namespace IFC_Table_View.ViewModels
 {
@@ -18,6 +22,8 @@ namespace IFC_Table_View.ViewModels
         private BackgroundWorker worker;
 
         #region Свойства
+
+        HashSet<IPersistEntity> _deleteEntity;
 
         #region Модель
 
@@ -131,18 +137,20 @@ namespace IFC_Table_View.ViewModels
                 var path = args.Argument as string;
 
                 IfcStore ifcStore = IfcStore.Open(path, null, null, worker.ReportProgress);
-
+                
                 Task task = Task.Run(() =>
                 {
                     if (ifcStore.GeometryStore.IsEmpty)
                     {
                         var context = new Xbim3DModelContext(ifcStore);
                         context.CreateContext(worker.ReportProgress);
-                        //signal.Set();
+
                     }
                 });
+                
 
-                ModelIFC tempModel = ModelIFC.Create(ifcStore, ZoomSelected, SelectElement, worker.ReportProgress);
+                ModelIFC tempModel = ModelIFC.Create(ifcStore, ZoomSelected, SelectElement,
+                    worker, RefreshDrawingControl);
 
                 if (tempModel != null)
                 {
@@ -158,6 +166,7 @@ namespace IFC_Table_View.ViewModels
                         {
                             modelIFC = tempModel;
                             mainWindow.WPFDrawingControl.ModelProvider.ObjectInstance = ifcStore;
+                            _deleteEntity = new HashSet<IPersistEntity>();
                         }
                     });
                 }
@@ -176,6 +185,16 @@ namespace IFC_Table_View.ViewModels
                 });
                 worker.DoWork -= LoadModel;
             }
+        }
+
+        void RefreshDrawingControl(IEnumerable<IPersistEntity> persistEntitySet)
+        {
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                _deleteEntity.AddRange(persistEntitySet);
+                mainWindow.WPFDrawingControl.DrawingControl.HiddenInstances = new List<IPersistEntity>(_deleteEntity);
+                mainWindow.WPFDrawingControl.DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
+            });
         }
 
         #endregion Загрузка модели
@@ -245,9 +264,9 @@ namespace IFC_Table_View.ViewModels
 
         #region Выделить элемент
 
-        private void SelectElement(ModelItemIFCObject modelItemIFCObject)
+        private void SelectElement(IPersistEntity persistEntity)
         {
-            mainWindow.WPFDrawingControl.DrawingControl.SelectedEntity = modelItemIFCObject.ItemIFC;
+            mainWindow.WPFDrawingControl.DrawingControl.SelectedEntity = persistEntity;
         }
 
         #endregion Выделить элемент
@@ -347,9 +366,8 @@ namespace IFC_Table_View.ViewModels
                                                 OfType<BaseModelReferenceIFC>().
                                                 ToList();
 
-            SelectReferenceObjectWindow window_Add_Reference_To_Table = new SelectReferenceObjectWindow(collectionModelObject, collectionModelReference, modelIFC.AddReferenceToTheObject);
+            SelectReferenceObjectWindow.CreateSelectReferenceObjectWindow(collectionModelObject, collectionModelReference, modelIFC.AddReferenceToTheObject);
 
-            window_Add_Reference_To_Table.ShowDialog();
         }
 
         private bool CanAddReferenceToTheElementsExecute(object o)
@@ -380,9 +398,8 @@ namespace IFC_Table_View.ViewModels
                                                 OfType<BaseModelReferenceIFC>().
                                                 ToList();
 
-            SelectReferenceObjectWindow window_Add_Reference_To_Table = new SelectReferenceObjectWindow(collectionModelObject, collectionModelReference, modelIFC.DeleteReferenceToTheObject);
+            SelectReferenceObjectWindow.CreateSelectReferenceObjectWindow(collectionModelObject, collectionModelReference, modelIFC.DeleteReferenceToTheObject);
 
-            window_Add_Reference_To_Table.ShowDialog();
         }
 
         private bool CanDeleteReferenceToTheElementsExecute(object o)

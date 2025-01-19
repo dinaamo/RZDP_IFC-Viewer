@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using IFC_Table_View.HelperIFC;
 using IFC_Table_View.IFC.Model;
+using IFC_Table_View.View.Windows;
 using Xbim.Ifc;
 using Xbim.Ifc4.Interfaces;
 using Xbim.Ifc4.MeasureResource;
@@ -141,9 +142,15 @@ namespace IFC_Table_View.IFC.ModelItem
 
             Model.DeleteIFCObjectReferenceSelect(this);
         }
-
         #endregion Удалить_таблицу
 
+        #region Открыть_таблицу
+        protected override void OnOpenCommandExecuted(object o)
+        {
+            new TableWindow(this).ShowDialog();
+        }
+
+        #endregion 
         #endregion Комманды
     }
 }
