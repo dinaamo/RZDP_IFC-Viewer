@@ -38,7 +38,11 @@ namespace IFC_Table_View.ViewModels
         {
             var topElement = SearchItems[0];
             var foundItems = FilteredSearchItems;
-            ModelItemIFCObject.FindMultiplyTreeObject(topElement, foundItems);
+            //ModelItemIFCObject.FindMultiplyTreeObject(topElement, foundItems);
+
+            ModelItemIFCObject.SelectionNestedItems(SearchItems[0]).
+               Where(it => foundItems.Contains(it)).
+               ToList().ForEach(it => { it.IsPaint = true; it.ExpandOver(); });
         }
 
         private bool CanPaintElementCommandExecute(object o)
@@ -122,7 +126,7 @@ namespace IFC_Table_View.ViewModels
             var col2 = col1.Where(it => IsFilterString(new List<string>() { it.IFCClass }, textClassElement, FilterSearchValueClassElement));
             var col3 = col2.Where(it => IsFilterString(new List<string>() { it.IFCObjectName }, textNameElement, FilterSearchValueNameElement));
             var col4 = col3.Where(it => IsFilterString(it.CollectionPropertySet.Select(it => it.NamePropertySet), textPropertySet, FilterSearchValuePropertySet));
-            var col5 = col4.Where(it => IsFilterString(it.CollectionPropertySet.SelectMany(it => it.PropertyCollection).Select(it => it.NameProperty), textPropertyName, FilterSearchValuePropertyValue));
+            var col5 = col4.Where(it => IsFilterString(it.CollectionPropertySet.SelectMany(it => it.PropertyCollection).Select(it => it.NameProperty), textPropertyName, FilterSearchValuePropertyName));
             var col6 = col5.Where(it => IsFilterString(it.CollectionPropertySet.SelectMany(it => it.PropertyCollection).Select(it => it.ValueString), textPropertyValue, FilterSearchValuePropertyValue));
 
             FilteredSearchItems = new ObservableCollection<ModelItemIFCObject>(col6);
@@ -144,7 +148,7 @@ namespace IFC_Table_View.ViewModels
                 }
                 else if (seachingFilter == "Не равно")
                 {
-                    return stringCollection.Any(str => !str.Equals(seachString));
+                    return !stringCollection.Any(str => str.Equals(seachString));
                 }
                 else if (seachingFilter == "Содержит")
                 {
@@ -152,7 +156,7 @@ namespace IFC_Table_View.ViewModels
                 }
                 else if (seachingFilter == "Не содержит")
                 {
-                    return stringCollection.Any(str => !str.Contains(seachString));
+                    return !stringCollection.Any(str => str.Contains(seachString));
                 }
                 else
                 {

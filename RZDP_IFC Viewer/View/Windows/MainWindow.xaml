@@ -9,9 +9,11 @@
     xmlns:xbimSample="clr-namespace:Xbim.WinformsSample"
     x:Name="MainWindowIFC"
     mc:Ignorable="d"
+    Closing="MainWindowIFC_Closing"
     Title="{Binding Title, Mode=OneWay, TargetNullValue=IFC Table View, UpdateSourceTrigger=PropertyChanged}"
     Width="1027"
     Height="552"
+    
     Icon="{StaticResource ResourceKey=RZDP_Image}"
     Loaded="MainWindowIFC_Loaded"
     AllowDrop="True" Drop="MainWindowIFC_DragLeave" IsEnabled="{Binding Path=IsEnableWindow}">
@@ -74,10 +76,8 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <!--  kKKKKKKKKKKKKKKKKKKKK  -->
-                <MenuItem Header="Выход">
-                    <MenuItem.Command>
-                        <cmnd:CloseApplicationCommand />
-                    </MenuItem.Command>
+                <MenuItem x:Name="CloseApplication" Header="Выход" 
+                          Click="MenuItem_Click">
                     <MenuItem.Icon>
                         <fa:ImageAwesome
                             Height="12"

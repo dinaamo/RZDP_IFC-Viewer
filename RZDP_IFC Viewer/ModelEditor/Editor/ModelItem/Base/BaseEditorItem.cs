@@ -27,6 +27,10 @@ namespace IFC_Viewer.IFC.Base
 
         public abstract bool AddReferenceToTheObject(List<BaseModelReferenceIFC> modelReferenceSet);
 
+
+        public abstract void CreateNewPropertySet();
+
+
         /// <summary>
         /// Удаление ссылок на документы или таблицы
         /// </summary>
@@ -84,26 +88,6 @@ namespace IFC_Viewer.IFC.Base
         }
 
         protected abstract void AddPropertySet(IIfcPropertySet iIfcPropertySet);
-
-
-
-        //public void AddReferenceToTheObjectReferenceToLoad(ObservableCollection<BaseModelReferenceIFC> ReferenceElementSet, ModelItemIFCObject modelItemIFCObject)
-        //{
-        //    IEnumerable<IPropertyModel<IIfcPropertyReferenceValue>> propertyReferenceSet =  FillCollectionPropertySet().
-        //                                                SelectMany(it => it.PropertyCollection).
-        //                                                OfType<IPropertyModel<IIfcPropertyReferenceValue>>();
-
-        //    foreach (IPropertyModel<IIfcPropertyReferenceValue> propertyReference in propertyReferenceSet)
-        //    {
-        //        foreach (BaseModelReferenceIFC tableItem in ReferenceElementSet)
-        //        {
-        //            if (propertyReference.Property.Equals(tableItem.GetReference()))
-        //            {
-        //                tableItem.AddReferenceToTheElement(modelItemIFCObject);
-        //            }
-        //        }
-        //    }
-        //}
 
         #region Заполнение характеристик элемента
 

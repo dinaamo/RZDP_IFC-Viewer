@@ -141,6 +141,10 @@ namespace Editor_IFC
                     {
                         newValue = new IfcVolumeMeasure(newValueString);
                     }
+                    else if (simpleValue is IfcText)
+                    {
+                        newValue = new IfcText(newValueString);
+                    }
                 }
                 catch (FormatException)
                 {
@@ -151,10 +155,10 @@ namespace Editor_IFC
                 {
                     ifcSingleValue.NominalValue = newValue;
                 }
-                //else
-                //{
-                //    ifcSingleValue.NominalValue = new IfcText(newValueString);
-                //}
+                else
+                {
+                    ifcSingleValue.NominalValue = new IfcText(newValueString);
+                }
             }
         }
     }

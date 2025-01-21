@@ -11,7 +11,7 @@ namespace IFC_Table_View.View.Windows
     /// </summary>
     public partial class TableWindow : Window
     {
-        public TableWindow(ModelItemIFCTable modelItemIFCTable)
+        private TableWindow(ModelItemIFCTable modelItemIFCTable)
         {
             InitializeComponent();
 
@@ -20,6 +20,24 @@ namespace IFC_Table_View.View.Windows
             MaxWidth = SystemParameters.PrimaryScreenWidth;
             MaxHeight = SystemParameters.PrimaryScreenHeight;
         }
+
+        private static TableWindow instance;
+
+        public static void CreateTableWindow(ModelItemIFCTable modelItemIFCTable)
+        {
+            if (instance == null)
+            {
+                instance = new TableWindow(modelItemIFCTable);
+                instance.Show();
+                instance.Activate();
+            }
+            else
+            {
+                instance.Activate();
+                return;
+            }
+        }
+
 
         private void ResizeColumns()
         {
@@ -80,6 +98,11 @@ namespace IFC_Table_View.View.Windows
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             ResizeColumns();
+        }
+
+        private void Win_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            instance = null;
         }
     }
 }

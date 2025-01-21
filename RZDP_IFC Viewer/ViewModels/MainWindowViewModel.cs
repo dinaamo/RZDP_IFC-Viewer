@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using IFC_Table_View.IFC.Model;
 using IFC_Table_View.IFC.ModelItem;
@@ -13,6 +14,7 @@ using Xbim.Common;
 using Xbim.Ifc;
 using Xbim.ModelGeometry.Scene;
 using Xbim.Presentation;
+using static Microsoft.Isam.Esent.Interop.EnumeratedColumn;
 using static Xbim.Presentation.DrawingControl3D;
 
 namespace IFC_Table_View.ViewModels
@@ -27,17 +29,17 @@ namespace IFC_Table_View.ViewModels
 
         #region Модель
 
-        private ModelIFC _modelIFC;
+        private ModelIFC _Model;
 
-        public ModelIFC modelIFC
+        public ModelIFC Model
         {
             get
-            { return _modelIFC; }
+            { return _Model; }
             set
             {
-                Set(ref _modelIFC, value);
-                Title = _modelIFC.FilePath;
-                mainWindow.treeViewIFC.ItemsSource = modelIFC.ModelItems;
+                Set(ref _Model, value);
+                Title = _Model.FilePath;
+                mainWindow.treeViewIFC.ItemsSource = Model.ModelItems;
             }
         }
 
@@ -126,10 +128,7 @@ namespace IFC_Table_View.ViewModels
 
         private void LoadModel(object sender, DoWorkEventArgs args)
         {
-            Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                IsEnableWindow = false;
-            });
+
             try
             {
                 //using ManualResetEvent signal = new ManualResetEvent(false);
@@ -150,13 +149,13 @@ namespace IFC_Table_View.ViewModels
                 
 
                 ModelIFC tempModel = ModelIFC.Create(ifcStore, ZoomSelected, SelectElement,
-                    worker, RefreshDrawingControl);
+                    worker, RefreshDCAfterDeleteEntity);
 
                 if (tempModel != null)
                 {
-                    if (modelIFC is not null)
+                    if (Model is not null)
                     {
-                        modelIFC.Dispose();
+                        Model.Dispose();
                     }
                     task.Wait();
 
@@ -164,7 +163,7 @@ namespace IFC_Table_View.ViewModels
                     {
                         if (!ifcStore.GeometryStore.IsEmpty)
                         {
-                            modelIFC = tempModel;
+                            Model = tempModel;
                             mainWindow.WPFDrawingControl.ModelProvider.ObjectInstance = ifcStore;
                             _deleteEntity = new HashSet<IPersistEntity>();
                         }
@@ -177,17 +176,19 @@ namespace IFC_Table_View.ViewModels
             }
             finally
             {
+                Application.Current.Dispatcher.BeginInvoke(() =>{IsEnableWindow = true;});
                 ProgressValue = 0;
                 worker.ReportProgress(0);
-                Application.Current.Dispatcher.BeginInvoke(() =>
-                {
-                    IsEnableWindow = true;
-                });
                 worker.DoWork -= LoadModel;
             }
         }
 
-        void RefreshDrawingControl(IEnumerable<IPersistEntity> persistEntitySet)
+
+
+        #endregion Загрузка модели
+
+        #region Скрываем объекты после удаления
+        void RefreshDCAfterDeleteEntity(IEnumerable<IPersistEntity> persistEntitySet)
         {
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
@@ -196,8 +197,28 @@ namespace IFC_Table_View.ViewModels
                 mainWindow.WPFDrawingControl.DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
             });
         }
+        #endregion
 
-        #endregion Загрузка модели
+        #region Закрыть файл
+
+        public bool CloseApplication()
+        {
+            //if (Model is not null && Model.IsEditModel)
+            //{
+            //    MessageBoxResult result = MessageBox.Show("Сохранить изменения в модели?", "RZDP IFC Viewer!", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+
+            //    if (result == MessageBoxResult.Cancel)
+            //    {
+            //        return false;
+            //    }
+            //    else if (result == MessageBoxResult.Yes)
+            //    {
+            //        await Task.Run(() => { SaveModelAsIFC(this, new DoWorkEventArgs(Model.FilePath)); });
+            //    }
+            //}
+            return true;
+        }
+        #endregion
 
         #region Сохранение модели
 
@@ -210,7 +231,7 @@ namespace IFC_Table_View.ViewModels
 
             var path = args.Argument as string;
 
-            modelIFC.SaveFile(path, worker.ReportProgress);
+            Model.SaveFile(path, worker.ReportProgress);
 
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
@@ -228,7 +249,7 @@ namespace IFC_Table_View.ViewModels
 
             var path = args.Argument as string;
 
-            modelIFC.SaveAsXMLFile(path, worker.ReportProgress);
+            Model.SaveAsXMLFile(path, worker.ReportProgress);
 
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
@@ -244,11 +265,11 @@ namespace IFC_Table_View.ViewModels
         private bool _simpleFastExtrusion = false;
         private bool _camChanged;
 
-        private void ZoomSelected(ModelItemIFCObject modelItemIFCObject)
+        private void ZoomSelected(IPersistEntity persistEntity)
         {
             _camChanged = false;
             mainWindow.WPFDrawingControl.DrawingControl.Viewport.Camera.Changed += Camera_Changed;
-            mainWindow.WPFDrawingControl.DrawingControl.SelectedEntity = modelItemIFCObject.ItemIFC;
+            mainWindow.WPFDrawingControl.DrawingControl.SelectedEntity = persistEntity;
             mainWindow.WPFDrawingControl.DrawingControl.ZoomSelected();
             mainWindow.WPFDrawingControl.DrawingControl.Viewport.Camera.Changed -= Camera_Changed;
             if (!_camChanged)
@@ -266,10 +287,45 @@ namespace IFC_Table_View.ViewModels
 
         private void SelectElement(IPersistEntity persistEntity)
         {
+            //SelectionChangedEventArgs a = new SelectionChangedEventArgs(
+            //SelectedEntityChangedEvent,
+            //        new[] { SelectedEntityProperty },
+            //        new[] { persistEntity }
+            //        );
+
+            //DrawingControl_SelectedEntityChanged(this , a);
+
             mainWindow.WPFDrawingControl.DrawingControl.SelectedEntity = persistEntity;
         }
 
+        private void DrawingControl_SelectedEntityChanged(object sender, SelectionChangedEventArgs e)
+        {
+            
+        }
+
+
+
         #endregion Выделить элемент
+
+        #region Блокировка окна при загрузке
+        private void Worker_DoWork(object? sender, DoWorkEventArgs e)
+        {
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                IsEnableWindow = false;
+            });
+        }
+
+        private void Worker_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
+        {
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                IsEnableWindow = true;
+            });
+        }
+
+        
+        #endregion Блокировка окна при загрузке
 
         #endregion Методы
 
@@ -310,13 +366,13 @@ namespace IFC_Table_View.ViewModels
 
         private void OnAddIFCTableCommandExecuted(object o)
         {
-            AddTableWindow tableForm = new AddTableWindow(modelIFC.CreateNewIFCTable);
+            AddTableWindow tableForm = new AddTableWindow(Model.CreateNewIFCTable);
             tableForm.ShowDialog();
         }
 
         private bool CanAddIFCTableCommandExecute(object o)
         {
-            if (modelIFC != null)
+            if (Model != null)
             {
                 return true;
             }
@@ -334,13 +390,13 @@ namespace IFC_Table_View.ViewModels
 
         private void OnAddDocumentCommandExecuted(object o)
         {
-            AddDocumentWindow addDocumentWindow = new AddDocumentWindow(modelIFC.FilePath, modelIFC.CreateNewIFCDocumentInformation);
+            AddDocumentWindow addDocumentWindow = new AddDocumentWindow(Model.FilePath, Model.CreateNewIFCDocumentInformation);
             addDocumentWindow.ShowDialog();
         }
 
         private bool CanAddDocumentCommandExecute(object o)
         {
-            if (modelIFC != null)
+            if (Model != null)
             {
                 return true;
             }
@@ -358,21 +414,21 @@ namespace IFC_Table_View.ViewModels
 
         private void OnAddReferenceToTheElementsExecuted(object o)
         {
-            ModelItemIFCObject ifcProject = modelIFC.ModelItems[0].ModelItems[0] as ModelItemIFCObject;
+            ModelItemIFCObject ifcProject = Model.ModelItems[0].ModelItems[0] as ModelItemIFCObject;
 
             List<ModelItemIFCObject> collectionModelObject = ModelItemIFCObject.FindPaintObjects(ifcProject);
 
-            List<BaseModelReferenceIFC> collectionModelReference = modelIFC.ModelItems[0].ModelItems.
+            List<BaseModelReferenceIFC> collectionModelReference = Model.ModelItems[0].ModelItems.
                                                 OfType<BaseModelReferenceIFC>().
                                                 ToList();
 
-            SelectReferenceObjectWindow.CreateSelectReferenceObjectWindow(collectionModelObject, collectionModelReference, modelIFC.AddReferenceToTheObject);
+            SelectReferenceObjectWindow.CreateSelectReferenceObjectWindow(collectionModelObject, collectionModelReference, Model.AddReferenceToTheObject);
 
         }
 
         private bool CanAddReferenceToTheElementsExecute(object o)
         {
-            if (modelIFC != null)
+            if (Model != null)
             {
                 return true;
             }
@@ -390,21 +446,21 @@ namespace IFC_Table_View.ViewModels
 
         private void OnDeleteReferenceToTheElementsExecuted(object o)
         {
-            ModelItemIFCObject ifcProject = modelIFC.ModelItems[0].ModelItems[0] as ModelItemIFCObject;
+            ModelItemIFCObject ifcProject = Model.ModelItems[0].ModelItems[0] as ModelItemIFCObject;
 
             List<ModelItemIFCObject> collectionModelObject = ModelItemIFCObject.FindPaintObjects(ifcProject);
 
-            List<BaseModelReferenceIFC> collectionModelReference = modelIFC.ModelItems[0].ModelItems.
+            List<BaseModelReferenceIFC> collectionModelReference = Model.ModelItems[0].ModelItems.
                                                 OfType<BaseModelReferenceIFC>().
                                                 ToList();
 
-            SelectReferenceObjectWindow.CreateSelectReferenceObjectWindow(collectionModelObject, collectionModelReference, modelIFC.DeleteReferenceToTheObject);
+            SelectReferenceObjectWindow.CreateSelectReferenceObjectWindow(collectionModelObject, collectionModelReference, Model.DeleteReferenceToTheObject);
 
         }
 
         private bool CanDeleteReferenceToTheElementsExecute(object o)
         {
-            if (modelIFC != null)
+            if (Model != null)
             {
                 return true;
             }
@@ -422,13 +478,13 @@ namespace IFC_Table_View.ViewModels
 
         private void OnRemovePaintCommandExecuted(object o)
         {
-            ModelItemIFCObject ifcProject = modelIFC.ModelItems[0].ModelItems[0] as ModelItemIFCObject;
+            ModelItemIFCObject ifcProject = Model.ModelItems[0].ModelItems[0] as ModelItemIFCObject;
             ifcProject.ResetSearchCommand.Execute(ifcProject);
         }
 
         private bool CanRemovePaintCommandExecute(object o)
         {
-            return modelIFC is not null;
+            return Model is not null;
         }
 
         #endregion Убрать выделение
@@ -440,12 +496,12 @@ namespace IFC_Table_View.ViewModels
         private void OnSaveFileCommandExecuted(object o)
         {
             worker.DoWork += SaveModelAsIFC;
-            worker.RunWorkerAsync(modelIFC.FilePath);
+            worker.RunWorkerAsync(Model.FilePath);
         }
 
         private bool CanSaveFileCommandExecute(object o)
         {
-            if (modelIFC != null)
+            if (Model != null)
             {
                 return true;
             }
@@ -476,7 +532,7 @@ namespace IFC_Table_View.ViewModels
 
         private bool CanSaveAsIFCFileCommandExecute(object o)
         {
-            if (modelIFC != null)
+            if (Model != null)
             {
                 return true;
             }
@@ -506,7 +562,7 @@ namespace IFC_Table_View.ViewModels
 
         private bool CanSaveAsIFCXMLFileCommandExecute(object o)
         {
-            if (modelIFC != null)
+            if (Model != null)
             {
                 return true;
             }
@@ -586,9 +642,12 @@ namespace IFC_Table_View.ViewModels
             this.mainWindow = mainWindow;
             //IsEnableWindow = true;
             worker = new BackgroundWorker();
-
+            mainWindow.WPFDrawingControl.DrawingControl.SelectedEntityChanged += DrawingControl_SelectedEntityChanged;
             worker.ProgressChanged += ProgressChanged;
             worker.WorkerReportsProgress = true;
+
+            worker.DoWork += Worker_DoWork;
+            worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
 
             var strArray = System.Environment.GetCommandLineArgs();
             if (strArray.Length > 1)
@@ -603,6 +662,10 @@ namespace IFC_Table_View.ViewModels
             LoadApplicationCommand = new ActionCommand(
                 OnLoadApplicationCommandExecuted,
                 CanLoadApplicationCommandExecute);
+
+            //CloseApplicationCommand = new ActionCommand(
+            //    OnCloseApplicationCommandExecuted,
+            //    CanCloseApplicationCommandExecute);
 
             AddIFCTableCommand = new ActionCommand(
                 OnAddIFCTableCommandExecuted,
@@ -646,5 +709,7 @@ namespace IFC_Table_View.ViewModels
 
             #endregion Комманды
         }
+
+
     }
 }

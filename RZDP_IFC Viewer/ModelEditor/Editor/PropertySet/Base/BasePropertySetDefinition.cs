@@ -1,8 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Input;
 using IFC_Table_View.IFC.Model;
 using IFC_Table_View.IFC.ModelItem;
+using IFC_Table_View.Infracrucrure.Commands;
 using RZDP_IFC_Viewer.IFC.Editor.Base;
 using RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base;
 using Xbim.Ifc2x3.PropertyResource;
@@ -32,7 +34,28 @@ namespace Editor_IFC
             this.ifcObjectDefinition = ifcObjectDefinition;
             this.IFCPropertySetDefinition = ifcPropertySetDef;
             this.ModelObject = modelObject;
+
+            //AddPropertyCommand = new ActionCommand(
+            //       OnAddPropertyCommandExecuted,
+            //       CanAddPropertyCommandExecute);
         }
+        //#region Добавить свойство
+
+        //public ICommand AddPropertyCommand { get; }
+
+        //private void OnAddPropertyCommandExecuted(object o)
+        //{
+        //    AddProperty();
+        //    OnPropertyChanged("PropertyCollection");
+        //}
+
+        //private bool CanAddPropertyCommandExecute(object o)
+        //{
+        //    return this is EdPropertySet4 || this is EdPropertySet2x3;
+        //}
+
+        //#endregion Добавить свойство
+
 
         protected abstract IEnumerable<IPropertyModel<IIfcResourceObjectSelect>> FillCollectionProperty();
 
@@ -76,7 +99,7 @@ namespace Editor_IFC
             {
                 ModelIFC.ChangeName(new List<(IIfcRoot, string)> { (IFCPropertySetDefinition, value) });
                 OnPropertyChanged("NamePropertySet");
-                ModelObject.OnPropertyChanged("CollectionPropertySet");
+                //ModelObject.OnPropertyChanged("CollectionPropertySet");
             }
         }
 
@@ -107,7 +130,7 @@ namespace Editor_IFC
 
         public abstract void AddProperty(string nameProperty, string valueProperty);
 
-        public abstract void AddProperty();
+        public abstract void CreateNewProperty();
 
         public abstract IIfcPropertySetDefinition GetCopyPropertySet();
     }

@@ -36,14 +36,15 @@ namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
                 }
                 else if (Property is IIfcPropertyReferenceValue ifcRefValue)
                 {
-                    if (ifcRefValue.PropertyReference is IIfcTable ifcTable)
-                    {
-                        return ifcTable.Name;
-                    }
-                    else if (ifcRefValue.PropertyReference is IIfcDocumentReference ifcDocumentReference)
-                    {
-                        return ifcDocumentReference.Name;
-                    }
+                    //if (ifcRefValue.PropertyReference is IIfcTable ifcTable)
+                    //{
+                    //    return ifcTable.Name;
+                    //}
+                    //else if (ifcRefValue.PropertyReference is IIfcDocumentReference ifcDocumentReference)
+                    //{
+                    //    return ifcDocumentReference.Name;
+                    //}
+                    return ifcRefValue.Name;
                 }
 
                 throw new ArgumentException("Exception get NameProperty");
@@ -51,9 +52,9 @@ namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
 
             set
             {
-                if (Property is IIfcPropertySingleValue property)
+                if (Property is IIfcProperty property)
                 {
-                    ModelIFC.ChangeName(new List<(IIfcPropertySingleValue, string)> { (property, value) });
+                    ModelIFC.ChangeName(new List<(IIfcProperty, string)> { (property, value) });
                     //OnPropertyChanged("Property");
                     OnPropertyChanged("NameProperty");
                     //PropertySetDefinition.ModelObject.OnPropertyChanged("CollectionPropertySet");
@@ -114,6 +115,7 @@ namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
                 ModelIFC.ChangeValue(new List<(Action<string>, string)> { (SetNewValue, value) });
                 //OnPropertyChanged("Property");
                 OnPropertyChanged("ValueString");
+                OnPropertyChanged("DataType");
                 //PropertySetDefinition.ModelObject.OnPropertyChanged("CollectionPropertySet");
             }
         }
@@ -228,6 +230,7 @@ namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
                 ModelIFC.ChangeValue(new List<(Action<string>, string)> { (SetNewValue, value) });
                 //OnPropertyChanged("Property");
                 OnPropertyChanged("ValueString");
+                OnPropertyChanged("DataType");
                 //PropertySetDefinition.ModelObject.OnPropertyChanged("CollectionPropertySet");
             }
         }

@@ -38,9 +38,17 @@ namespace IFC_Table_View.ViewModels
 
                 dataGrid.ItemsSource = CreateDataTableFromClipboard().AsDataView();
             }
+            catch (IndexOutOfRangeException iEx)
+            {
+                MessageBox.Show(iEx.Message, "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
             catch (FormatException fEx)
             {
                 MessageBox.Show(fEx.Message, "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            catch (Exception Ex)
+            {
+                MessageBox.Show(Ex.Message, "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -116,6 +124,10 @@ namespace IFC_Table_View.ViewModels
                 throw new FormatException("Неверный формат данных");
             }
 
+            try
+            {
+
+
             DataTable dataTable = new DataTable();
             //В качестве разделителя по умолчанию используется табуляция, но если табуляция отсутствует, используется системное значение по умолчанию
 
@@ -160,6 +172,19 @@ namespace IFC_Table_View.ViewModels
             }
 
             return dataTable;
+            }
+            catch (IndexOutOfRangeException iEx)
+            {
+                throw;
+            }
+            catch (FormatException fEx)
+            {
+                throw;
+            }
+            catch (Exception Ex)
+            {
+                throw;
+            }
         }
 
         private static string ReplaceSymbols(string targetString)

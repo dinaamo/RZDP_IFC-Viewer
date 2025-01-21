@@ -22,6 +22,23 @@ namespace IFC_Table_View
         }
 
         //IProgress<(double percente, string message)> progress;
+        private void MainWindowIFC_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!viewModel.CloseApplication())
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem menuItem = sender as MenuItem;
+
+            if (menuItem.Name.Equals("CloseApplication"))
+            {
+                this.Close();
+            }
+        }
 
         private MainWindowViewModel viewModel;
 
@@ -40,13 +57,13 @@ namespace IFC_Table_View
                         {
                             ObservableCollection<BaseModelItemIFC> collectionObjectModel = treeViewIFC.ItemsSource as ObservableCollection<BaseModelItemIFC>;
 
-                            BaseModelReferenceIFC targetBaseReferenceModel = collectionObjectModel[0].ModelItems.
+                            BaseModelReferenceIFC? targetBaseReferenceModel = collectionObjectModel[0].ModelItems.
                                                                     OfType<BaseModelReferenceIFC>().
                                                                     FirstOrDefault(it => it.GetReference().Equals(ifcPropertyRefVa?.PropertyReference));
 
                             if (targetBaseReferenceModel is ModelItemIFCTable modelIfcTable)
                             {
-                                new TableWindow(modelIfcTable).ShowDialog();
+                                TableWindow.CreateTableWindow(modelIfcTable);
                             }
                             else if (targetBaseReferenceModel is ModelItemDocumentReference modelItemDocumentReference)
                             {
@@ -132,7 +149,7 @@ namespace IFC_Table_View
 
                         BaseModelReferenceIFC targetBaseReferenceModel = collectionObjectModel[0].ModelItems.
                                                                         OfType<BaseModelReferenceIFC>().
-                                                                        FirstOrDefault(it => it.ItemIFC == PropertyRefVa?.PropertyReference);
+                                                                        FirstOrDefault(it => it.ItemIFC.Equals(PropertyRefVa?.PropertyReference));
 
                         if (targetBaseReferenceModel != null)
                         {
@@ -162,7 +179,7 @@ namespace IFC_Table_View
 
                         BaseModelReferenceIFC targetBaseReferenceModel = collectionObjectModel[0].ModelItems.
                                                                         OfType<BaseModelReferenceIFC>().
-                                                                        FirstOrDefault(it => it.ItemIFC == PropertyRefVa?.PropertyReference);
+                                                                        FirstOrDefault(it => it.ItemIFC.Equals(PropertyRefVa?.PropertyReference));
 
                         if (targetBaseReferenceModel != null)
                         {
@@ -241,29 +258,19 @@ namespace IFC_Table_View
         {
             foreach (var item in e.AddedItems)
             {
-                //DateTime dt1 = DateTime.Now;
-
                 ModelItemIFCObject findObj = FindModelObject(item);
                 if (findObj != null)
                 {
-                    //new Task(() =>
-                    //{
-                    //MainWindowIFC.Dispatcher.InvokeAsync(() =>
-                    //{
                     findObj.ExpandOver();
                     findObj.IsSelected = true;
                     findObj.IsFocusReference = false;
-                    //});
-                    //}).Start();
-
-                    //DateTime dt2 = DateTime.Now;
-                    //TimeSpan tsp1 = dt2 - dt1;
-
-                    //MessageBox.Show(tsp1.TotalMilliseconds.ToString());
                 }
             }
         }
 
+
         #endregion 3D просмотрщик
+
+
     }
 }

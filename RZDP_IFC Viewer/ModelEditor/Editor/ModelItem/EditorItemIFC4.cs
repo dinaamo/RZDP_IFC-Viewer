@@ -17,6 +17,14 @@ namespace IFC_Viewer.IFC.ModelItem
         {
             this.IFCObjectDefinition = IFCObjectDefinition;
         }
+        #region Создать набор характеристик
+        public override void CreateNewPropertySet()
+        {
+            IfcPropertySet newPropertySet = ModelIFC.IfcStore.Model.Instances.New<IfcPropertySet>(prS =>
+            { prS.Name = "Новый набор"; });
+            AddPropertySet(newPropertySet);
+        }
+        #endregion
 
         #region Добавление ссылок
 
@@ -164,12 +172,25 @@ namespace IFC_Viewer.IFC.ModelItem
 
         protected override void AddPropertySet(IIfcPropertySet iIfcPropertySet)
         {
+            //IfcPropertySet? ifcPropertySet = iIfcPropertySet as IfcPropertySet;
+
+            //if (ifcObjectDefinition is IfcObject ifcObject)
+            //{
             IfcRelDefinesByProperties ifcRelDefinesByProperties = ModelIFC.IfcStore.Instances.New<IfcRelDefinesByProperties>(relDef =>
             {
                 relDef.RelatedObjects.Add(IFCObjectDefinition);
                 relDef.RelatingPropertyDefinition = iIfcPropertySet;
             });
-        }
+            //}
+            //else if (ifcObjectDefinition is IfcContext ifcContext)
+            //{
+            //    IfcRelDefinesByProperties ifcRelDefinesByProperties = ModelIFC.IfcStore.Instances.New<IfcRelDefinesByProperties>(relDef =>
+            //    {
+            //        relDef.RelatedObjects.Add(IFCObjectDefinition);
+            //        relDef.RelatingPropertyDefinition = ifcPropertySet;
+            //    });
+            //}
+    }
 
         #endregion Добавить набор характеристик
     }

@@ -8,7 +8,7 @@
     xmlns:ep="clr-namespace:RZDP_IFC_Viewer.View.Controls"
     Title="Поиск и групповое редактирование элементов"
     Width="auto"
-    MinWidth="1400"
+    MinWidth="1300"
     Height="auto"
     SizeToContent="Width"
     Icon="{StaticResource ResourceKey=Search_Image}"
@@ -25,9 +25,9 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.5*" MinWidth="350" />
             <ColumnDefinition Width="2" />
-            <ColumnDefinition Width="*" MinWidth="350" />
+            <ColumnDefinition Width="0.8*" MinWidth="350" />
             <ColumnDefinition Width="2" />
-            <ColumnDefinition Width="*" MinWidth="650" />
+            <ColumnDefinition Width="1.2*" MinWidth="{Binding ElementName=LBEditor, Path=ActualWidth}" />
         </Grid.ColumnDefinitions>
 
         <StackPanel Orientation="Vertical">
@@ -280,9 +280,13 @@
                     Grid.Column="3" Grid.Row="1" Margin="0,15,0,0"
                     Width="20" HorizontalAlignment="Center">
         </GridSplitter>
-        <GroupBox DockPanel.Dock="Right" Header="Характеристики" Padding="2" Grid.Column="4" Margin="5">
-            <ep:EditorProperty x:Name="controlEditor" Width="auto"
+        <GroupBox DockPanel.Dock="Right" Header="Характеристики" Padding="0" Grid.Column="4" Margin="0" 
+                  >
+            <DockPanel x:Name="SPEditor" >
+                <ListBox DockPanel.Dock="Top" Visibility="Hidden" Name="LBEditor" Margin="0,0,10,0"/>
+                <ep:EditorProperty x:Name="controlEditor"  Width="auto" 
                    DataContext="{Binding ElementName=dgSearchElements, Path=SelectedItem}" />
+            </DockPanel>
         </GroupBox>
     </Grid>
 </Window>

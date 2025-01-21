@@ -147,7 +147,7 @@ namespace IFC_Table_View.IFC.ModelItem
         #region Открыть_таблицу
         protected override void OnOpenCommandExecuted(object o)
         {
-            new TableWindow(this).ShowDialog();
+            TableWindow.CreateTableWindow(this);
         }
 
         #endregion 

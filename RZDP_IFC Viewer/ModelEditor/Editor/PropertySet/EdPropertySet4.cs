@@ -30,9 +30,10 @@ namespace Editor_IFC
             });
 
             ifcPropertySet.HasProperties.Add(ifcProp);
+            OnPropertyChanged("PropertyCollection");
         }
 
-        public override void AddProperty()
+        public override void CreateNewProperty()
         {
             IfcPropertySingleValue ifcProp = ModelIFC.IfcStore.Model.Instances.New<IfcPropertySingleValue>(prop =>
             {
@@ -41,7 +42,7 @@ namespace Editor_IFC
             });
 
             ifcPropertySet.HasProperties.Add(ifcProp);
-            //PropertyCollection.Add(new EditorProperty4<IfcPropertySingleValue>(ifcProp, ModelIFC, this));
+            OnPropertyChanged("PropertyCollection");
         }
 
         public override IfcPropertySet GetCopyPropertySet()
@@ -98,9 +99,10 @@ namespace Editor_IFC
             });
 
             ElementQuantity.Quantities.Add(ifcProp);
+            OnPropertyChanged("PropertyCollection");
         }
 
-        public override void AddProperty()
+        public override void CreateNewProperty()
         {
             IfcQuantityLength ifcProp = ModelIFC.IfcStore.Model.Instances.New<IfcQuantityLength>(prop =>
             {
@@ -109,6 +111,7 @@ namespace Editor_IFC
             });
 
             ElementQuantity.Quantities.Add(ifcProp);
+            OnPropertyChanged("PropertyCollection");
         }
 
         //public override bool DeletePropertyModel(IPropertyModel<IIfcResourceObjectSelect> propertyModel)
@@ -117,7 +120,7 @@ namespace Editor_IFC
         //    return true;
         //}
 
-protected override IEnumerable<IPropertyModel<IIfcResourceObjectSelect>> FillCollectionProperty()
+        protected override IEnumerable<IPropertyModel<IIfcResourceObjectSelect>> FillCollectionProperty()
         {
             //ObservableCollection<IPropertyModel<IIfcResourceObjectSelect>> CollectionProperty = new ObservableCollection<IPropertyModel<IIfcResourceObjectSelect>>();
 

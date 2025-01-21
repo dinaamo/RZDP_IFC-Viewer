@@ -16,7 +16,7 @@ namespace IFC_Table_View.Resourses
                 {
                     if (textBlock.DataContext is ModelItemIFCTable modelItemIFCTable)
                     {
-                        new TableWindow(modelItemIFCTable).ShowDialog();
+                        TableWindow.CreateTableWindow(modelItemIFCTable);
                     }
                     else if (textBlock.DataContext is ModelItemDocumentReference documentReference)
                     {

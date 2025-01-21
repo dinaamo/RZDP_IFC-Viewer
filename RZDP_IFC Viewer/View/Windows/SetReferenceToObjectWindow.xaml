@@ -56,7 +56,7 @@
                         Header="Наименование элемента" />
                     <DataGridTextColumn
                         Width="*"
-                        Binding="{Binding Path=IFCObjectClass}"
+                        Binding="{Binding Path=IFCClass}"
                         Header="Класс IFC" />
                 </DataGrid.Columns>
             </DataGrid>

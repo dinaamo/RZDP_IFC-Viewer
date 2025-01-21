@@ -6,10 +6,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Height="auto"
-    MinWidth="700"
+    MinWidth="200"
     
     Loaded="UserControl_Loaded"
-    mc:Ignorable="d">
+    mc:Ignorable="d" DataContextChanged="UserControl_DataContextChanged">
     <UserControl.Resources>
         <Style TargetType="Button">
             <Setter Property="Margin" Value="0,0,5,0" />
@@ -42,9 +42,9 @@
     </UserControl.Resources>
     <Grid Margin="5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" MinWidth="260" />
+            <ColumnDefinition Width="0.8*" MinWidth="200"/>
             <ColumnDefinition Width="2" />
-            <ColumnDefinition Width="*" MinWidth="350" />
+            <ColumnDefinition Width="*" MinWidth="300" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -64,6 +64,7 @@
                     Focusable="False"
                     LostFocus="tbName_LostFocus"
                     MouseDoubleClick="TextBox_MouseDoubleClick"
+                    MinWidth="300"
                     Text="{Binding Path=IFCObjectName, Mode=TwoWay}" />
             </StackPanel>
 
@@ -90,7 +91,8 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <StackPanel Margin="3" Orientation="Horizontal">
-                    <Button Click="Button_Click" ToolTip="Добавить">
+                    <Button Click="Button_Click" ToolTip="Добавить новый набор"
+                            Command="{Binding AddPropertySetCommand}">
                         <fa:ImageAwesome
                             Width="25"
                             Height="25"
@@ -105,6 +107,7 @@
                     Width="auto"
                     SelectionMode="Single" 
                     AutoGenerateColumns="False"
+                    IsSynchronizedWithCurrentItem="True"
                     ItemsSource="{Binding Path=CollectionPropertySet, UpdateSourceTrigger=LostFocus}">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn
@@ -155,7 +158,9 @@
                     Grid.Row="0"
                     Margin="3"
                     Orientation="Horizontal">
-                    <Button ToolTip="Добавить">
+                    <Button ToolTip="Добавить новое свойство"
+                            Command="{Binding AddPropertyCommand}" 
+                            CommandParameter="{Binding ElementName=dgPropertySet, Path=SelectedItem}">
                         <fa:ImageAwesome
                             Width="25"
                             Height="25"
@@ -168,7 +173,6 @@
                     x:Name="dgProperty"
                     Grid.Row="1"
                     Width="auto"
-                    
                     SelectionMode="Single" 
                     SelectionUnit="Cell"
                     AutoGenerateColumns="False"
@@ -216,6 +220,7 @@
                         <DataGridTemplateColumn
                             Width="*"
                             MinWidth="100"
+                            MaxWidth="150"
                             IsReadOnly="True"
                             CanUserSort="False"
                             SortMemberPath="{Binding Path=DataType}"
@@ -223,7 +228,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBox
-                                            Text="{Binding Path=DataType, Mode=OneTime}"
+                                            Text="{Binding Path=DataType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                             Focusable="False"
                                             IsReadOnly="True"
                                             Foreground="Black"

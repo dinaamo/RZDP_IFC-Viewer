@@ -17,10 +17,30 @@ namespace IFC_Table_View.IFC.Model
 {
     public class ModelIFC : IDisposable
     {
-        private ModelIFC()
+        private ModelIFC(IfcStore ifcStore)
         {
+            IfcStore = ifcStore;
+            IfcStore.EntityDeleted += IfcStore_EntityDeleted;
+            IfcStore.EntityModified += IfcStore_EntityModified;
+            IfcStore.EntityNew += IfcStore_EntityNew;
         }
 
+        private void IfcStore_EntityNew(IPersistEntity entity)
+        {
+            IsEditModel = true;
+        }
+
+        private void IfcStore_EntityModified(IPersistEntity entity, int property)
+        {
+            IsEditModel = true;
+        }
+
+        private void IfcStore_EntityDeleted(IPersistEntity entity)
+        {
+            IsEditModel = true;
+        }
+
+        public bool IsEditModel { get; private set; } = false;
         public IfcStore IfcStore { get; private set; }
 
         public ObservableCollection<BaseModelItemIFC> ModelItems { get; private set; }
@@ -36,8 +56,9 @@ namespace IFC_Table_View.IFC.Model
                 return false;
             }
 
+
             IfcStore.SaveAs(filePath, Xbim.IO.StorageType.Ifc, ReportProcess);
-            ReportProcess.Invoke(0, "");
+            ReportProcess?.Invoke(0, "");
             if (IfcStore is not null)
             {
                 return true;
@@ -70,7 +91,7 @@ namespace IFC_Table_View.IFC.Model
         /// <summary>
         /// Делегат для фокуса на объекте
         /// </summary>
-        public Action<ModelItemIFCObject> ZoomObject;
+        public Action<IPersistEntity> ZoomObject;
 
         /// <summary>
         /// Делегат для выделения объекта
@@ -86,7 +107,7 @@ namespace IFC_Table_View.IFC.Model
         /// <summary>
         /// Процесс загрузки
         /// </summary>
-        private Action<IEnumerable<IPersistEntity>> DrawingControlRefresh;
+        private Action<IEnumerable<IPersistEntity>> RefreshDCAfterDeleteEntity;
 
         /// <summary>
         /// ///////////////
@@ -94,9 +115,9 @@ namespace IFC_Table_View.IFC.Model
         /// <param name="filePath"></param>
         /// <returns></returns>
         //Загружаем базу данных
-        public static ModelIFC Create(IfcStore ifcStore, Action<ModelItemIFCObject> ZoomObject, Action<IPersistEntity> SelectObject, BackgroundWorker ReportProcess, Action<IEnumerable<IPersistEntity>> DrawingControlRefresh)
+        public static ModelIFC Create(IfcStore ifcStore, Action<IPersistEntity> ZoomObject, Action<IPersistEntity> SelectObject, BackgroundWorker ReportProcess, Action<IEnumerable<IPersistEntity>> RefreshDCAfterDeleteEntity)
         {
-            return new ModelIFC().LoadDataBase(ifcStore, ZoomObject, SelectObject, ReportProcess, DrawingControlRefresh);
+            return new ModelIFC(ifcStore).LoadDataBase(ifcStore, ZoomObject, SelectObject, ReportProcess, RefreshDCAfterDeleteEntity);
         }
 
         private BaseEditorModel baseEditorModel;
@@ -105,7 +126,7 @@ namespace IFC_Table_View.IFC.Model
         /// Открываем файл
         /// </summary>
         /// <param name="filePath"></param>
-        private ModelIFC LoadDataBase(IfcStore ifcStore, Action<ModelItemIFCObject> ZoomObject, Action<IPersistEntity> SelectObject, BackgroundWorker ReportProcess, Action<IEnumerable<IPersistEntity>> DrawingControlRefresh)
+        private ModelIFC LoadDataBase(IfcStore ifcStore, Action<IPersistEntity> ZoomObject, Action<IPersistEntity> SelectObject, BackgroundWorker ReportProcess, Action<IEnumerable<IPersistEntity>> RefreshDCAfterDeleteEntity)
         {
             this.ZoomObject = ZoomObject;
 
@@ -113,9 +134,7 @@ namespace IFC_Table_View.IFC.Model
 
             this.backgroundWorker = ReportProcess;
 
-            this.DrawingControlRefresh = DrawingControlRefresh;
-
-            IfcStore = ifcStore;
+            this.RefreshDCAfterDeleteEntity = RefreshDCAfterDeleteEntity;
 
             FilePath = ifcStore.FileName;
 
@@ -137,7 +156,7 @@ namespace IFC_Table_View.IFC.Model
                 trans.Commit();
             }
             baseEditorModel = BaseEditorModel.CreateEditor(this);
-
+            IsEditModel = false;
             return this;
         }
 
@@ -305,19 +324,27 @@ namespace IFC_Table_View.IFC.Model
 
         public void DeleteIFCEntity(IPersistEntity persistEntity)
         {
-            if (IfcStore.Model.CurrentTransaction is null)
+            try
             {
-                using (ITransaction trans = IfcStore.Model.BeginTransaction("DeleteIFCEntity"))
+                if (IfcStore.Model.CurrentTransaction is null)
+                {
+                    using (ITransaction trans = IfcStore.Model.BeginTransaction("DeleteIFCEntity"))
+                    {
+                        IfcStore.Delete(persistEntity);
+
+                        trans.Commit();
+                    }
+                }
+                else
                 {
                     IfcStore.Delete(persistEntity);
 
-                    trans.Commit();
-                }
+                 }
             }
-            else
+            catch (StackOverflowException sEx)
             {
-                IfcStore.Delete(persistEntity);
 
+                MessageBox.Show(sEx.Message, "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -333,20 +360,24 @@ namespace IFC_Table_View.IFC.Model
         {
             if (args.Argument is List<ModelItemIFCObject> modelItemIFCObjectSet)
             {
-                var entityToDelete = modelItemIFCObjectSet.Select(it => it.GetIFCObject());
-                countToPresent = 100d / modelItemIFCObjectSet.Count;
-                counter = 0;
-                foreach (var modelItemIFCObject in modelItemIFCObjectSet)
+                using (ITransaction trans = IfcStore.Model.BeginTransaction("DeleteModelObjects"))
                 {
-                    UpdateProgress((int)(countToPresent * ++counter), "Удаление элементов");
-                    DeleteIFCEntity(modelItemIFCObject.GetIFCObject());
-                    Application.Current.Dispatcher.BeginInvoke(() =>
+                    var entityToDelete = modelItemIFCObjectSet.Select(it => it.GetIFCObject());
+                    countToPresent = 100d / modelItemIFCObjectSet.Count;
+                    counter = 0;
+                    foreach (var modelItemIFCObject in modelItemIFCObjectSet)
                     {
-                        modelItemIFCObject.TopElement.ModelItems.Remove(modelItemIFCObject);
-                    });
+                        UpdateProgress((int)(countToPresent * ++counter), "Удаление элементов");
+                        DeleteIFCEntity(modelItemIFCObject.GetIFCObject());
+                        Application.Current.Dispatcher.BeginInvoke(() =>
+                        {
+                            modelItemIFCObject.TopElement.ModelItems.Remove(modelItemIFCObject);
+                        });
+                    }
+                    RefreshDCAfterDeleteEntity(entityToDelete);
+                    UpdateProgress(0);
+                    trans.Commit();
                 }
-                DrawingControlRefresh(entityToDelete);
-                UpdateProgress(0);
             }
             backgroundWorker.DoWork -= DeleteModelObjectsBackground;
         }
@@ -469,6 +500,19 @@ namespace IFC_Table_View.IFC.Model
                 foreach ((Action<string>, string) tuple in tupleCollection)
                 {
                     tuple.Item1(tuple.Item2);
+                }
+
+                trans.Commit();
+            }
+        }
+
+        public void AddEntity(List<Action> actionSet)
+        {
+            using (ITransaction trans = IfcStore.Model.BeginTransaction("AddEntity"))
+            {
+                foreach (Action action in actionSet)
+                {
+                    action();
                 }
 
                 trans.Commit();

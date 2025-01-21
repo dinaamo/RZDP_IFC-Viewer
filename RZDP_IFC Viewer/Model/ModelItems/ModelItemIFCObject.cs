@@ -12,6 +12,7 @@ using IFC_Viewer.IFC.Base;
 using IFC_Viewer.View.Windows;
 using RZDP_IFC_Viewer.View.Windows;
 using Xbim.Ifc4.Interfaces;
+using static Microsoft.Isam.Esent.Interop.EnumeratedColumn;
 
 namespace IFC_Table_View.IFC.ModelItem
 {
@@ -35,6 +36,14 @@ namespace IFC_Table_View.IFC.ModelItem
             ZoomElementsCommand = new ActionCommand(
                    OnZoomElementsCommandExecuted,
                    CanZoomElementsCommandExecute);
+
+            AddPropertyCommand = new ActionCommand(
+                   OnAddPropertyCommandExecuted,
+                   CanAddPropertyCommandExecute);
+
+            AddPropertySetCommand = new ActionCommand(
+                   OnAddPropertySetCommandExecuted,
+                   CanAddPropertySetCommandExecute);
 
             PaintElementsCommand = new ActionCommand(
                    OnPaintElementsCommandExecuted,
@@ -75,7 +84,7 @@ namespace IFC_Table_View.IFC.ModelItem
 
         private void OnZoomElementsCommandExecuted(object o)
         {
-            Model.ZoomObject(this);
+            Model.ZoomObject(IFCObjectDefinition);
         }
 
         private bool CanZoomElementsCommandExecute(object o)
@@ -84,6 +93,43 @@ namespace IFC_Table_View.IFC.ModelItem
         }
 
         #endregion Показать элемент
+
+
+        #region Добавить свойство
+
+        public ICommand AddPropertyCommand { get; }
+
+        private void OnAddPropertyCommandExecuted(object o)
+        {
+            if (o is BasePropertySetDefinition propertySetDefinition)
+            {
+                Model.AddEntity(new List<Action> { propertySetDefinition.CreateNewProperty});
+            }
+        }
+
+        private bool CanAddPropertyCommandExecute(object o)
+        {
+            return o is not null;
+        }
+
+        #endregion Добавить свойство
+
+        #region Добавить набор характеристик
+
+        public ICommand AddPropertySetCommand { get; }
+
+        private void OnAddPropertySetCommandExecuted(object o)
+        {
+            Model.AddEntity(new List<Action> { modelEditor.CreateNewPropertySet });
+            OnPropertyChanged("CollectionPropertySet");
+        }
+
+        private bool CanAddPropertySetCommandExecute(object o)
+        {
+            return this is not null;
+        }
+
+        #endregion Добавить набор характеристик
 
         #region Выделить элемент
 
@@ -393,20 +439,20 @@ namespace IFC_Table_View.IFC.ModelItem
         /// </summary>
         /// <param name="topElement"></param>
         /// <param name="foundObjects"></param>
-        public static void FindMultiplyTreeObject(ModelItemIFCObject topElement, IEnumerable<ModelItemIFCObject> foundObjects)
-        {
-            if (foundObjects.Any(it => it == topElement))
-            {
-                topElement.IsPaint = true;
-            }
+        //public static void FindMultiplyTreeObject(ModelItemIFCObject topElement, IEnumerable<ModelItemIFCObject> foundObjects)
+        //{
+        //    if (foundObjects.Any(it => it == topElement))
+        //    {
+        //        topElement.IsPaint = true;
+        //    }
 
-            topElement.IsExpanded = true;
+        //    topElement.IsExpanded = true;
 
-            foreach (ModelItemIFCObject item in topElement.ModelItems)
-            {
-                FindMultiplyTreeObject(item, foundObjects);
-            }
-        }
+        //    foreach (ModelItemIFCObject item in topElement.ModelItems)
+        //    {
+        //        FindMultiplyTreeObject(item, foundObjects);
+        //    }
+        //}
 
         /// <summary>
         /// Ищем все элементы в дереве по критериям
@@ -415,7 +461,7 @@ namespace IFC_Table_View.IFC.ModelItem
         /// <param name="foundObjects"></param>
         public static List<ModelItemIFCObject> FindPaintObjects(ModelItemIFCObject topElement)
         {
-            return topElement.SelectionNestedItems(topElement).Where(it => it.IsPaint).ToList();
+            return SelectionNestedItems(topElement).Where(it => it.IsPaint).ToList();
         }
 
         /// <summary>
@@ -444,7 +490,7 @@ namespace IFC_Table_View.IFC.ModelItem
         /// </summary>
         /// <param name="modelItem"></param>
         /// <returns></returns>
-        private List<ModelItemIFCObject> SelectionNestedItems(ModelItemIFCObject modelItem)
+        public static List<ModelItemIFCObject> SelectionNestedItems(ModelItemIFCObject modelItem)
         {
             List<ModelItemIFCObject> list = new List<ModelItemIFCObject>{modelItem};
 

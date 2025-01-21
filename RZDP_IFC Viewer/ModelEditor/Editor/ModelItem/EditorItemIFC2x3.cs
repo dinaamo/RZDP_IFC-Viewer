@@ -3,6 +3,7 @@ using Editor_IFC;
 using IFC_Table_View.IFC.Model;
 using IFC_Table_View.IFC.ModelItem;
 using IFC_Viewer.IFC.Base;
+using RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base;
 using Xbim.Ifc2x3.Kernel;
 using Xbim.Ifc2x3.PropertyResource;
 using Xbim.Ifc4.Interfaces;
@@ -11,11 +12,11 @@ namespace IFC_Viewer.IFC.Fabric
 {
     public class EditorItemIFC2x3 : BaseEditorItem
     {
-        private IfcObjectDefinition IFCObjectDefinition;
+        private IfcObjectDefinition _ifcObjectDefinition;
 
         public EditorItemIFC2x3(ModelItemIFCObject modelItemIFCObject, ModelIFC modelIFC, IfcObjectDefinition IFCObjectDefinition) : base(modelItemIFCObject, modelIFC, IFCObjectDefinition)
         {
-            this.IFCObjectDefinition = IFCObjectDefinition;
+            this._ifcObjectDefinition = IFCObjectDefinition;
         }
 
         #region Добавление ссылок
@@ -70,56 +71,22 @@ namespace IFC_Viewer.IFC.Fabric
 
         #endregion Добавление ссылок
 
-        #region Удаление ссылок
-
-        //public override List<BasePropertySetDefinition> DeleteReferenceToTheObject(List<BaseModelReferenceIFC> CollectionModelitemReferenceToDelete)
-        //{
-        //    //Получаем необходимый набор характеристик
-        //    List<BasePropertySetDefinition> PropSetReferenceCollection = CollectionPropertySet.
-        //                                        Where(it => it.IFCPropertySetDefinition.GetType() == typeof(IIfcPropertySet)).
-        //                                        Where(it => ((IIfcPropertySet)it.IFCPropertySetDefinition).HasProperties.Any(pr => pr.GetType() == typeof(IfcPropertyReferenceValue))).ToList();
-
-
-        //    if (PropSetReferenceCollection.Count == 0)
-        //    {
-        //        throw new ArgumentNullException("Не найден набор с ссылками");
-        //    }
-
-        //    //Удаляем ссылки
-            
-        //    foreach (BaseModelReferenceIFC modelReference in CollectionModelitemReferenceToDelete)
-        //    {
-        //        foreach (BasePropertySetDefinition propertySet in PropSetReferenceCollection.ToArray())
-        //        {
-                
-        //            IfcPropertyReferenceValue propertyToDelete = ((IIfcPropertySet)propertySet.IFCPropertySetDefinition).HasProperties
-        //                                                                                .OfType<IfcPropertyReferenceValue>()
-        //                                                                                .FirstOrDefault(it => it.PropertyReference == modelReference.GetReference());
-                                                                                        
-        //            if (propertyToDelete is null)
-        //            { continue; }
-
-        //            modelReference.DeleteReferenceToTheElement(modelItemIFCObject);
-        //            foreach (var PropSetReference in PropSetReferenceCollection)
-        //            {
-
-        //                ((IIfcPropertySet)PropSetReference.IFCPropertySetDefinition).HasProperties.Remove(propertyToDelete);
-        //                PropSetReferenceCollection.Remove(propertySet);
-        //            }
-        //        }
-        //    }
-
-
-        //    return PropSetReferenceCollection;
-        //}
-
-        #endregion Удаление ссылок
+        #region Создать набор характеристик
+        public override void CreateNewPropertySet()
+        {
+            IfcPropertySet newPropertySet = ModelIFC.IfcStore.Model.Instances.New<IfcPropertySet>(prS =>
+            { prS.Name = "Новый набор"; });
+            AddPropertySet(newPropertySet);
+        }
+        #endregion
 
         #region Добавить набор характеристик
 
         protected override void AddPropertySet(IIfcPropertySet iIfcPropertySet)
         {
-            if (iIfcPropertySet is IfcPropertySet ifcPropertySet && ifcObjectDefinition is IfcObject ifcObject)
+            IfcPropertySet? ifcPropertySet = iIfcPropertySet as IfcPropertySet;
+
+            if (ifcObjectDefinition is IfcObject ifcObject)
             {
                 IfcRelDefinesByProperties ifcRelDefinesByProperties = ModelIFC.IfcStore.Instances.New<IfcRelDefinesByProperties>(relDef =>
                 {
@@ -173,6 +140,7 @@ namespace IFC_Viewer.IFC.Fabric
 
             return true;
         }
+
 
         #endregion Заполнение характеристик элемента
     }

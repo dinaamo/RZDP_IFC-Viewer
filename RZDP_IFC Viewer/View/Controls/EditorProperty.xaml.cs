@@ -4,7 +4,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Editor_IFC;
+using IFC_Table_View;
 using IFC_Table_View.IFC.ModelItem;
+using PropertyTools.Wpf;
 using RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base;
 using Xbim.Ifc4.Interfaces;
 
@@ -18,13 +20,9 @@ namespace RZDP_IFC_Viewer.View.Controls
         public EditorProperty()
         {
             InitializeComponent();
-            DataContextChanged += EditorProperty_DataContextChanged;
         }
 
-        private void EditorProperty_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            
-        }
+
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
@@ -33,8 +31,8 @@ namespace RZDP_IFC_Viewer.View.Controls
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var tt = dgPropertySet;
-            var t4t = dgProperty;
+            //var tt = dgPropertySet;
+            //var t4t = dgProperty;
         }
         
         private void TextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -88,6 +86,19 @@ namespace RZDP_IFC_Viewer.View.Controls
 
 
             }
+        }
+
+        private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                //dgPropertySet.SelectedIndex = 0;
+                if (dgPropertySet.Items.Count >0)
+                {
+                    dgPropertySet.CurrentCell = new DataGridCellInfo(dgPropertySet.Items[0], dgPropertySet.Columns[0]);
+                    dgPropertySet.SelectedItem = dgPropertySet.CurrentCell;
+                }
+            });
         }
     }
 }
