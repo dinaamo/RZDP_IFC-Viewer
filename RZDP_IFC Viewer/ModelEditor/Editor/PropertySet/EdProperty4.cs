@@ -24,6 +24,7 @@ namespace Editor_IFC
         protected override void SetNewValueForProperty<T>(string newValueString, T simpleValue)
         {
             IfcValue newValue = null;
+            newValueString = newValueString.Replace(',', '.');
 
             if (Property is IIfcPropertySingleValue ifcSingleValue)
             {
@@ -151,13 +152,13 @@ namespace Editor_IFC
                     //ifcSingleValue.NominalValue = new IfcText(newValueString);
                 }
 
-                if (newValue is not null)
+                if (newValue is null)
                 {
-                    ifcSingleValue.NominalValue = newValue;
+                    ifcSingleValue.NominalValue = new IfcText(newValueString);
                 }
                 else
                 {
-                    ifcSingleValue.NominalValue = new IfcText(newValueString);
+                    ifcSingleValue.NominalValue = newValue;
                 }
             }
         }

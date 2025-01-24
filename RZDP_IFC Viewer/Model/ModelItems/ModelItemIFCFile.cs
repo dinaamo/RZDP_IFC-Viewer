@@ -10,7 +10,7 @@ namespace IFC_Table_View.IFC.ModelItem
         public ModelItemIFCFile(IfcStore ifcStore, IIfcProject Project, ModelIFC modelIFC) : base(modelIFC)
         {
             this.Project = Project;
-            PropertyObject();
+            AddPropertyObject();
         }
 
         public IIfcProject Project { get; private set; }
@@ -47,7 +47,7 @@ namespace IFC_Table_View.IFC.ModelItem
 
         private Dictionary<string, HashSet<object>> _PropertyElement;
 
-        private void PropertyObject()
+        private void AddPropertyObject()
         {
             _PropertyElement = new Dictionary<string, HashSet<object>>
             {

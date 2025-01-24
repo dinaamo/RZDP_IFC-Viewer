@@ -35,26 +35,11 @@ namespace Editor_IFC
             this.IFCPropertySetDefinition = ifcPropertySetDef;
             this.ModelObject = modelObject;
 
-            //AddPropertyCommand = new ActionCommand(
-            //       OnAddPropertyCommandExecuted,
-            //       CanAddPropertyCommandExecute);
+
         }
-        //#region Добавить свойство
 
-        //public ICommand AddPropertyCommand { get; }
 
-        //private void OnAddPropertyCommandExecuted(object o)
-        //{
-        //    AddProperty();
-        //    OnPropertyChanged("PropertyCollection");
-        //}
 
-        //private bool CanAddPropertyCommandExecute(object o)
-        //{
-        //    return this is EdPropertySet4 || this is EdPropertySet2x3;
-        //}
-
-        //#endregion Добавить свойство
 
 
         protected abstract IEnumerable<IPropertyModel<IIfcResourceObjectSelect>> FillCollectionProperty();
@@ -63,13 +48,13 @@ namespace Editor_IFC
         public ObservableCollection<IPropertyModel<IIfcResourceObjectSelect>> PropertyCollection => new ObservableCollection<IPropertyModel<IIfcResourceObjectSelect>>(FillCollectionProperty());
 
 
-        public void UnpinPropertySet()
-        {
-            foreach (IIfcRelDefinesByProperties RelDef in IFCPropertySetDefinition.DefinesOccurrence)
-            {
-                RelDef.RelatedObjects.Remove(ifcObjectDefinition);
-            }
-        }
+        //public void UnpinPropertySet()
+        //{
+        //    foreach (IIfcRelDefinesByProperties RelDef in IFCPropertySetDefinition.DefinesOccurrence)
+        //    {
+        //        RelDef.RelatedObjects.Remove(ifcObjectDefinition);
+        //    }
+        //}
 
         public void DeletePropertyModel(IPropertyModel<IIfcResourceObjectSelect> propertyModel)
         {
@@ -78,16 +63,20 @@ namespace Editor_IFC
         }
 
 
-        private int DeterminingRelatedObjectsCount()
-        {
-            int RelatedObjectsCount = default;
+        //private int DeterminingCountRelatedObjects()
+        //{
+        //    int RelatedObjectsCount = default;
 
-            RelatedObjectsCount += IFCPropertySetDefinition?.DefinesOccurrence.SelectMany(it => it.RelatedObjects).Count() ?? 0;
+        //    RelatedObjectsCount += IFCPropertySetDefinition?.DefinesOccurrence.SelectMany(it => it.RelatedObjects).Count() ?? 0;
 
-            RelatedObjectsCount += IFCPropertySetDefinition?.DefinesType.Count() ?? 0;
+        //    RelatedObjectsCount += IFCPropertySetDefinition?.DefinesType.Count() ?? 0;
 
-            return RelatedObjectsCount;
-        }
+        //    return RelatedObjectsCount;
+        //}
+
+        public int CountRelatedObjectsInstanse => IFCPropertySetDefinition?.DefinesOccurrence.SelectMany(it => it.RelatedObjects).Count() ?? 0;
+
+        public int CountRelatedObjectsType => IFCPropertySetDefinition?.DefinesType.Count() ?? 0;
 
         public string NamePropertySet
         {

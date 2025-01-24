@@ -100,7 +100,7 @@ namespace IFC_Table_View.IFC.ModelItem
 
                 for (int cell = 0; cell < ifcTable.Rows[row].RowCells.Count; cell++)
                 {
-                    string valueString = ifcTable.Rows[row].RowCells[cell].Value.ToString();
+                    string valueString = ifcTable.Rows[row].RowCells[cell].Value?.ToString();
 
                     string newValueString = Regex.Replace(valueString, @"\s+", " ");
 

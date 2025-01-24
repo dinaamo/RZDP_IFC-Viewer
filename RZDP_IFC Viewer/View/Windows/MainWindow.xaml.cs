@@ -73,46 +73,47 @@ namespace IFC_Table_View
                     }
                     else if (textBlock.DataContext is ModelItemIFCObject searchModelObject)
                     {
-                        ModelItemIFCObject findObj = FindModelObject(searchModelObject.ItemIFC);
-                        if (findObj != null)
-                        {
-                            findObj.IsSelected = true;
-                            findObj.IsFocusReference = false;
-                        }
+                        //ModelItemIFCObject findObj = FindModelObject(searchModelObject.ItemIFC);
+                        //if (findObj != null)
+                        //{
+                        searchModelObject.ExpandOver();
+                        searchModelObject.IsSelected = true;
+                        searchModelObject.IsFocusReference = false;
+                        //}
                     }
                 }
             }
         }
 
-        private ModelItemIFCObject FindModelObject(object searchModelObject)
-        {
-            if (searchModelObject == null)
-            {
-                return null;
-            }
-            try
-            {
-                ((BaseModelItemIFC)treeViewIFC.Items[0]).IsExpanded = true;
+        //private ModelItemIFCObject FindModelObject(object searchModelObject)
+        //{
+        //    if (searchModelObject == null)
+        //    {
+        //        return null;
+        //    }
+        //    try
+        //    {
+        //        ((BaseModelItemIFC)treeViewIFC.Items[0]).IsExpanded = true;
 
-                IEnumerable<ModelItemIFCObject> secondLevelCollection = ((BaseModelItemIFC)treeViewIFC.Items[0]).ModelItems.
-                    OfType<ModelItemIFCObject>();
+        //        IEnumerable<ModelItemIFCObject> secondLevelCollection = ((BaseModelItemIFC)treeViewIFC.Items[0]).ModelItems.
+        //            OfType<ModelItemIFCObject>();
 
-                foreach (ModelItemIFCObject modelObject in secondLevelCollection)
-                {
-                    if (modelObject.ItemIFC.Equals(searchModelObject))
-                    {
-                        throw new FindObjectException(modelObject);
-                    }
-                    ModelItemIFCObject.FindSingleTreeObject(modelObject, searchModelObject);
-                }
-            }
-            catch (FindObjectException findObj)
-            {
-                return findObj.FindObject;
-            }
+        //        foreach (ModelItemIFCObject modelObject in secondLevelCollection)
+        //        {
+        //            if (modelObject.ItemIFC.Equals(searchModelObject))
+        //            {
+        //                throw new FindObjectException(modelObject);
+        //            }
+        //            ModelItemIFCObject.FindSingleTreeObject(modelObject, searchModelObject);
+        //        }
+        //    }
+        //    catch (FindObjectException findObj)
+        //    {
+        //        return findObj.FindObject;
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
 
         /// Загрузка формы
         private void MainWindowIFC_Loaded(object sender, RoutedEventArgs e)
@@ -258,7 +259,17 @@ namespace IFC_Table_View
         {
             foreach (var item in e.AddedItems)
             {
-                ModelItemIFCObject findObj = FindModelObject(item);
+                //ModelItemIFCObject findObj = tree FindModelObject(item);
+
+                ObservableCollection<BaseModelItemIFC>? collectionObjectModel = treeViewIFC.ItemsSource as ObservableCollection<BaseModelItemIFC>;
+
+                if (collectionObjectModel is null)
+                {
+                    return;
+                }
+                ModelItemIFCObject? project = collectionObjectModel[0].ModelItems.OfType<ModelItemIFCObject>().FirstOrDefault(); 
+                var findObj = ModelItemIFCObject.SelectionNestedItems(project).FirstOrDefault(it => it.GetIFCObject().Equals(item));
+
                 if (findObj != null)
                 {
                     findObj.ExpandOver();

@@ -55,7 +55,7 @@ namespace RZDP_IFC_Viewer.View.Controls
             //Получаем контекст ячейки datagrid
             MenuItem menuItem = sender as MenuItem;
             //Если набор
-            if (menuItem.DataContext is BasePropertySetDefinition propertySetDefinitionModel) 
+            if (menuItem?.DataContext is BasePropertySetDefinition propertySetDefinitionModel) 
             {
                 if (propertySetDefinitionModel.IFCPropertySetDefinition is IIfcPropertySet ifcPropertySet)
                 {
@@ -67,9 +67,15 @@ namespace RZDP_IFC_Viewer.View.Controls
                         { return; }
                     }
                 }
+                if (propertySetDefinitionModel.CountRelatedObjectsInstanse >1 || propertySetDefinitionModel.CountRelatedObjectsType >1)
+                {
+                    MessageBoxResult result = MessageBox.Show("На данный набор характеристик ссылается более одного объекта?\n" +
+                            "Продолжить?", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (result == MessageBoxResult.No)
+                    { return; }
+                }
                 //Удаляем
                  (DataContext as ModelItemIFCObject)?.DeletePropertySet(propertySetDefinitionModel);
-
             }
             //Если свойство
             else if (menuItem.DataContext is IPropertyModel<IIfcResourceObjectSelect> propertyModel) 
@@ -83,8 +89,31 @@ namespace RZDP_IFC_Viewer.View.Controls
                 }
                 //Удаляем
                 propertyModel.PropertySetDefinition.DeletePropertyModel(propertyModel);
+            }
+        }
+
+        private void MenuItemDublicate_Click(object sender, RoutedEventArgs e)
+        {
+            //Получаем контекст ячейки datagrid
+            MenuItem menuItem = sender as MenuItem;
+            //Если набор
+            if (menuItem?.DataContext is BasePropertySetDefinition propertySetDefinitionModel)
+            {
+                //Создаем дубликат
+                 (DataContext as ModelItemIFCObject)?.AddDublicatePropertySet(propertySetDefinitionModel);
+            }
+        }
 
 
+        private void MenuItemUnpin_Click(object sender, RoutedEventArgs e)
+        {
+            //Получаем контекст ячейки datagrid
+            MenuItem menuItem = sender as MenuItem;
+            //Если набор
+            if (menuItem?.DataContext is BasePropertySetDefinition propertySetDefinitionModel)
+            {
+                //Открепляем
+                 (DataContext as ModelItemIFCObject)?.UnpinPropertySet(propertySetDefinitionModel);
             }
         }
 

@@ -16,16 +16,31 @@
             <Setter Property="Padding" Value="1" />
         </Style>
         
-        <!--<Style TargetType="{x:Type DataGridCell}">
-            <Style.Triggers>
-                <Trigger Property="DataGridCell.IsSelected" Value="True">
-                    <Setter Property="BorderBrush" Value="DarkBlue"/>
-                    <Setter Property="BorderThickness" Value="2"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>-->
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
 
-        <ContextMenu x:Key="TextBoxMenu">
+        <ContextMenu x:Key="TextBoxMenuPropertySet">
+            <MenuItem Header="Дублировать"
+                            Click="MenuItemDublicate_Click">
+                <MenuItem.Icon>
+                    <fa:ImageAwesome
+                                    Height="12"
+                                    Margin="0,0,3,0"
+                                    Foreground="DarkGreen"
+                                    Icon="Copy" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Открепить"
+                            Click="MenuItemUnpin_Click">
+                <MenuItem.Icon>
+                    <fa:ImageAwesome
+                                    Height="12"
+                                    Margin="0,0,3,0"
+                                    Foreground="DarkBlue"
+                                    Icon="Scissors" />
+                </MenuItem.Icon>
+            </MenuItem>
             <MenuItem Header="Удалить"
                             Click="MenuItemDelete_Click">
                         <MenuItem.Icon>
@@ -34,6 +49,19 @@
                                     Margin="0,0,3,0"
                                     Foreground="DarkRed"
                                     Icon="Remove" />    
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
+
+        <ContextMenu x:Key="TextBoxMenuProperty">
+            <MenuItem Header="Удалить"
+                            Click="MenuItemDelete_Click">
+                <MenuItem.Icon>
+                    <fa:ImageAwesome
+                                    Height="12"
+                                    Margin="0,0,3,0"
+                                    Foreground="DarkRed"
+                                    Icon="Remove" />
                 </MenuItem.Icon>
             </MenuItem>
         </ContextMenu>
@@ -90,7 +118,7 @@
                     <RowDefinition Height="auto" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <StackPanel Margin="3" Orientation="Horizontal">
+                <StackPanel Margin="3" Orientation="Horizontal" Grid.Row="0">
                     <Button Click="Button_Click" ToolTip="Добавить новый набор"
                             Command="{Binding AddPropertySetCommand}">
                         <fa:ImageAwesome
@@ -113,12 +141,10 @@
                         <DataGridTemplateColumn
                             Width="*"
                             MinWidth="100"
-                            
                             SortMemberPath="{Binding Path=NamePropertySet}"
                             CanUserSort="False"
                             Header="Наименование"
                             Visibility="Visible">
-
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBox
@@ -127,8 +153,42 @@
                                         Foreground="Black"
                                         MouseDoubleClick="TextBox_MouseDoubleClick"
                                         LostFocus="tbName_LostFocus" 
-                                        ContextMenu="{StaticResource TextBoxMenu}">
+                                        ContextMenu="{StaticResource TextBoxMenuPropertySet}">
                                     </TextBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn
+                            Width="70"
+                            MinWidth="30"
+                            SortMemberPath="{Binding Path=CountRelatedObjectsInstanse}"
+                            CanUserSort="False"
+                            Header="Экземпляр"
+                            Visibility="Visible">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox
+                                         Text="{Binding Path=CountRelatedObjectsInstanse, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                         Focusable="False"
+                                         IsReadOnly="True"    
+                                         ContextMenu="{StaticResource TextBoxMenuPropertySet}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn
+                           Width="40"
+                           MinWidth="20"
+                           SortMemberPath="{Binding Path=CountRelatedObjectsType}"
+                           CanUserSort="False"
+                           Header="Тип"
+                           Visibility="Visible">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox
+                                        Text="{Binding Path=CountRelatedObjectsType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Focusable="False"
+                                        IsReadOnly="True"    
+                                        ContextMenu="{StaticResource TextBoxMenuPropertySet}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -193,7 +253,7 @@
                                             Foreground="Black"
                                             MouseDoubleClick="TextBox_MouseDoubleClick"
                                             LostFocus="tbName_LostFocus" 
-                                            ContextMenu="{StaticResource TextBoxMenu}"/>
+                                            ContextMenu="{StaticResource TextBoxMenuProperty}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -212,7 +272,7 @@
                                             Foreground="Black"
                                             MouseDoubleClick="TextBox_MouseDoubleClick"
                                             LostFocus="tbName_LostFocus" 
-                                            ContextMenu="{StaticResource TextBoxMenu}"/>
+                                            ContextMenu="{StaticResource TextBoxMenuProperty}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -230,11 +290,8 @@
                                     <TextBox
                                             Text="{Binding Path=DataType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                             Focusable="False"
-                                            IsReadOnly="True"
-                                            Foreground="Black"
-            
-                                            LostFocus="tbName_LostFocus" 
-                                            ContextMenu="{StaticResource TextBoxMenu}"/>
+                                            IsReadOnly="True"    
+                                            ContextMenu="{StaticResource TextBoxMenuProperty}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

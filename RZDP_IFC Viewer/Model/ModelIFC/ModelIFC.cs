@@ -1,10 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
+using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks.Dataflow;
 using System.Windows;
 using System.Windows.Documents;
+using Editor_IFC;
 using IFC_Table_View.IFC.ModelItem;
 using IFC_Table_View.ViewModels;
 using IFC_Viewer.IFC.Base;
@@ -57,8 +59,9 @@ namespace IFC_Table_View.IFC.Model
             }
 
 
-            IfcStore.SaveAs(filePath, Xbim.IO.StorageType.Ifc, ReportProcess);
-            ReportProcess?.Invoke(0, "");
+            IfcStore.SaveAs(filePath, null, ReportProcess);
+            IsEditModel = false;
+            ReportProcess.Invoke(0, "");
             if (IfcStore is not null)
             {
                 return true;
@@ -77,6 +80,7 @@ namespace IFC_Table_View.IFC.Model
             }
 
             IfcStore.SaveAs(filePath, Xbim.IO.StorageType.IfcXml, ReportProcess);
+            IsEditModel = false;
             ReportProcess.Invoke(0, "");
             if (IfcStore is not null)
             {
@@ -363,16 +367,29 @@ namespace IFC_Table_View.IFC.Model
                 using (ITransaction trans = IfcStore.Model.BeginTransaction("DeleteModelObjects"))
                 {
                     var entityToDelete = modelItemIFCObjectSet.Select(it => it.GetIFCObject());
+
+                    //Получаем все таблицы и документы в файле
+                    IEnumerable<BaseModelReferenceIFC> allModelReference = ModelItems[0].ModelItems.OfType<BaseModelReferenceIFC>();
+
+                    //Определяем количество всех элементов
                     countToPresent = 100d / modelItemIFCObjectSet.Count;
                     counter = 0;
                     foreach (var modelItemIFCObject in modelItemIFCObjectSet)
                     {
-                        UpdateProgress((int)(countToPresent * ++counter), "Удаление элементов");
-                        DeleteIFCEntity(modelItemIFCObject.GetIFCObject());
+                        //Удаляем ссылки на таблицы и документы от объекта
+                        modelItemIFCObject.DeleteReferenceToTheObject(allModelReference);
+                        
+                        //Удаляем объект из дерева
                         Application.Current.Dispatcher.BeginInvoke(() =>
                         {
                             modelItemIFCObject.TopElement.ModelItems.Remove(modelItemIFCObject);
                         });
+
+                        ///Удаляем объект из XBIM
+                        DeleteIFCEntity(modelItemIFCObject.GetIFCObject());
+                        
+                        //Обновляем прогресс бар
+                        UpdateProgress((int)(countToPresent * ++counter), "Удаление элементов");
                     }
                     RefreshDCAfterDeleteEntity(entityToDelete);
                     UpdateProgress(0);
@@ -506,15 +523,27 @@ namespace IFC_Table_View.IFC.Model
             }
         }
 
-        public void AddEntity(List<Action> actionSet)
+        public void ActionInTransaction(List<Action> actionSet)
         {
-            using (ITransaction trans = IfcStore.Model.BeginTransaction("AddEntity"))
+            using (ITransaction trans = IfcStore.Model.BeginTransaction("ActioninTransaction"))
             {
                 foreach (Action action in actionSet)
                 {
                     action();
                 }
 
+                trans.Commit();
+            }
+        }
+
+        public void ActionInTransactionForPropertySet(List<(Action<BasePropertySetDefinition>, BasePropertySetDefinition)> tupleSet)
+        {
+            using (ITransaction trans = IfcStore.Model.BeginTransaction("AddDublicatePropertySet"))
+            {
+                foreach ((Action<BasePropertySetDefinition>, BasePropertySetDefinition) tuple in tupleSet)
+                {
+                    tuple.Item1(tuple.Item2);
+                }
                 trans.Commit();
             }
         }

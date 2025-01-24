@@ -115,7 +115,6 @@
                     <TextBlock HorizontalAlignment="Left" Text="Значение" Grid.Row="6" Grid.Column="0" />
                     <ComboBox Grid.Row="6" Grid.Column="1" Style="{StaticResource ConditionsSearch}" Name="CBPropertyValueFilter" />
                     <ComboBox Grid.Row="6" Grid.Column="2"
-                                            MaxWidth="300"
                                             Name="CBPropertyValue"
                                             IsEditable="True" IsTextSearchEnabled="False">
                         <ComboBox.ItemTemplate>

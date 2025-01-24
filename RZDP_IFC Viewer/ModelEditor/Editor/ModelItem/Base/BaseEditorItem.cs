@@ -30,6 +30,20 @@ namespace IFC_Viewer.IFC.Base
 
         public abstract void CreateNewPropertySet();
 
+        public abstract void DeletePropertySet(BasePropertySetDefinition PropertySetDefinition);
+
+        public void AddDublicatePropertySet(BasePropertySetDefinition PropertySetDefinition)
+        { 
+            AddPropertySet(PropertySetDefinition.GetCopyPropertySet());
+        }
+
+        public void  UnpinPropertySet(BasePropertySetDefinition PropertySetDefinition)
+        {
+            foreach (IIfcRelDefinesByProperties RelDef in PropertySetDefinition.IFCPropertySetDefinition.DefinesOccurrence)
+            {
+                RelDef.RelatedObjects.Remove(ifcObjectDefinition);
+            }
+        }
 
         /// <summary>
         /// Удаление ссылок на документы или таблицы
@@ -48,7 +62,7 @@ namespace IFC_Viewer.IFC.Base
             //Если таких не нашли то кидаем исключение
             if (PropSetReferenceCollection.Count() == 0)
             {
-                throw new ArgumentNullException("Не найдены наборы с ссылками");
+                return 0;
             }
 
            
@@ -87,7 +101,7 @@ namespace IFC_Viewer.IFC.Base
             
         }
 
-        protected abstract void AddPropertySet(IIfcPropertySet iIfcPropertySet);
+        protected abstract void AddPropertySet(IIfcPropertySetDefinition iIfcPropertySet);
 
         #region Заполнение характеристик элемента
 

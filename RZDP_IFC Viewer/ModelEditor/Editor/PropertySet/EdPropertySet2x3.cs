@@ -64,15 +64,18 @@ namespace Editor_IFC
             {
                 prS.Name = NamePropertySet;
 
-                foreach (var Property in PropertyCollection.OfType<IPropertyModel<IfcPropertySingleValue>>())
+                foreach (var Property in PropertyCollection)
                 {
-                    IfcPropertySingleValue ifcProp = ModelIFC.IfcStore.Model.Instances.New<IfcPropertySingleValue>(prop =>
+                    if (Property.Property is IfcPropertySingleValue ifcPropertySingleValue)
                     {
-                        prop.Name = Property.NameProperty;
-                        prop.NominalValue = Property.Property.NominalValue;
-                    });
+                        IfcPropertySingleValue ifcProp = ModelIFC.IfcStore.Model.Instances.New<IfcPropertySingleValue>(prop =>
+                        {
+                            prop.Name = Property.NameProperty;
+                            prop.NominalValue = ifcPropertySingleValue.NominalValue;
+                        });
 
-                    prS.HasProperties.Add(ifcProp);
+                        prS.HasProperties.Add(ifcProp);
+                    }
                 }
             });
 
@@ -178,7 +181,7 @@ namespace Editor_IFC
             {
                 prS.Name = NamePropertySet;
 
-                foreach (IPropertyModel<IIfcPhysicalQuantity> property in PropertyCollection.OfType<IPropertyModel<IIfcPhysicalQuantity>>())
+                foreach (var property in PropertyCollection)
                 {
                     if (property.Property is IfcQuantityArea quantityArea)
                     {

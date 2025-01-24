@@ -19,6 +19,22 @@ namespace IFC_Viewer.IFC.Fabric
             this._ifcObjectDefinition = IFCObjectDefinition;
         }
 
+
+        public override void DeletePropertySet(BasePropertySetDefinition PropertySetDefinition)
+        {
+            if (_ifcObjectDefinition is IfcObject ifcObject)
+            {
+                IfcRelDefinesByProperties? rpRelDef =  ifcObject.IsDefinedByProperties.FirstOrDefault(prDef => prDef.RelatingPropertyDefinition == PropertySetDefinition.IFCPropertySetDefinition);
+
+                if (rpRelDef != null)
+                {
+                    ModelIFC.DeleteIFCEntity(rpRelDef);
+                }
+
+                ModelIFC.DeleteIFCEntity(PropertySetDefinition.IFCPropertySetDefinition);
+            }
+        }
+
         #region Добавление ссылок
 
         /// <summary>
@@ -82,16 +98,16 @@ namespace IFC_Viewer.IFC.Fabric
 
         #region Добавить набор характеристик
 
-        protected override void AddPropertySet(IIfcPropertySet iIfcPropertySet)
+        protected override void AddPropertySet(IIfcPropertySetDefinition iIfcPropertySet)
         {
-            IfcPropertySet? ifcPropertySet = iIfcPropertySet as IfcPropertySet;
+            IfcPropertySetDefinition? ifcPropertySetdefinition = iIfcPropertySet as IfcPropertySetDefinition;
 
             if (ifcObjectDefinition is IfcObject ifcObject)
             {
                 IfcRelDefinesByProperties ifcRelDefinesByProperties = ModelIFC.IfcStore.Instances.New<IfcRelDefinesByProperties>(relDef =>
                 {
                     relDef.RelatedObjects.Add(ifcObject);
-                    relDef.RelatingPropertyDefinition = ifcPropertySet;
+                    relDef.RelatingPropertyDefinition = ifcPropertySetdefinition;
                 });
             }
         }
@@ -100,46 +116,48 @@ namespace IFC_Viewer.IFC.Fabric
 
         #region Заполнение характеристик элемента
 
-        public bool FillCollectionPropertySet(ObservableCollection<IIfcPropertySetDefinition> CollectionPropertySet)
-        {
-            if (this.ifcObjectDefinition == null)
-            {
-                return false;
-            }
+        //public bool FillCollectionPropertySet(ObservableCollection<IIfcPropertySetDefinition> CollectionPropertySet)
+        //{
+        //    if (this.ifcObjectDefinition == null)
+        //    {
+        //        return false;
+        //    }
 
-            CollectionPropertySet.Clear();
-            if (ifcObjectDefinition is IIfcObject obj)
-            {
-                var collectionProperty = obj.IsDefinedBy.Select(it => it.RelatingPropertyDefinition)
-                    .OfType<IfcPropertySetDefinition>();
+        //    CollectionPropertySet.Clear();
+        //    if (ifcObjectDefinition is IIfcObject obj)
+        //    {
+        //        var collectionProperty = obj.IsDefinedBy.Select(it => it.RelatingPropertyDefinition)
+        //            .OfType<IfcPropertySetDefinition>();
 
-                foreach (IfcPropertySetDefinition propSetIsObj in collectionProperty)
-                {
-                    CollectionPropertySet.Add(propSetIsObj);
-                }
+        //        foreach (IfcPropertySetDefinition propSetIsObj in collectionProperty)
+        //        {
+        //            CollectionPropertySet.Add(propSetIsObj);
+        //        }
 
-                IEnumerable<IfcPropertySetDefinition> collectionTypeProperty = obj.IsTypedBy.SelectMany(it => it.RelatingType.HasPropertySets).Cast<IfcPropertySetDefinition>();
+        //        IEnumerable<IfcPropertySetDefinition> collectionTypeProperty = obj.IsTypedBy.SelectMany(it => it.RelatingType.HasPropertySets).Cast<IfcPropertySetDefinition>();
 
-                if (collectionTypeProperty != null)
-                {
-                    foreach (IfcPropertySetDefinition propSetIsType in collectionTypeProperty)
-                    {
-                        CollectionPropertySet.Add(propSetIsType);
-                    }
-                }
-            }
-            else if (ifcObjectDefinition is IIfcContext context)
-            {
-                IEnumerable<IfcPropertySetDefinition> collectionProperty = context.IsDefinedBy.Select(it => it.RelatingPropertyDefinition).OfType<IfcPropertySetDefinition>();
+        //        if (collectionTypeProperty != null)
+        //        {
+        //            foreach (IfcPropertySetDefinition propSetIsType in collectionTypeProperty)
+        //            {
+        //                CollectionPropertySet.Add(propSetIsType);
+        //            }
+        //        }
+        //    }
+            //else if (ifcObjectDefinition is IIfcContext context)
+            //{
+            //    IEnumerable<IfcPropertySetDefinition> collectionProperty = context.IsDefinedBy.Select(it => it.RelatingPropertyDefinition).OfType<IfcPropertySetDefinition>();
 
-                foreach (IfcPropertySetDefinition propSetIsObj in collectionProperty)
-                {
-                    CollectionPropertySet.Add(propSetIsObj);
-                }
-            }
+            //    foreach (IfcPropertySetDefinition propSetIsObj in collectionProperty)
+            //    {
+            //        CollectionPropertySet.Add(propSetIsObj);
+            //    }
+            //}
 
-            return true;
-        }
+        //    return true;
+        //}
+
+
 
 
         #endregion Заполнение характеристик элемента

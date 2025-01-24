@@ -108,7 +108,7 @@ namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
                         return ifcDocumentReference.ReferencedDocument?.Identification;
                     }
                 }
-                throw new ArgumentException("Exception get ValueString");
+                return string.Empty;
             }
             set
             {

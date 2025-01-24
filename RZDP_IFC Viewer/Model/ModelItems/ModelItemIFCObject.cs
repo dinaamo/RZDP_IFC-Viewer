@@ -103,7 +103,7 @@ namespace IFC_Table_View.IFC.ModelItem
         {
             if (o is BasePropertySetDefinition propertySetDefinition)
             {
-                Model.AddEntity(new List<Action> { propertySetDefinition.CreateNewProperty});
+                Model.ActionInTransaction(new List<Action> { propertySetDefinition.CreateNewProperty});
             }
         }
 
@@ -120,7 +120,7 @@ namespace IFC_Table_View.IFC.ModelItem
 
         private void OnAddPropertySetCommandExecuted(object o)
         {
-            Model.AddEntity(new List<Action> { modelEditor.CreateNewPropertySet });
+            Model.ActionInTransaction(new List<Action> { modelObjectEditor.CreateNewPropertySet });
             OnPropertyChanged("CollectionPropertySet");
         }
 
@@ -269,6 +269,7 @@ namespace IFC_Table_View.IFC.ModelItem
             if (result == MessageBoxResult.No)
             { return; }
 
+
             Model.DeleteModelObjects(CollectionNestedItems);
         }
 
@@ -293,12 +294,35 @@ namespace IFC_Table_View.IFC.ModelItem
         #endregion Выделить элемент
 
 
+        #region Действия с наборами характеристик
         public void DeletePropertySet(BasePropertySetDefinition PropertySet)
         {
-            Model.DeleteIFCEntity(PropertySet.IFCPropertySetDefinition);
+            Model.ActionInTransactionForPropertySet(new List<(Action<BasePropertySetDefinition>, BasePropertySetDefinition)>
+            {
+                (modelObjectEditor.DeletePropertySet, PropertySet)
+            });
             OnPropertyChanged("CollectionPropertySet");
         }
 
+
+        public void AddDublicatePropertySet(BasePropertySetDefinition PropertySet)
+        {
+            Model.ActionInTransactionForPropertySet(new List<(Action<BasePropertySetDefinition>, BasePropertySetDefinition)>
+            {
+                (modelObjectEditor.AddDublicatePropertySet, PropertySet)
+            });
+            OnPropertyChanged("CollectionPropertySet");
+        }
+
+        public void UnpinPropertySet(BasePropertySetDefinition PropertySet)
+        {
+            Model.ActionInTransactionForPropertySet(new List<(Action<BasePropertySetDefinition>, BasePropertySetDefinition)>
+            {
+                (modelObjectEditor.UnpinPropertySet, PropertySet)
+            });
+            OnPropertyChanged("CollectionPropertySet");
+        }
+        #endregion
 
         public IIfcObjectDefinition GetIFCObject()
         {
@@ -310,11 +334,11 @@ namespace IFC_Table_View.IFC.ModelItem
         /// </summary>
         private void InitializationModelObject()
         {
-            modelEditor = BaseEditorItem.CreateEditor(this, ModelIFC, IFCObjectDefinition);
+            modelObjectEditor = BaseEditorItem.CreateEditor(this, ModelIFC, IFCObjectDefinition);
 
             //CollectionPropertySet = modelEditor.FillCollectionPropertySet();
 
-            PropertyElement = modelEditor.GetPropertyObject();
+            PropertyElement = modelObjectEditor.GetPropertyObject();
 
             int? countPropRef = CollectionPropertySet?.SelectMany(it => it.PropertyCollection).
                                                                 Select(it => it.Property).
@@ -357,26 +381,26 @@ namespace IFC_Table_View.IFC.ModelItem
                     IsContainPropertyReferenceDownTree = false;
                 }
             }
-            else
-            {
-                IsContainPropertyReferenceDownTree = false;
-            }
+            //else
+            //{
+            //    IsContainPropertyReferenceDownTree = false;
+            //}
 
             PropertyReferenceChanged?.Invoke(this, new PropertyReferenceChangedEventArg(IsContainPropertyReferenceDownTree));
         }
 
-        private BaseEditorItem modelEditor;
+        private BaseEditorItem modelObjectEditor;
 
         /// <summary>
         /// Удаление ссылок
         /// </summary>
-        /// <param name="CollectionModelitemReferenceToDelete"></param>
-        public void DeleteReferenceToTheObject(List<BaseModelReferenceIFC> CollectionModelitemReferenceToDelete)
+        /// <param name="CollectionModelReferenceToDelete"></param>
+        public void DeleteReferenceToTheObject(IEnumerable<BaseModelReferenceIFC> CollectionModelReferenceToDelete)
         {
             try
             {
                 //Удаляем нужные параметры и наборы
-                int countPropSetContainsReference = modelEditor.DeleteReferenceToTheObject(CollectionModelitemReferenceToDelete);
+                int countPropSetContainsReference = modelObjectEditor.DeleteReferenceToTheObject(CollectionModelReferenceToDelete);
 
                 if (countPropSetContainsReference == 0)
                 {
@@ -425,7 +449,7 @@ namespace IFC_Table_View.IFC.ModelItem
         /// <param name="modelReferenceSet"></param>
         public void AddReferenceToTheObject(List<BaseModelReferenceIFC> modelReferenceSet)
         {
-            IsContainPropertyReference = modelEditor.AddReferenceToTheObject(modelReferenceSet);
+            IsContainPropertyReference = modelObjectEditor.AddReferenceToTheObject(modelReferenceSet);
 
             //Прокидываем наверх по дереву событие добавления ссылки
             PropertyReferenceChanged?.Invoke(this, new PropertyReferenceChangedEventArg(IsContainPropertyReference));
@@ -628,7 +652,7 @@ namespace IFC_Table_View.IFC.ModelItem
         ///// <summary>
         ///// Наборы характеристик
         ///// </summary>
-        public ObservableCollection<BasePropertySetDefinition> CollectionPropertySet => new ObservableCollection<BasePropertySetDefinition>(modelEditor.FillCollectionPropertySet());
+        public ObservableCollection<BasePropertySetDefinition> CollectionPropertySet => new ObservableCollection<BasePropertySetDefinition>(modelObjectEditor.FillCollectionPropertySet());
         //{
             //get
             //{

@@ -28,14 +28,24 @@
             <MenuItem Header="Файл">
                 <MenuItem
                     Command="{Binding LoadApplicationCommand}"
-                    CommandParameter="{Binding ElementName=DrawingControl}"
                     Header="Открыть">
                     <MenuItem.Icon>
                         <fa:ImageAwesome
                             Height="12"
                             Margin="0,0,3,0"
                             Foreground="DarkOrange"
-                            Icon="FolderOpen" />
+                            Icon="FolderOpen" /> 
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem
+                    Command="{Binding UpdateApplicationCommand}"
+                    Header="Обновить">
+                    <MenuItem.Icon>
+                        <fa:ImageAwesome
+                            Height="12"
+                            Margin="0,0,3,0"
+                            Foreground="DarkOrchid"
+                            Icon="Refresh" />
                     </MenuItem.Icon>
                 </MenuItem>
                 <!--  kKKKKKKKKKKKKKKKKKKKK  -->
@@ -167,13 +177,14 @@
 
             <StatusBarItem HorizontalAlignment="Right">
                 <StackPanel Orientation="Vertical">
+
                     <TextBlock Text="{Binding Path=StatusMsg, StringFormat=Статус:  \{0\}}" />
-                    <ProgressBar Margin="0,0,30,0" Width="200" HorizontalAlignment="Right" Minimum="0" Maximum="100" Name="pbStatus"  Value="{Binding Path=ProgressValue, UpdateSourceTrigger=PropertyChanged}" Height="20"  Visibility="Visible" />
+                    <ProgressBar Margin="0,0,5,0" Width="{Binding ElementName=dpProperty, Path=ActualWidth}" HorizontalAlignment="Right" Minimum="0" Maximum="100" Name="pbStatus"  Value="{Binding Path=ProgressValue, UpdateSourceTrigger=PropertyChanged}" Height="20"  Visibility="Visible" />
                     <StackPanel.Style>
                         <Style TargetType="StackPanel">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding ProgressValue}" Value="0">
-                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Setter Property="Visibility" Value="Collapsed" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -248,7 +259,7 @@
                         </StackPanel>
                     </TabItem.Header>
 
-                    <DockPanel>
+                    <DockPanel x:Name="dpProperty">
                         <Button
                             Name="ButtonProperty"
                             VerticalAlignment="Top"

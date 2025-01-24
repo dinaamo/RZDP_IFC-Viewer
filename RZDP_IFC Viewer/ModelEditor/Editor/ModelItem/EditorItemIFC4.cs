@@ -11,11 +11,11 @@ namespace IFC_Viewer.IFC.ModelItem
 {
     public class EditorItemIFC4 : BaseEditorItem
     {
-        private IfcObjectDefinition IFCObjectDefinition;
+        private IfcObjectDefinition _ifcObjectDefinition;
 
         public EditorItemIFC4(ModelItemIFCObject modelItemIFCObject, ModelIFC modelIFC, IfcObjectDefinition IFCObjectDefinition) : base(modelItemIFCObject, modelIFC, IFCObjectDefinition)
         {
-            this.IFCObjectDefinition = IFCObjectDefinition;
+            this._ifcObjectDefinition = IFCObjectDefinition;
         }
         #region Создать набор характеристик
         public override void CreateNewPropertySet()
@@ -123,6 +123,33 @@ namespace IFC_Viewer.IFC.ModelItem
 
         #endregion
 
+
+        public override void DeletePropertySet(BasePropertySetDefinition PropertySetDefinition)
+        {
+            if (_ifcObjectDefinition is IfcObject ifcObject)
+            {
+                IfcRelDefinesByProperties? rpRelDef = ifcObject.IsDefinedBy.FirstOrDefault(prDef => prDef.RelatingPropertyDefinition == PropertySetDefinition.IFCPropertySetDefinition);
+
+                if (rpRelDef != null)
+                {
+                    ModelIFC.DeleteIFCEntity(rpRelDef);
+                    
+                }
+                ModelIFC.DeleteIFCEntity(PropertySetDefinition.IFCPropertySetDefinition);
+            }
+            else if (ifcObjectDefinition is IfcContext ifcContext)
+            {
+                IfcRelDefinesByProperties? rpRelDef =  ifcContext.IsDefinedBy.FirstOrDefault(prDef => prDef.RelatingPropertyDefinition == PropertySetDefinition.IFCPropertySetDefinition);
+
+                if (rpRelDef != null)
+                {
+                    ModelIFC.DeleteIFCEntity(rpRelDef);
+
+                }
+                ModelIFC.DeleteIFCEntity(PropertySetDefinition.IFCPropertySetDefinition);
+            }
+        }
+
         #region Заполнение характеристик элемента
 
         //public bool FillCollectionPropertySet(ObservableCollection<IIfcPropertySetDefinition> CollectionPropertySet)
@@ -170,7 +197,7 @@ namespace IFC_Viewer.IFC.ModelItem
 
         #region Добавить набор характеристик
 
-        protected override void AddPropertySet(IIfcPropertySet iIfcPropertySet)
+        protected override void AddPropertySet(IIfcPropertySetDefinition iIfcPropertySet)
         {
             //IfcPropertySet? ifcPropertySet = iIfcPropertySet as IfcPropertySet;
 
@@ -178,7 +205,7 @@ namespace IFC_Viewer.IFC.ModelItem
             //{
             IfcRelDefinesByProperties ifcRelDefinesByProperties = ModelIFC.IfcStore.Instances.New<IfcRelDefinesByProperties>(relDef =>
             {
-                relDef.RelatedObjects.Add(IFCObjectDefinition);
+                relDef.RelatedObjects.Add(_ifcObjectDefinition);
                 relDef.RelatingPropertyDefinition = iIfcPropertySet;
             });
             //}

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -12,6 +13,9 @@ using IFC_Viewer.View.Windows;
 using NuGet;
 using Xbim.Common;
 using Xbim.Ifc;
+using Xbim.IO;
+using Xbim.IO.Memory;
+using Xbim.IO.Parser;
 using Xbim.ModelGeometry.Scene;
 using Xbim.Presentation;
 using static Microsoft.Isam.Esent.Interop.EnumeratedColumn;
@@ -21,7 +25,8 @@ namespace IFC_Table_View.ViewModels
 {
     internal class MainWindowViewModel : BaseViewModel
     {
-        private BackgroundWorker worker;
+        private BackgroundWorker _worker;
+        private ManualResetEvent _signal;
 
         #region Свойства
 
@@ -42,6 +47,7 @@ namespace IFC_Table_View.ViewModels
                 mainWindow.treeViewIFC.ItemsSource = Model.ModelItems;
             }
         }
+
 
         #endregion Модель
 
@@ -112,10 +118,14 @@ namespace IFC_Table_View.ViewModels
         #region Методы
 
         #region Загрузка модели
-
+        /// <summary>
+        /// Обновление прогресс бара
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void ProgressChanged(object sender, ProgressChangedEventArgs args)
         {
-            if (args.ProgressPercentage < 0 || args.ProgressPercentage > 100)
+            if (sender is null || args.ProgressPercentage < 0 || args.ProgressPercentage > 100)
                 return;
 
             Application.Current.Dispatcher.BeginInvoke(
@@ -128,48 +138,73 @@ namespace IFC_Table_View.ViewModels
 
         private void LoadModel(object sender, DoWorkEventArgs args)
         {
+            //Закрываем все дочерние окна
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                foreach (Window window in Application.Current.Windows)
+                {
+                    if (window != mainWindow)
+                    {
+                        window.Close();
+                    }
+                }
+            });
 
             try
             {
-                //using ManualResetEvent signal = new ManualResetEvent(false);
+                string path = args.Argument as string;
+                /* Версия с потоком
+                FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+                IfcStore ifcStore = IfcStore.Open(fileStream, StorageType.Ifc, XbimModelType.MemoryModel, null, XbimDBAccess.Read, _worker.ReportProgress);
+                ifcStore.FileName = path;
+                */
 
-                var path = args.Argument as string;
+                //Открываем ifcStore
+                IfcStore ifcStore = IfcStore.Open(path, null, 5000, _worker.ReportProgress, XbimDBAccess.ReadWrite);
 
-                IfcStore ifcStore = IfcStore.Open(path, null, null, worker.ReportProgress);
-                
+                //Запускаем создание геометрии
                 Task task = Task.Run(() =>
                 {
                     if (ifcStore.GeometryStore.IsEmpty)
                     {
-                        var context = new Xbim3DModelContext(ifcStore);
-                        context.CreateContext(worker.ReportProgress);
-
+                        var context = new Xbim3DModelContext(ifcStore.Model);
+                        context.CreateContext(_worker.ReportProgress);
                     }
                 });
-                
 
+                //Создаем модель
                 ModelIFC tempModel = ModelIFC.Create(ifcStore, ZoomSelected, SelectElement,
-                    worker, RefreshDCAfterDeleteEntity);
+                    _worker, RefreshDCAfterDeleteEntity);
 
+                //Ждем создания геометрии из задачи 
+                task.Wait();
                 if (tempModel != null)
                 {
-                    if (Model is not null)
+                    if (!ifcStore.GeometryStore.IsEmpty)
                     {
-                        Model.Dispose();
-                    }
-                    task.Wait();
-
-                    Application.Current.Dispatcher.BeginInvoke(() =>
-                    {
-                        if (!ifcStore.GeometryStore.IsEmpty)
+                        Application.Current.Dispatcher.BeginInvoke(() =>
                         {
+                            if (Model != null)
+                            {
+                                Model.Dispose();
+                            }
                             Model = tempModel;
                             mainWindow.WPFDrawingControl.ModelProvider.ObjectInstance = ifcStore;
                             _deleteEntity = new HashSet<IPersistEntity>();
-                        }
                     });
+                    }
+                    else
+                    {
+                        throw new FileLoadException("Ошибка загрузки файла");
+                    }
                 }
+                
             }
+            catch(FileLoadException fLex)
+            {
+                MessageBox.Show($"{fLex.Message}", "Внимание!", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка {ex}", "Внимание!", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -177,9 +212,9 @@ namespace IFC_Table_View.ViewModels
             finally
             {
                 Application.Current.Dispatcher.BeginInvoke(() =>{IsEnableWindow = true;});
-                ProgressValue = 0;
-                worker.ReportProgress(0);
-                worker.DoWork -= LoadModel;
+                //ProgressValue = 0;
+                _worker.ReportProgress(0);
+                _worker.DoWork -= LoadModel;
             }
         }
 
@@ -203,19 +238,23 @@ namespace IFC_Table_View.ViewModels
 
         public bool CloseApplication()
         {
-            //if (Model is not null && Model.IsEditModel)
-            //{
-            //    MessageBoxResult result = MessageBox.Show("Сохранить изменения в модели?", "RZDP IFC Viewer!", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+            if (Model is not null && Model.IsEditModel)
+            {
+                MessageBoxResult result = MessageBox.Show("Сохранить изменения в модели?", "RZDP IFC Viewer!", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
 
-            //    if (result == MessageBoxResult.Cancel)
-            //    {
-            //        return false;
-            //    }
-            //    else if (result == MessageBoxResult.Yes)
-            //    {
-            //        await Task.Run(() => { SaveModelAsIFC(this, new DoWorkEventArgs(Model.FilePath)); });
-            //    }
-            //}
+                if (result == MessageBoxResult.Cancel)
+                {
+                    return false;
+                }
+                else if (result == MessageBoxResult.Yes)
+                {
+                    using (_signal = new ManualResetEvent(false))
+                    {
+                        OnSaveFileCommandExecuted(this);
+                        _signal.WaitOne();
+                    }
+                }
+            }
             return true;
         }
         #endregion
@@ -231,13 +270,18 @@ namespace IFC_Table_View.ViewModels
 
             var path = args.Argument as string;
 
-            Model.SaveFile(path, worker.ReportProgress);
+            Model.SaveFile(path, _worker.ReportProgress);
 
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 IsEnableWindow = true;
             });
-            worker.DoWork -= SaveModelAsIFC;
+            _worker.DoWork -= SaveModelAsIFC;
+
+            if (_signal is not null)
+            {
+                _signal.Set();
+            }
         }
 
         private void SaveModelAsIFCXML(object sender, DoWorkEventArgs args)
@@ -249,13 +293,13 @@ namespace IFC_Table_View.ViewModels
 
             var path = args.Argument as string;
 
-            Model.SaveAsXMLFile(path, worker.ReportProgress);
+            Model.SaveAsXMLFile(path, _worker.ReportProgress);
 
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 IsEnableWindow = true;
             });
-            worker.DoWork -= SaveModelAsIFCXML;
+            _worker.DoWork -= SaveModelAsIFCXML;
         }
 
         #endregion Сохранение модели
@@ -337,6 +381,18 @@ namespace IFC_Table_View.ViewModels
 
         private void OnLoadApplicationCommandExecuted(object o)
         {
+            if (Model is not null && Model.IsEditModel)
+            { 
+                MessageBoxResult result = MessageBox.Show("В модель были внесены изменения.\n" +
+                    "При открытии нового файла изменения не будут сохранены.\n" +
+                    "Продолжить?", "RZDP IFC Viewer!", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.No)
+                {
+                    return;
+                }
+            }
+
             string path = o as string;
 
             if (string.IsNullOrEmpty(path))
@@ -348,14 +404,49 @@ namespace IFC_Table_View.ViewModels
             {
                 return;
             }
-            worker.DoWork += LoadModel;
-            worker.RunWorkerAsync(path);
+            _worker.DoWork += LoadModel;
+            _worker.RunWorkerAsync(path);
             //worker.DoWork -= LoadModel;
         }
 
         private bool CanLoadApplicationCommandExecute(object o)
         {
             return true;
+        }
+
+        #endregion Открыть_файл
+
+        #region Обновить
+
+        public ICommand UpdateApplicationCommand { get; }
+
+        private void OnUpdateApplicationCommandExecuted(object o)
+        {
+
+            if(!File.Exists(Model.FilePath))
+            {
+                MessageBox.Show($"Файл\n{Model.FilePath}\nне найден!", "Внимание", MessageBoxButton.OK, MessageBoxImage.Error);
+                return ;
+            }
+
+            if (Model.IsEditModel)
+            {
+                MessageBoxResult result = MessageBox.Show("В модель были внесены изменения.\n" +
+                    "При обновлении изменения не будут сохранены.\n" +
+                    "Продолжить?", "RZDP IFC Viewer!", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.No)
+                {
+                    return;
+                }
+            }
+            _worker.DoWork += LoadModel;
+            _worker.RunWorkerAsync(Model.FilePath);
+        }
+
+        private bool CanUpdateApplicationCommandExecute(object o)
+        {
+            return Model is not null;
         }
 
         #endregion Открыть_файл
@@ -495,8 +586,14 @@ namespace IFC_Table_View.ViewModels
 
         private void OnSaveFileCommandExecuted(object o)
         {
-            worker.DoWork += SaveModelAsIFC;
-            worker.RunWorkerAsync(Model.FilePath);
+            if (!File.Exists(Model.FilePath))
+            {
+                MessageBox.Show($"Файл\n{Model.FilePath}\nне найден!", "Внимание", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            _worker.DoWork += SaveModelAsIFC;
+            _worker.RunWorkerAsync(Model.FilePath);
         }
 
         private bool CanSaveFileCommandExecute(object o)
@@ -526,8 +623,8 @@ namespace IFC_Table_View.ViewModels
                 return;
             }
 
-            worker.DoWork += SaveModelAsIFC;
-            worker.RunWorkerAsync(path);
+            _worker.DoWork += SaveModelAsIFC;
+            _worker.RunWorkerAsync(path);
         }
 
         private bool CanSaveAsIFCFileCommandExecute(object o)
@@ -556,8 +653,8 @@ namespace IFC_Table_View.ViewModels
             {
                 return;
             }
-            worker.DoWork += SaveModelAsIFCXML;
-            worker.RunWorkerAsync(path);
+            _worker.DoWork += SaveModelAsIFCXML;
+            _worker.RunWorkerAsync(path);
         }
 
         private bool CanSaveAsIFCXMLFileCommandExecute(object o)
@@ -641,20 +738,20 @@ namespace IFC_Table_View.ViewModels
         {
             this.mainWindow = mainWindow;
             //IsEnableWindow = true;
-            worker = new BackgroundWorker();
+            _worker = new BackgroundWorker();
             mainWindow.WPFDrawingControl.DrawingControl.SelectedEntityChanged += DrawingControl_SelectedEntityChanged;
-            worker.ProgressChanged += ProgressChanged;
-            worker.WorkerReportsProgress = true;
+            _worker.ProgressChanged += ProgressChanged;
+            _worker.WorkerReportsProgress = true;
 
-            worker.DoWork += Worker_DoWork;
-            worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
+            _worker.DoWork += Worker_DoWork;
+            _worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
 
             var strArray = System.Environment.GetCommandLineArgs();
             if (strArray.Length > 1)
             {
-                worker.DoWork += LoadModel;
-                worker.RunWorkerAsync(Environment.GetCommandLineArgs()[1]);
-                worker.DoWork += LoadModel;
+                _worker.DoWork += LoadModel;
+                _worker.RunWorkerAsync(Environment.GetCommandLineArgs()[1]);
+                _worker.DoWork += LoadModel;
             }
 
             #region Комманды
@@ -663,9 +760,9 @@ namespace IFC_Table_View.ViewModels
                 OnLoadApplicationCommandExecuted,
                 CanLoadApplicationCommandExecute);
 
-            //CloseApplicationCommand = new ActionCommand(
-            //    OnCloseApplicationCommandExecuted,
-            //    CanCloseApplicationCommandExecute);
+            UpdateApplicationCommand = new ActionCommand(
+                OnUpdateApplicationCommandExecuted,
+                CanUpdateApplicationCommandExecute);
 
             AddIFCTableCommand = new ActionCommand(
                 OnAddIFCTableCommandExecuted,

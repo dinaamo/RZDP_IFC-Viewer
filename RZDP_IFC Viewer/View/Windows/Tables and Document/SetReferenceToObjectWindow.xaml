@@ -17,6 +17,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
+            <ColumnDefinition Width="5"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
@@ -40,7 +41,7 @@
             </Button.CommandParameter>
         </Button>
 
-        <GroupBox Header="Объекты" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+        <GroupBox Header="Объекты" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">
             <DataGrid x:Name="dgObjects"
                       IsReadOnly="True"
                       AutoGenerateColumns="False"
@@ -85,7 +86,12 @@
             </DataGrid>
         </GroupBox>
 
-        <GroupBox Header="Документы" Grid.Row="2" Grid.Column="1">
+        <GridSplitter
+                    Grid.Row="2" Grid.Column="1" Margin="0,15,0,0"
+                    Width="20" HorizontalAlignment="Center">
+        </GridSplitter>
+
+        <GroupBox Header="Документы" Grid.Row="2" Grid.Column="2">
             <DataGrid x:Name="dgDocument"
                     AutoGenerateColumns="False"
                     IsReadOnly="True"
