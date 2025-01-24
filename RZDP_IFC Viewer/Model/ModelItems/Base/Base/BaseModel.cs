@@ -1,4 +1,4 @@
-﻿using IFC_Table_View.IFC.Model;
+﻿using RZDP_IFC_Viewer.IFC.Model;
 
 namespace RZDP_IFC_Viewer.IFC.Editor.Base
 {

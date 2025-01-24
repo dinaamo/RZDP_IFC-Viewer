@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Excel = Microsoft.Office.Interop.Excel;
 
-namespace IFC_Table_View.HelperExcel
+namespace RZDP_IFC_Viewer.HelperExcel
 {
     internal class ExcelHelper : IDisposable
     {

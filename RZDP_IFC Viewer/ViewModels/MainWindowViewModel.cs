@@ -4,11 +4,11 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using IFC_Table_View.IFC.Model;
-using IFC_Table_View.IFC.ModelItem;
-using IFC_Table_View.Infracrucrure.Commands;
-using IFC_Table_View.View.Windows;
-using IFC_Table_View.ViewModels.Base;
+using RZDP_IFC_Viewer.IFC.Model;
+using RZDP_IFC_Viewer.IFC.ModelItem;
+using RZDP_IFC_Viewer.Infracrucrure.Commands;
+using RZDP_IFC_Viewer.View.Windows;
+using RZDP_IFC_Viewer.ViewModels.Base;
 using IFC_Viewer.View.Windows;
 using NuGet;
 using Xbim.Common;
@@ -21,7 +21,7 @@ using Xbim.Presentation;
 using static Microsoft.Isam.Esent.Interop.EnumeratedColumn;
 using static Xbim.Presentation.DrawingControl3D;
 
-namespace IFC_Table_View.ViewModels
+namespace RZDP_IFC_Viewer.ViewModels
 {
     internal class MainWindowViewModel : BaseViewModel
     {

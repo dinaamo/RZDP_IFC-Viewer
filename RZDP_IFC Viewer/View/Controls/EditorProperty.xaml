@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wind="clr-namespace:RZDP_IFC_Viewer"
     Height="auto"
     MinWidth="200"
     
@@ -18,6 +19,7 @@
         
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="12"/>
         </Style>
 
         <ContextMenu x:Key="TextBoxMenuPropertySet">
@@ -70,7 +72,7 @@
     </UserControl.Resources>
     <Grid Margin="5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.8*" MinWidth="200"/>
+            <ColumnDefinition Width="0.8*" MinWidth="220"/>
             <ColumnDefinition Width="2" />
             <ColumnDefinition Width="*" MinWidth="300" />
         </Grid.ColumnDefinitions>
@@ -89,6 +91,7 @@
                 <TextBlock Text="Наименование элемента: " />
                 <TextBox
                     x:Name="tbName"
+                    IsEnabled="{Binding Path=(wind:MainWindow.IsEnabled)}"
                     Focusable="False"
                     LostFocus="tbName_LostFocus"
                     MouseDoubleClick="TextBox_MouseDoubleClick"
@@ -120,6 +123,7 @@
                 </Grid.RowDefinitions>
                 <StackPanel Margin="3" Orientation="Horizontal" Grid.Row="0">
                     <Button Click="Button_Click" ToolTip="Добавить новый набор"
+                            IsEnabled="{Binding Path=(wind:MainWindow.IsEnabled)}"
                             Command="{Binding AddPropertySetCommand}">
                         <fa:ImageAwesome
                             Width="25"
@@ -136,7 +140,7 @@
                     SelectionMode="Single" 
                     AutoGenerateColumns="False"
                     IsSynchronizedWithCurrentItem="True"
-                    ItemsSource="{Binding Path=CollectionPropertySet, UpdateSourceTrigger=LostFocus}">
+                    ItemsSource="{Binding Path=CollectionPropertySet, UpdateSourceTrigger=LostFocus}" Margin="3,0,-3,0">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn
                             Width="*"
@@ -150,6 +154,7 @@
                                     <TextBox
                                         Text="{Binding Path=NamePropertySet, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                         Focusable="False"
+                                        IsReadOnly="{Binding Path=(wind:MainWindow.IsReadOnly)}"
                                         Foreground="Black"
                                         MouseDoubleClick="TextBox_MouseDoubleClick"
                                         LostFocus="tbName_LostFocus" 
@@ -160,7 +165,7 @@
                         </DataGridTemplateColumn>
                         <DataGridTemplateColumn
                             Width="70"
-                            MinWidth="30"
+                            MinWidth="70"
                             SortMemberPath="{Binding Path=CountRelatedObjectsInstanse}"
                             CanUserSort="False"
                             Header="Экземпляр"
@@ -176,8 +181,8 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTemplateColumn
-                           Width="40"
-                           MinWidth="20"
+                           Width="35"
+                           MinWidth="35"
                            SortMemberPath="{Binding Path=CountRelatedObjectsType}"
                            CanUserSort="False"
                            Header="Тип"
@@ -220,6 +225,7 @@
                     Orientation="Horizontal">
                     <Button ToolTip="Добавить новое свойство"
                             Command="{Binding AddPropertyCommand}" 
+                            IsEnabled="{Binding Path=(wind:MainWindow.IsEnabled)}"
                             CommandParameter="{Binding ElementName=dgPropertySet, Path=SelectedItem}">
                         <fa:ImageAwesome
                             Width="25"
@@ -250,6 +256,7 @@
                                     <TextBox
                                             Text="{Binding Path=NameProperty, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                             Focusable="False"
+                                            IsReadOnly="{Binding Path=(wind:MainWindow.IsReadOnly)}"
                                             Foreground="Black"
                                             MouseDoubleClick="TextBox_MouseDoubleClick"
                                             LostFocus="tbName_LostFocus" 
@@ -269,6 +276,7 @@
                                     <TextBox
                                             Text="{Binding Path=ValueString, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                             Focusable="False"
+                                            IsReadOnly="{Binding Path=(wind:MainWindow.IsReadOnly)}"
                                             Foreground="Black"
                                             MouseDoubleClick="TextBox_MouseDoubleClick"
                                             LostFocus="tbName_LostFocus" 

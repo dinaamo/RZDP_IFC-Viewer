@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using Editor_IFC;
-using IFC_Table_View.IFC.Model;
-using IFC_Table_View.IFC.ModelItem;
+using RZDP_IFC_Viewer.IFC.Model;
+using RZDP_IFC_Viewer.IFC.ModelItem;
 using IFC_Viewer.IFC.Fabric;
 using IFC_Viewer.IFC.ModelItem;
 using RZDP_IFC_Viewer.IFC.Editor.Base;

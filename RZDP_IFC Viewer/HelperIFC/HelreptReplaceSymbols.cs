@@ -1,4 +1,4 @@
-﻿namespace IFC_Table_View.HelperIFC
+﻿namespace RZDP_IFC_Viewer.HelperIFC
 {
     internal static class HelreptReplaceSymbols
     {

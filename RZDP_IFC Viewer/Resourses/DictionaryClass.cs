@@ -1,10 +1,10 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using IFC_Table_View.IFC.ModelItem;
-using IFC_Table_View.View.Windows;
+using RZDP_IFC_Viewer.IFC.ModelItem;
+using RZDP_IFC_Viewer.View.Windows;
 
-namespace IFC_Table_View.Resourses
+namespace RZDP_IFC_Viewer.Resourses
 {
     public partial class DictionaryClass
     {

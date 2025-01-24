@@ -1,12 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
-using IFC_Table_View.IFC.Model;
-using IFC_Table_View.Infracrucrure;
+using RZDP_IFC_Viewer.IFC.Model;
+using RZDP_IFC_Viewer.Infracrucrure;
 using RZDP_IFC_Viewer.IFC.Editor.Base;
 using Xbim.Common;
 
-namespace IFC_Table_View.IFC.ModelItem
+namespace RZDP_IFC_Viewer.IFC.ModelItem
 {
     public abstract class BaseModelItemIFC : BaseModel, INotifyPropertyChanged
     {

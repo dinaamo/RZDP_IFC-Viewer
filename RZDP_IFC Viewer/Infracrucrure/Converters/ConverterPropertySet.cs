@@ -1,9 +1,9 @@
 ﻿using System.Globalization;
 using System.Windows.Data;
-using IFC_Table_View.IFC.ModelItem;
+using RZDP_IFC_Viewer.IFC.ModelItem;
 using Xbim.Ifc4.Interfaces;
 
-namespace IFC_Table_View.Infracrucrure.Converter
+namespace RZDP_IFC_Viewer.Infracrucrure.Converter
 {
     // <summary>
     /// Возвращаем наименование характеристики

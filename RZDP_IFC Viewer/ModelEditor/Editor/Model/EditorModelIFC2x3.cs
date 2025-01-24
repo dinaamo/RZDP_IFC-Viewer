@@ -1,6 +1,6 @@
 ﻿using System.Data;
-using IFC_Table_View.IFC.Model;
-using IFC_Table_View.ViewModels;
+using RZDP_IFC_Viewer.IFC.Model;
+using RZDP_IFC_Viewer.ViewModels;
 using IFC_Viewer.IFC.Base;
 using Xbim.Ifc2x3.ExternalReferenceResource;
 using Xbim.Ifc2x3.MeasureResource;

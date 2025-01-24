@@ -1,10 +1,11 @@
 ﻿<Window
-    x:Class="IFC_Table_View.View.Windows.SearchAndEditWindow"
+    x:Class="RZDP_IFC_Viewer.View.Windows.SearchAndEditWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="clr-namespace:IFC_Table_View.ViewModels"
+    xmlns:vm="clr-namespace:RZDP_IFC_Viewer.ViewModels"
+    xmlns:wind="clr-namespace:RZDP_IFC_Viewer"
     xmlns:ep="clr-namespace:RZDP_IFC_Viewer.View.Controls"
     Title="Поиск и групповое редактирование элементов"
     Width="auto"
@@ -23,11 +24,11 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.5*" MinWidth="350" />
-            <ColumnDefinition Width="2" />
-            <ColumnDefinition Width="0.8*" MinWidth="350" />
-            <ColumnDefinition Width="2" />
-            <ColumnDefinition Width="1.2*" MinWidth="{Binding ElementName=LBEditor, Path=ActualWidth}" />
+            <ColumnDefinition Width="0.4*" MinWidth="350" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="0.7*" MinWidth="350" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="1.3*" MinWidth="500" />
         </Grid.ColumnDefinitions>
 
         <StackPanel Orientation="Vertical">
@@ -194,8 +195,8 @@
                                 Command="{Binding PaintElements}" />
                 </StackPanel>
             </DockPanel>
-            
-            <GroupBox Header="Групповые операции" Padding="2" Grid.Column="0" Margin="5">
+
+            <GroupBox Header="Групповые операции" Padding="2" Grid.Column="0" Margin="5" Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}">
 
                     <StackPanel DockPanel.Dock="Left" HorizontalAlignment="Center">
 
@@ -251,20 +252,20 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn
                         x:Name="col0"
-                        MinWidth="100"
+                        MinWidth="80"
                         Width="auto"
                         Binding="{Binding Path=IFCObjectGUID}"
                         Header="IFCObjectGUID" />
                     <DataGridTextColumn
                         x:Name="col1"
                         Width="auto"
-                        MinWidth="80"
+                        MinWidth="70"
                         Binding="{Binding Path=IFCClass}"
                         Header="Класс IFC" />
                     <DataGridTextColumn
                         x:Name="col2"
                         Width="*"
-                        MinWidth="100"
+                        MinWidth="80"
                         Binding="{Binding Path=IFCObjectName}"
                         Header="Имя Элемента" />
                 </DataGrid.Columns>

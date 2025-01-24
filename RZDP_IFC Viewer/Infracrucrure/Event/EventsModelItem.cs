@@ -1,4 +1,4 @@
-﻿namespace IFC_Table_View.Infracrucrure
+﻿namespace RZDP_IFC_Viewer.Infracrucrure
 {
     public class PropertyReferenceChangedEventArg : EventArgs
     {

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace IFC_Table_View.ViewModels.Base
+namespace RZDP_IFC_Viewer.ViewModels.Base
 {
     internal abstract class BaseViewModel : INotifyPropertyChanged, IDisposable
     {

@@ -7,15 +7,15 @@ using System.Threading.Tasks.Dataflow;
 using System.Windows;
 using System.Windows.Documents;
 using Editor_IFC;
-using IFC_Table_View.IFC.ModelItem;
-using IFC_Table_View.ViewModels;
+using RZDP_IFC_Viewer.IFC.ModelItem;
+using RZDP_IFC_Viewer.ViewModels;
 using IFC_Viewer.IFC.Base;
 using Xbim.Common;
 using Xbim.Ifc;
 using Xbim.Ifc4.Interfaces;
 using Xbim.Ifc4.PropertyResource;
 
-namespace IFC_Table_View.IFC.Model
+namespace RZDP_IFC_Viewer.IFC.Model
 {
     public class ModelIFC : IDisposable
     {

@@ -3,18 +3,18 @@ using System.Data;
 using System.Windows;
 using System.Windows.Input;
 using Editor_IFC;
-using IFC_Table_View.IFC.Model;
-using IFC_Table_View.Infracrucrure;
-using IFC_Table_View.Infracrucrure.Commands;
-using IFC_Table_View.Infracrucrure.FindObjectException;
-using IFC_Table_View.View.Windows;
+using RZDP_IFC_Viewer.IFC.Model;
+using RZDP_IFC_Viewer.Infracrucrure;
+using RZDP_IFC_Viewer.Infracrucrure.Commands;
+using RZDP_IFC_Viewer.Infracrucrure.FindObjectException;
+using RZDP_IFC_Viewer.View.Windows;
 using IFC_Viewer.IFC.Base;
 using IFC_Viewer.View.Windows;
 using RZDP_IFC_Viewer.View.Windows;
 using Xbim.Ifc4.Interfaces;
 using static Microsoft.Isam.Esent.Interop.EnumeratedColumn;
 
-namespace IFC_Table_View.IFC.ModelItem
+namespace RZDP_IFC_Viewer.IFC.ModelItem
 {
     public class ModelItemIFCObject : BaseModelItemIFC
     {

@@ -1,12 +1,12 @@
 ﻿using System.Data;
 using System.Windows.Input;
-using IFC_Table_View.IFC.Model;
-using IFC_Table_View.Infracrucrure.Commands;
+using RZDP_IFC_Viewer.IFC.Model;
+using RZDP_IFC_Viewer.Infracrucrure.Commands;
 using Xbim.Common;
 using Xbim.Ifc;
 using Xbim.Ifc4.Interfaces;
 
-namespace IFC_Table_View.IFC.ModelItem
+namespace RZDP_IFC_Viewer.IFC.ModelItem
 {
     public abstract class BaseModelReferenceIFC : BaseModelItemIFC
     {

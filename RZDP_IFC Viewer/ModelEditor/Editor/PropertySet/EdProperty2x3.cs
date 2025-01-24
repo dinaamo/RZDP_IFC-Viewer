@@ -1,5 +1,5 @@
-﻿using IFC_Table_View.IFC.Model;
-using IFC_Table_View.IFC.ModelItem;
+﻿using RZDP_IFC_Viewer.IFC.Model;
+using RZDP_IFC_Viewer.IFC.ModelItem;
 using RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base;
 using Xbim.Ifc2x3.MeasureResource;
 using Xbim.Ifc2x3.PropertyResource;
@@ -23,143 +23,140 @@ namespace Editor_IFC
 
         protected override void SetNewValueForProperty<T>(string newValueString, T simpleValue)
         {
-            IfcValue newValue = null;
             newValueString = newValueString.Replace(',', '.');
+            var ifcSingleValue = Property as IfcPropertySingleValue;
 
-            if (Property is IfcPropertySingleValue ifcSingleValue)
+            if (simpleValue is null)
             {
-                try
-                {
-                    if (simpleValue is IfcReal)
-                    {
-                        newValue = new IfcReal(newValueString);
-                    }
-                    else if (simpleValue is IfcInteger)
-                    {
-                        newValue = new IfcInteger(newValueString);
-                    }
-                    else if (simpleValue is IfcBoolean)
-                    {
-                        newValue = new IfcBoolean(newValueString);
-                    }
-                    else if (simpleValue is IfcLogical)
-                    {
-                        newValue = new IfcLogical(newValueString);
-                    }
-                    else if (simpleValue is IfcIdentifier)
-                    {
-                        newValue = new IfcIdentifier(newValueString);
-                    }
-                    else if (simpleValue is IfcLabel)
-                    {
-                        newValue = new IfcLabel(newValueString);
-                    }
-                    else if (simpleValue is IfcTimeStamp)
-                    {
-                        newValue = new IfcTimeStamp(newValueString);
-                    }
-                    else if (simpleValue is IfcAmountOfSubstanceMeasure)
-                    {
-                        newValue = new IfcAmountOfSubstanceMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcAreaMeasure)
-                    {
-                        newValue = new IfcAreaMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcContextDependentMeasure)
-                    {
-                        newValue = new IfcContextDependentMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcCountMeasure)
-                    {
-                        newValue = new IfcCountMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcDescriptiveMeasure)
-                    {
-                        newValue = new IfcDescriptiveMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcElectricCurrentMeasure)
-                    {
-                        newValue = new IfcElectricCurrentMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcLengthMeasure)
-                    {
-                        newValue = new IfcLengthMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcLuminousIntensityMeasure)
-                    {
-                        newValue = new IfcLuminousIntensityMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcMassMeasure)
-                    {
-                        newValue = new IfcMassMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcNormalisedRatioMeasure)
-                    {
-                        newValue = new IfcNormalisedRatioMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcNumericMeasure)
-                    {
-                        newValue = new IfcNumericMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcParameterValue)
-                    {
-                        newValue = new IfcParameterValue(newValueString);
-                    }
-                    else if (simpleValue is IfcPlaneAngleMeasure)
-                    {
-                        newValue = new IfcPlaneAngleMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcPositiveLengthMeasure)
-                    {
-                        newValue = new IfcPositiveLengthMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcPositivePlaneAngleMeasure)
-                    {
-                        newValue = new IfcPositivePlaneAngleMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcPositiveRatioMeasure)
-                    {
-                        newValue = new IfcPositiveRatioMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcRatioMeasure)
-                    {
-                        newValue = new IfcRatioMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcSolidAngleMeasure)
-                    {
-                        newValue = new IfcSolidAngleMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcThermodynamicTemperatureMeasure)
-                    {
-                        newValue = new IfcThermodynamicTemperatureMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcTimeMeasure)
-                    {
-                        newValue = new IfcTimeMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcVolumeMeasure)
-                    {
-                        newValue = new IfcVolumeMeasure(newValueString);
-                    }
-                    else if (simpleValue is IfcText)
-                    {
-                        newValue = new IfcText(newValueString);
-                    }
-                }
-                catch (FormatException)
-                {
-                    //ifcSingleValue.NominalValue = new IfcText(newValueString);
-                }
+                ifcSingleValue.NominalValue = new IfcText(newValueString);
+                return;
+            }
 
-                if (newValue is null)
+            try
+            {
+                if (simpleValue is IfcReal)
+                {
+                    ifcSingleValue.NominalValue = new IfcReal(newValueString);
+                }
+                if (simpleValue is IfcReal)
+                {
+                    ifcSingleValue.NominalValue = new IfcReal(newValueString);
+                }
+                else if (simpleValue is IfcInteger)
+                {
+                    ifcSingleValue.NominalValue = new IfcInteger(newValueString);
+                }
+                else if (simpleValue is IfcBoolean)
+                {
+                    ifcSingleValue.NominalValue = new IfcBoolean(newValueString);
+                }
+                else if (simpleValue is IfcLogical)
+                {
+                    ifcSingleValue.NominalValue = new IfcLogical(newValueString);
+                }
+                else if (simpleValue is IfcIdentifier)
+                {
+                    ifcSingleValue.NominalValue = new IfcIdentifier(newValueString);
+                }
+                else if (simpleValue is IfcLabel)
+                {
+                    ifcSingleValue.NominalValue = new IfcLabel(newValueString);
+                }
+                else if (simpleValue is IfcTimeStamp)
+                {
+                    ifcSingleValue.NominalValue = new IfcTimeStamp(newValueString);
+                }
+                else if (simpleValue is IfcAmountOfSubstanceMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcAmountOfSubstanceMeasure(newValueString);
+                }
+                else if (simpleValue is IfcAreaMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcAreaMeasure(newValueString);
+                }
+                else if (simpleValue is IfcContextDependentMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcContextDependentMeasure(newValueString);
+                }
+                else if (simpleValue is IfcCountMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcCountMeasure(newValueString);
+                }
+                else if (simpleValue is IfcDescriptiveMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcDescriptiveMeasure(newValueString);
+                }
+                else if (simpleValue is IfcElectricCurrentMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcElectricCurrentMeasure(newValueString);
+                }
+                else if (simpleValue is IfcLengthMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcLengthMeasure(newValueString);
+                }
+                else if (simpleValue is IfcLuminousIntensityMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcLuminousIntensityMeasure(newValueString);
+                }
+                else if (simpleValue is IfcMassMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcMassMeasure(newValueString);
+                }
+                else if (simpleValue is IfcNormalisedRatioMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcNormalisedRatioMeasure(newValueString);
+                }
+                else if (simpleValue is IfcNumericMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcNumericMeasure(newValueString);
+                }
+                else if (simpleValue is IfcParameterValue)
+                {
+                    ifcSingleValue.NominalValue = new IfcParameterValue(newValueString);
+                }
+                else if (simpleValue is IfcPlaneAngleMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcPlaneAngleMeasure(newValueString);
+                }
+                else if (simpleValue is IfcPositiveLengthMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcPositiveLengthMeasure(newValueString);
+                }
+                else if (simpleValue is IfcPositivePlaneAngleMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcPositivePlaneAngleMeasure(newValueString);
+                }
+                else if (simpleValue is IfcPositiveRatioMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcPositiveRatioMeasure(newValueString);
+                }
+                else if (simpleValue is IfcRatioMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcRatioMeasure(newValueString);
+                }
+                else if (simpleValue is IfcSolidAngleMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcSolidAngleMeasure(newValueString);
+                }
+                else if (simpleValue is IfcThermodynamicTemperatureMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcThermodynamicTemperatureMeasure(newValueString);
+                }
+                else if (simpleValue is IfcTimeMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcTimeMeasure(newValueString);
+                }
+                else if (simpleValue is IfcVolumeMeasure)
+                {
+                    ifcSingleValue.NominalValue = new IfcVolumeMeasure(newValueString);
+                }
+                else if (simpleValue is IfcText)
                 {
                     ifcSingleValue.NominalValue = new IfcText(newValueString);
                 }
-                else
-                {
-                    ifcSingleValue.NominalValue = newValue;
-                }
+            }
+            catch (FormatException)
+            {
             }
         }
     }

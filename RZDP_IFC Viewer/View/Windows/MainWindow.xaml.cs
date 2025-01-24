@@ -2,20 +2,30 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using IFC_Table_View.IFC.ModelItem;
-using IFC_Table_View.Infracrucrure.FindObjectException;
-using IFC_Table_View.View.Windows;
-using IFC_Table_View.ViewModels;
+using RZDP_IFC_Viewer.IFC.ModelItem;
+using RZDP_IFC_Viewer.Infracrucrure.FindObjectException;
+using RZDP_IFC_Viewer.View.Windows;
+using RZDP_IFC_Viewer.ViewModels;
 using RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base;
 using Xbim.Ifc4.Interfaces;
 
-namespace IFC_Table_View
+namespace RZDP_IFC_Viewer
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        //public static bool IsReadOnly { get; private set; } = true;
+        //public static bool IsEnabled { get; private set; } = false;
+        //public static Visibility IsVisibility { get; private set; } = Visibility.Collapsed;
+
+        public static bool IsReadOnly { get; private set; } = false;
+        public static bool IsEnabled { get; private set; } = true;
+        public static Visibility IsVisibility { get; private set; } = Visibility.Visible;
+
+
+
         public MainWindow()
         {
             InitializeComponent();

@@ -2,9 +2,9 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
-using IFC_Table_View.IFC.Model;
-using IFC_Table_View.IFC.ModelItem;
-using IFC_Table_View.Infracrucrure.Commands;
+using RZDP_IFC_Viewer.IFC.Model;
+using RZDP_IFC_Viewer.IFC.ModelItem;
+using RZDP_IFC_Viewer.Infracrucrure.Commands;
 using RZDP_IFC_Viewer.IFC.Editor.Base;
 using RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base;
 using Xbim.Ifc2x3.PropertyResource;

@@ -1,6 +1,6 @@
-﻿using IFC_Table_View.IFC.ModelItem;
+﻿using RZDP_IFC_Viewer.IFC.ModelItem;
 
-namespace IFC_Table_View.Infracrucrure.FindObjectException
+namespace RZDP_IFC_Viewer.Infracrucrure.FindObjectException
 {
     internal class FindObjectException : Exception
     {

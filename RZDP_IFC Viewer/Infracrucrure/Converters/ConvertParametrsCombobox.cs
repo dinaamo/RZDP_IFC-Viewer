@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Windows.Data;
 
-namespace IFC_Table_View.Infracrucrure.Converter
+namespace RZDP_IFC_Viewer.Infracrucrure.Converter
 {
     internal class ConvertParametersMultibuilding : IMultiValueConverter
     {

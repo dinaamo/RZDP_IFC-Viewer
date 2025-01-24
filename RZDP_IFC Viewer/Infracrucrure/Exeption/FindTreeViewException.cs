@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace IFC_Table_View.Infracrucrure.FindObjectException
+namespace RZDP_IFC_Viewer.Infracrucrure.FindObjectException
 {
     internal class FindTreeViewException : Exception
     {

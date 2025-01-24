@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Data;
 
-namespace IFC_Table_View.Infracrucrure.Converter
+namespace RZDP_IFC_Viewer.Infracrucrure.Converter
 {
     //Конвертер видимости значка
     internal class ConverterImageVisibility : IValueConverter

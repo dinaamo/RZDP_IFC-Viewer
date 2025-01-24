@@ -1,9 +1,9 @@
 ﻿using System.CodeDom;
 using System.Windows;
-using IFC_Table_View.IFC.ModelItem;
-using IFC_Table_View.ViewModels;
+using RZDP_IFC_Viewer.IFC.ModelItem;
+using RZDP_IFC_Viewer.ViewModels;
 
-namespace IFC_Table_View.View.Windows
+namespace RZDP_IFC_Viewer.View.Windows
 {
     /// <summary>
     /// Логика взаимодействия для SearchWindow.xaml

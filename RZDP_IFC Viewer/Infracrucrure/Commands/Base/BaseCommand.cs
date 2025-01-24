@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace IFC_Table_View.Infracrucrure.Commands.Base
+namespace RZDP_IFC_Viewer.Infracrucrure.Commands.Base
 {
     internal abstract class BaseCommand : ICommand
     {

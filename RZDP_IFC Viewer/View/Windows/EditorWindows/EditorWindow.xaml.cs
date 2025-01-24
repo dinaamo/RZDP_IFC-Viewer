@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using IFC_Table_View.IFC.ModelItem;
+using RZDP_IFC_Viewer.IFC.ModelItem;
 
 namespace RZDP_IFC_Viewer.View.Windows
 {

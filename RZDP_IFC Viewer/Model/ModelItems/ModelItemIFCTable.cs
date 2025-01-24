@@ -1,14 +1,14 @@
 ﻿using System.Data;
 using System.Text.RegularExpressions;
 using System.Windows;
-using IFC_Table_View.HelperIFC;
-using IFC_Table_View.IFC.Model;
-using IFC_Table_View.View.Windows;
+using RZDP_IFC_Viewer.HelperIFC;
+using RZDP_IFC_Viewer.IFC.Model;
+using RZDP_IFC_Viewer.View.Windows;
 using Xbim.Ifc;
 using Xbim.Ifc4.Interfaces;
 using Xbim.Ifc4.MeasureResource;
 
-namespace IFC_Table_View.IFC.ModelItem
+namespace RZDP_IFC_Viewer.IFC.ModelItem
 {
     public class ModelItemIFCTable : BaseModelReferenceIFC
     {

@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using IFC_Table_View.ViewModels;
+using RZDP_IFC_Viewer.ViewModels;
 
 namespace IFC_Viewer.View.Windows
 {

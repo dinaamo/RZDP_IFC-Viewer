@@ -1,7 +1,7 @@
 ﻿using System.Windows;
-using IFC_Table_View.Infracrucrure.Commands.Base;
+using RZDP_IFC_Viewer.Infracrucrure.Commands.Base;
 
-namespace IFC_Table_View.Infracrucrure.Commands
+namespace RZDP_IFC_Viewer.Infracrucrure.Commands
 {
     //internal class CloseApplicationCommand : BaseCommand
     //{

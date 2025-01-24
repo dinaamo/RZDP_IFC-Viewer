@@ -1,6 +1,6 @@
 ﻿using System.Windows;
-using IFC_Table_View.IFC.ModelItem;
-using IFC_Table_View.ViewModels;
+using RZDP_IFC_Viewer.IFC.ModelItem;
+using RZDP_IFC_Viewer.ViewModels;
 using RZDP_IFC_Viewer.View.Windows;
 
 namespace IFC_Viewer.View.Windows

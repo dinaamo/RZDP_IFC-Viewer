@@ -1,11 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Input;
-using IFC_Table_View.IFC.ModelItem;
-using IFC_Table_View.Infracrucrure.Commands;
-using IFC_Table_View.ViewModels.Base;
+using RZDP_IFC_Viewer.IFC.ModelItem;
+using RZDP_IFC_Viewer.Infracrucrure.Commands;
+using RZDP_IFC_Viewer.ViewModels.Base;
 
-namespace IFC_Table_View.ViewModels
+namespace RZDP_IFC_Viewer.ViewModels
 {
     internal class SearchAndEditWindowViewModel : BaseViewModel
     {

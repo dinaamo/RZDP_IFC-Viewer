@@ -1,10 +1,11 @@
 ﻿<ResourceDictionary
-    x:Class="IFC_Table_View.Resourses.DictionaryClass"
+    x:Class="RZDP_IFC_Viewer.Resourses.DictionaryClass"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:fa="http://schemas.fontawesome.io/icons/"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mi="clr-namespace:IFC_Table_View.IFC.ModelItem"
-    xmlns:cnv="clr-namespace:IFC_Table_View.Infracrucrure.Converter">
+    xmlns:mi="clr-namespace:RZDP_IFC_Viewer.IFC.ModelItem"
+    xmlns:cnv="clr-namespace:RZDP_IFC_Viewer.Infracrucrure.Converter"
+    xmlns:wind="clr-namespace:RZDP_IFC_Viewer">
 
     <cnv:ConvertItemTreeName x:Key="ConvTreeItem" />
     <cnv:ConvertItemStatusGUID x:Key="ConvStatusGuid" />
@@ -26,6 +27,9 @@
     <cnv:ConvertTest x:Key="ConvertTest" />
     <cnv:ConvertParametersMultibuilding x:Key="ConvertParametersMultibuilding" />
     <!--<cnv:ConvertItemGetCollectionProperty x:Key="ConvertItemGetCollectionProperty" />-->
+
+
+    <!--<wind:MainWindow x:Key="Global"/>-->
 
     <Style TargetType="{x:Type DataGrid}">
         <Setter Property="ColumnWidth" Value="300" />
@@ -244,7 +248,7 @@
                         Command="{Binding EditElementsCommand}"
                         CommandParameter="{Binding}"
                         Header="Редактирование"
-                        ToolTip="">
+                        ToolTip="" Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}">
                         <MenuItem.Icon>
                             <fa:ImageAwesome
                                 Height="12"
@@ -266,11 +270,11 @@
                             Icon="Search" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <Separator />
+                    <Separator Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}"/>
                     <MenuItem
                             Command="{Binding AddReferenceToTheTable}"
                             CommandParameter="{Binding}"
-                            Header="Задать ссылки">
+                            Header="Задать ссылки" Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}">
                         <MenuItem.Icon>
                             <fa:ImageAwesome
                             Height="12"
@@ -282,7 +286,7 @@
                     <MenuItem
                             Command="{Binding DeleteReferenceToTheTable}"
                             CommandParameter="{Binding}"
-                            Header="Удалить ссылки">
+                            Header="Удалить ссылки" Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}">
                         <MenuItem.Icon>
                             <fa:ImageAwesome
                             Height="12"
@@ -291,11 +295,11 @@
                             Icon="ExternalLinkSquare" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <Separator />
+                    <Separator Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}"/>
                     <MenuItem
                             Command="{Binding DeleteModelObject}"
                             CommandParameter="{Binding}"
-                            Header="Удалить элемент">
+                            Header="Удалить элемент" Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}">
                         <MenuItem.Icon>
                           <fa:ImageAwesome
                             Height="12"
@@ -356,6 +360,7 @@
                     <MenuItem
                             Command="{Binding DeleteReferenceCommand}"
                             CommandParameter="{Binding}"
+                            Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}"
                             Header="Удалить таблицу">
                         <MenuItem.Icon>
                             <fa:ImageAwesome
@@ -429,7 +434,7 @@
                     <MenuItem
                                 Command="{Binding DeleteReferenceCommand}"
                                 CommandParameter="{Binding}"
-                                Header="Удалить ссылку на документ">
+                                Header="Удалить ссылку на документ" Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}">
                         <MenuItem.Icon>
                             <fa:ImageAwesome
                                 Height="12"

@@ -2,7 +2,7 @@
 using System.Windows.Data;
 using Editor_IFC;
 
-namespace IFC_Table_View.Infracrucrure.Converter
+namespace RZDP_IFC_Viewer.Infracrucrure.Converter
 {
     /// <summary>
     /// Возвращаем тип данных

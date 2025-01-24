@@ -1,9 +1,9 @@
 ﻿using System.Collections.ObjectModel;
-using IFC_Table_View.IFC.Model;
+using RZDP_IFC_Viewer.IFC.Model;
 using Xbim.Ifc;
 using Xbim.Ifc4.Interfaces;
 
-namespace IFC_Table_View.IFC.ModelItem
+namespace RZDP_IFC_Viewer.IFC.ModelItem
 {
     public class ModelItemIFCFile : BaseModelItemIFC
     {

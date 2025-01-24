@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using Editor_IFC;
-using IFC_Table_View.IFC.Model;
-using IFC_Table_View.IFC.ModelItem;
+using RZDP_IFC_Viewer.IFC.Model;
+using RZDP_IFC_Viewer.IFC.ModelItem;
 using RZDP_IFC_Viewer.IFC.Editor.Base;
 using Xbim.Ifc4.Interfaces;
 
