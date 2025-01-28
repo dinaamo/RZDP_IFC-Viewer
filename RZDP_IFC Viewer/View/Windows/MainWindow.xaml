@@ -153,7 +153,7 @@
                 </MenuItem>
             </MenuItem>
             <!--  kKKKKKKKKKKKKKKKKKKKK  -->
-            <MenuItem Header="Справка" IsEnabled="False">
+            <MenuItem Header="Справка">
                 <MenuItem Command="{Binding OpenHelp}" Header="Справка по программе">
                     <MenuItem.Icon>
                         <fa:ImageAwesome
@@ -168,6 +168,7 @@
 
         <!--  Нижняя панель  -->
         <StatusBar DockPanel.Dock="Bottom">
+            
             <StatusBarItem>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
                     <TextBlock Text="{Binding ElementName=treeViewIFC, Path=SelectedItem, Converter={StaticResource ConvStatusGuid}, StringFormat=GUID:  \{0\}}" />
@@ -175,10 +176,58 @@
                     <TextBlock Text="{Binding ElementName=treeViewIFC, Path=SelectedItem, Converter={StaticResource ConvStatusClassIFC}, StringFormat=Класс IFC:  \{0\}}" />
                 </StackPanel>
             </StatusBarItem>
+            
+            <StatusBarItem HorizontalAlignment="Right">
+
+                <StackPanel Orientation="Horizontal" >
+                    <StatusBarItem VerticalAlignment="Top" HorizontalAlignment="Right" Visibility="Collapsed">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="{Binding Path=FirstPoint3D, StringFormat=Начало: \{0\}}"/>
+                            <TextBlock Text="{Binding Path=SecondPoint3D, StringFormat=Конец: \{0\}}"/>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding FirstPoint3D}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                        </StackPanel>
+                    </StatusBarItem>
+
+                    <Separator Width="10" Visibility="Hidden"/>
+                    <!--<Separator.Style>
+                                <Style TargetType="Separator">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding LengthTotal}" Value="0">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Separator.Style>
+                    </Separator>-->
+                    
+                    <StatusBarItem VerticalAlignment="Top" HorizontalAlignment="Right">
+                        <StackPanel Orientation="Vertical">
+                            
+                            <TextBlock Text="{Binding Path=Length1_2, StringFormat=Расстояние: \{0\} м}"/>
+                            <TextBlock Text="{Binding Path=LengthTotal, StringFormat=Расстояние общее: \{0\} м}"/>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding LengthTotal}" Value="0">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                        </StackPanel>
+            </StatusBarItem>
+            
 
             <StatusBarItem HorizontalAlignment="Right">
                 <StackPanel Orientation="Vertical">
-
                     <TextBlock Text="{Binding Path=StatusMsg, StringFormat=Статус:  \{0\}}" />
                     <ProgressBar Margin="0,0,5,0" Width="{Binding ElementName=dpProperty, Path=ActualWidth}" HorizontalAlignment="Right" Minimum="0" Maximum="100" Name="pbStatus"  Value="{Binding Path=ProgressValue, UpdateSourceTrigger=PropertyChanged}" Height="20"  Visibility="Visible" />
                     <StackPanel.Style>
@@ -191,6 +240,8 @@
                         </Style>
                     </StackPanel.Style>
                 </StackPanel>
+            </StatusBarItem>
+            </StackPanel>
             </StatusBarItem>
         </StatusBar>
 
@@ -224,7 +275,10 @@
                 <TreeView
                     x:Name="treeViewIFC"
                     ItemContainerStyle="{StaticResource TreeViewStyle}"
-                    ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                    VirtualizingPanel.IsVirtualizing="True"
+                    VirtualizingPanel.VirtualizationMode="Recycling"
+                    VirtualizingPanel.IsContainerVirtualizable="True">
                     <TreeView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <VirtualizingStackPanel />

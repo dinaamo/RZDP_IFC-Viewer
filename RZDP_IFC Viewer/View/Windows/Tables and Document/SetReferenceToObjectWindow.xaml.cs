@@ -18,9 +18,14 @@ namespace IFC_Viewer.View.Windows
             {
                 instance = new SelectReferenceObjectWindow(collectionObject, collectionModelReference, createNewModelReference);
                 instance.Show();
+                instance.Topmost = true;
+                instance.Topmost = false;
             }
             else
             {
+                instance.WindowState = WindowState.Normal;
+                instance.Topmost = true;
+                instance.Topmost = false;
                 return;
             }
         }

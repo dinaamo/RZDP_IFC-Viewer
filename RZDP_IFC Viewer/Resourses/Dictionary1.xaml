@@ -35,10 +35,11 @@
         <Setter Property="ColumnWidth" Value="300" />
         <Setter Property="VirtualizingPanel.ScrollUnit" Value="Item" />
         <Setter Property="EnableRowVirtualization" Value="True" />
-        <!--<Setter Property="EnableColumnVirtualization" Value="True" />-->
+        <Setter Property="EnableColumnVirtualization" Value="True" />
         <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True" />
         <Setter Property="VirtualizingPanel.IsContainerVirtualizable" Value="True" />
         <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling" />
+        <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
         <Setter Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="True" />
         <Setter Property="VirtualizingPanel.ScrollUnit" Value="Item" />
         <Setter Property="ColumnHeaderStyle">
@@ -57,15 +58,19 @@
     </Style>
 
     <Style x:Key="NoStyleDataGrid" TargetType="{x:Type DataGrid}">
-        <Setter Property="VirtualizingPanel.ScrollUnit" Value="Item" />
         <Setter Property="EnableRowVirtualization" Value="True" />
-        <!--<Setter Property="EnableColumnVirtualization" Value="True" />-->
+        <Setter Property="EnableColumnVirtualization" Value="True" />
         <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True" />
         <Setter Property="VirtualizingPanel.IsContainerVirtualizable" Value="True" />
         <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling" />
         <Setter Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="True" />
         <Setter Property="VirtualizingPanel.ScrollUnit" Value="Item" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+        <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
+        <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
+        <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="True"/>
     </Style>
+
 
     <Style x:Key="TreeViewStyle" TargetType="{x:Type TreeViewItem}">
         <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -73,13 +78,14 @@
         <Setter Property="FontWeight" Value="{Binding Path=FontWeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True" />
         <Setter Property="VirtualizingPanel.IsContainerVirtualizable" Value="True" />
+        <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
         <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling" />
         <EventSetter Event="Selected" Handler="TreeViewSelectedItemChanged" />
-        <!--<EventSetter Event="MouseDoubleClick" Handler="MouseDoubleClick" />-->
     </Style>
 
     <Style TargetType="{x:Type ScrollViewer}">
         <Setter Property="CanContentScroll" Value="False" />
+        <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
     </Style>
 
     <Style x:Key="ConditionsSearch" TargetType="ComboBox">
@@ -384,7 +390,7 @@
                 Visibility="{Binding Path=IsFileExists, Converter={StaticResource ConverterImageVisibilityInverse}, UpdateSourceTrigger=PropertyChanged}"
                 Icon="Times" />
             <fa:ImageAwesome
-                Height="10"
+                Height="25"
                 Margin="0,0,3,0"
                 Foreground="SteelBlue"
                 Visibility="{Binding Path=IsFileExists, Converter={StaticResource ConverterImageVisibilityInverse}, UpdateSourceTrigger=PropertyChanged}"

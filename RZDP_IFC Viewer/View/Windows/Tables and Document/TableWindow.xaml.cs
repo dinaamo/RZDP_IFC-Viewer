@@ -29,11 +29,14 @@ namespace RZDP_IFC_Viewer.View.Windows
             {
                 instance = new TableWindow(modelItemIFCTable);
                 instance.Show();
-                instance.Activate();
+                instance.Topmost = true;
+                instance.Topmost = false;
             }
             else
             {
-                instance.Activate();
+                instance.WindowState = WindowState.Normal;
+                instance.Topmost = true;
+                instance.Topmost = false;
                 return;
             }
         }

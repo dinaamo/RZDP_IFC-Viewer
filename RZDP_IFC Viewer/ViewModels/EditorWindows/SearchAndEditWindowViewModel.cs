@@ -1,8 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections;
+using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Input;
 using RZDP_IFC_Viewer.IFC.ModelItem;
 using RZDP_IFC_Viewer.Infracrucrure.Commands;
+using RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows;
 using RZDP_IFC_Viewer.ViewModels.Base;
 
 namespace RZDP_IFC_Viewer.ViewModels
@@ -23,12 +25,37 @@ namespace RZDP_IFC_Viewer.ViewModels
 
             private set
             {
-                OnPropertyChanged("FilteredSearchItems");
                 _FilteredSearchItems = value;
+                OnPropertyChanged("FilteredSearchItems");
             }
         }
 
-        #region Комманды
+        #region Комманды 
+
+        #region Открыть групповой редактор наборов характеристик
+
+        public ICommand OpenGroupEditorPropertySetCommand { get; }
+
+        private void OnOpenGroupEditorPropertySetCommandExecuted(object o)
+        {
+            if(o is IEnumerable enumerable)
+            {
+                List<ModelItemIFCObject> modelObjectsSet =  new List<ModelItemIFCObject>();
+
+                foreach (ModelItemIFCObject modelObject in enumerable)
+                {
+                    modelObjectsSet.Add(modelObject);
+                }
+                new GroupEditPropertySetWindow(modelObjectsSet).ShowDialog();
+            }
+        }
+
+        private bool CanOpenGroupEditorPropertySetCommandExecute(object o)
+        {
+            return FilteredSearchItems != null && FilteredSearchItems.Count() > 0;
+        }
+
+        #endregion Открыть групповой редактор наборов
 
         #region Покрасить элементы
 
@@ -185,6 +212,10 @@ namespace RZDP_IFC_Viewer.ViewModels
             FilteredSearchItems = new ObservableCollection<ModelItemIFCObject>(modelElementsForSearch);
 
             #region Комманды
+
+            OpenGroupEditorPropertySetCommand = new ActionCommand(
+                OnOpenGroupEditorPropertySetCommandExecuted,
+                CanOpenGroupEditorPropertySetCommandExecute);
 
             PaintElements = new ActionCommand(
                 OnPaintElementCommandExecuted,

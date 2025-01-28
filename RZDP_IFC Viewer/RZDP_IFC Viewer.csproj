@@ -87,9 +87,4 @@
     </Page>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ViewModels\GroupOperation Windows\" />
-    <Folder Include="View\Windows\GroupOperation Windows\" />
-  </ItemGroup>
-
 </Project>

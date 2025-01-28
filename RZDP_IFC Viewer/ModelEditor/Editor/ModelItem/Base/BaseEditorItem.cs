@@ -30,16 +30,16 @@ namespace IFC_Viewer.IFC.Base
 
         public abstract void CreateNewPropertySet();
 
-        public abstract void DeletePropertySet(BasePropertySetDefinition PropertySetDefinition);
+        public abstract void DeletePropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition);
 
-        public void AddDublicatePropertySet(BasePropertySetDefinition PropertySetDefinition)
+        public void AddDublicatePropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition)
         { 
-            AddPropertySet(PropertySetDefinition.GetCopyPropertySet());
+            AddPropertySet(ifcPropertySetDefinition);
         }
 
-        public void  UnpinPropertySet(BasePropertySetDefinition PropertySetDefinition)
+        public void  UnpinPropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition)
         {
-            foreach (IIfcRelDefinesByProperties RelDef in PropertySetDefinition.IFCPropertySetDefinition.DefinesOccurrence)
+            foreach (IIfcRelDefinesByProperties RelDef in ifcPropertySetDefinition.DefinesOccurrence)
             {
                 RelDef.RelatedObjects.Remove(ifcObjectDefinition);
             }

@@ -16,9 +16,14 @@ namespace RZDP_IFC_Viewer.View.Windows
             {
                 instance = new EditorWindow(ModelObject);
                 instance.Show();
+                instance.Topmost = true;
+                instance.Topmost = false;
             }
             else
             {
+                instance.WindowState = WindowState.Normal;
+                instance.Topmost = true;
+                instance.Topmost = false;
                 return;
             }
         }

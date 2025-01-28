@@ -95,6 +95,7 @@
                     Focusable="False"
                     LostFocus="tbName_LostFocus"
                     MouseDoubleClick="TextBox_MouseDoubleClick"
+                    BorderThickness="1"
                     MinWidth="300"
                     Text="{Binding Path=IFCObjectName, Mode=TwoWay}" />
             </StackPanel>
@@ -122,7 +123,7 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <StackPanel Margin="3" Orientation="Horizontal" Grid.Row="0">
-                    <Button Click="Button_Click" ToolTip="Добавить новый набор"
+                    <Button ToolTip="Добавить новый набор"
                             IsEnabled="{Binding Path=(wind:MainWindow.IsEnabled)}"
                             Command="{Binding AddPropertySetCommand}">
                         <fa:ImageAwesome
@@ -137,10 +138,11 @@
                     x:Name="dgPropertySet"
                     Grid.Row="1"
                     Width="auto"
+                    KeyDown="Window_KeyDown"
                     SelectionMode="Single" 
                     AutoGenerateColumns="False"
                     IsSynchronizedWithCurrentItem="True"
-                    ItemsSource="{Binding Path=CollectionPropertySet, UpdateSourceTrigger=LostFocus}" Margin="3,0,-3,0">
+                    ItemsSource="{Binding Path=CollectionPropertySet, UpdateSourceTrigger=LostFocus}">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn
                             Width="*"
@@ -239,6 +241,7 @@
                     x:Name="dgProperty"
                     Grid.Row="1"
                     Width="auto"
+                    KeyDown="Window_KeyDown"
                     SelectionMode="Single" 
                     SelectionUnit="Cell"
                     AutoGenerateColumns="False"

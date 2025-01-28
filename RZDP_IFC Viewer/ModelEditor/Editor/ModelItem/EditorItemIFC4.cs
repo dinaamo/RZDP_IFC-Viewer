@@ -124,29 +124,28 @@ namespace IFC_Viewer.IFC.ModelItem
         #endregion
 
 
-        public override void DeletePropertySet(BasePropertySetDefinition PropertySetDefinition)
+        public override void DeletePropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition)
         {
             if (_ifcObjectDefinition is IfcObject ifcObject)
             {
-                IfcRelDefinesByProperties? rpRelDef = ifcObject.IsDefinedBy.FirstOrDefault(prDef => prDef.RelatingPropertyDefinition == PropertySetDefinition.IFCPropertySetDefinition);
+                IfcRelDefinesByProperties? rpRelDef = ifcObject.IsDefinedBy.FirstOrDefault(prDef => prDef.RelatingPropertyDefinition == ifcPropertySetDefinition);
 
                 if (rpRelDef != null)
                 {
                     ModelIFC.DeleteIFCEntity(rpRelDef);
-                    
                 }
-                ModelIFC.DeleteIFCEntity(PropertySetDefinition.IFCPropertySetDefinition);
+                ModelIFC.DeleteIFCEntity(ifcPropertySetDefinition);
             }
             else if (ifcObjectDefinition is IfcContext ifcContext)
             {
-                IfcRelDefinesByProperties? rpRelDef =  ifcContext.IsDefinedBy.FirstOrDefault(prDef => prDef.RelatingPropertyDefinition == PropertySetDefinition.IFCPropertySetDefinition);
+                IfcRelDefinesByProperties? rpRelDef =  ifcContext.IsDefinedBy.FirstOrDefault(prDef => prDef.RelatingPropertyDefinition == ifcPropertySetDefinition);
 
                 if (rpRelDef != null)
                 {
                     ModelIFC.DeleteIFCEntity(rpRelDef);
 
                 }
-                ModelIFC.DeleteIFCEntity(PropertySetDefinition.IFCPropertySetDefinition);
+                ModelIFC.DeleteIFCEntity(ifcPropertySetDefinition);
             }
         }
 

@@ -9,6 +9,7 @@ using RZDP_IFC_Viewer.IFC.ModelItem;
 using PropertyTools.Wpf;
 using RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base;
 using Xbim.Ifc4.Interfaces;
+using RZDP_IFC_Viewer.ViewModels;
 
 namespace RZDP_IFC_Viewer.View.Controls
 {
@@ -29,12 +30,15 @@ namespace RZDP_IFC_Viewer.View.Controls
 
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            //var tt = dgPropertySet;
-            //var t4t = dgProperty;
+            if (e.Key == Key.Delete)
+            {
+                
+            }
         }
-        
+
+
         private void TextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             TextBox tb = sender as TextBox;
@@ -57,40 +61,51 @@ namespace RZDP_IFC_Viewer.View.Controls
             //Если набор
             if (menuItem?.DataContext is BasePropertySetDefinition propertySetDefinitionModel) 
             {
-                if (propertySetDefinitionModel.IFCPropertySetDefinition is IIfcPropertySet ifcPropertySet)
-                {
-                    if (ifcPropertySet.HasProperties.Any(pr => pr is IIfcPropertyReferenceValue))
-                    {
-                        MessageBoxResult result = MessageBox.Show("Удалить набор характеристик с ссылками?\n" +
-                            "Удаление следует производить через панель инструментов", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                        if (result == MessageBoxResult.No)
-                        { return; }
-                    }
-                }
-                if (propertySetDefinitionModel.CountRelatedObjectsInstanse >1 || propertySetDefinitionModel.CountRelatedObjectsType >1)
-                {
-                    MessageBoxResult result = MessageBox.Show("На данный набор характеристик ссылается более одного объекта?\n" +
-                            "Продолжить?", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (result == MessageBoxResult.No)
-                    { return; }
-                }
-                //Удаляем
-                 (DataContext as ModelItemIFCObject)?.DeletePropertySet(propertySetDefinitionModel);
+                DeleteProperySet(propertySetDefinitionModel);
             }
             //Если свойство
             else if (menuItem.DataContext is IPropertyModel<IIfcResourceObjectSelect> propertyModel) 
             {
-                if (propertyModel.Property is IIfcPropertyReferenceValue ifcProperty)
+                DeleteProperty(propertyModel);
+            }
+        }
+
+        void DeleteProperySet(BasePropertySetDefinition propertySetDefinitionModel)
+        {
+            if (propertySetDefinitionModel.IFCPropertySetDefinition is IIfcPropertySet ifcPropertySet)
+            {
+                if (ifcPropertySet.HasProperties.Any(pr => pr is IIfcPropertyReferenceValue))
                 {
-                    MessageBoxResult result = MessageBox.Show("Удалить ссылку?\n" +
-                        "Удаление следует производить через панель инструментов.", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    MessageBoxResult result = MessageBox.Show("Удалить набор характеристик с ссылками?\n" +
+                        "Удаление следует производить через панель инструментов", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
                     if (result == MessageBoxResult.No)
                     { return; }
                 }
-                //Удаляем
-                propertyModel.PropertySetDefinition.DeletePropertyModel(propertyModel);
             }
+            if (propertySetDefinitionModel.CountRelatedObjectsInstanse > 1 || propertySetDefinitionModel.CountRelatedObjectsType > 1)
+            {
+                MessageBoxResult result = MessageBox.Show("На данный набор характеристик ссылается более одного объекта?\n" +
+                        "Продолжить?", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.No)
+                { return; }
+            }
+                 //Удаляем
+                 (DataContext as ModelItemIFCObject)?.DeletePropertySet(propertySetDefinitionModel.IFCPropertySetDefinition);
         }
+
+        void DeleteProperty(IPropertyModel<IIfcResourceObjectSelect> propertyModel)
+        {
+            if (propertyModel.Property is IIfcPropertyReferenceValue ifcProperty)
+            {
+                MessageBoxResult result = MessageBox.Show("Удалить ссылку?\n" +
+                    "Удаление следует производить через панель инструментов.", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.No)
+                { return; }
+            }
+            //Удаляем
+            propertyModel.PropertySetDefinition.DeletePropertyModel(propertyModel);
+        }
+
 
         private void MenuItemDublicate_Click(object sender, RoutedEventArgs e)
         {
@@ -100,7 +115,7 @@ namespace RZDP_IFC_Viewer.View.Controls
             if (menuItem?.DataContext is BasePropertySetDefinition propertySetDefinitionModel)
             {
                 //Создаем дубликат
-                 (DataContext as ModelItemIFCObject)?.AddDublicatePropertySet(propertySetDefinitionModel);
+                 (DataContext as ModelItemIFCObject)?.AddDublicatePropertySet(propertySetDefinitionModel.IFCPropertySetDefinition);
             }
         }
 
@@ -113,7 +128,7 @@ namespace RZDP_IFC_Viewer.View.Controls
             if (menuItem?.DataContext is BasePropertySetDefinition propertySetDefinitionModel)
             {
                 //Открепляем
-                 (DataContext as ModelItemIFCObject)?.UnpinPropertySet(propertySetDefinitionModel);
+                 (DataContext as ModelItemIFCObject)?.UnpinPropertySet(propertySetDefinitionModel.IFCPropertySetDefinition);
             }
         }
 

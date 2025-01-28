@@ -20,18 +20,18 @@ namespace IFC_Viewer.IFC.Fabric
         }
 
 
-        public override void DeletePropertySet(BasePropertySetDefinition PropertySetDefinition)
+        public override void DeletePropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition)
         {
             if (_ifcObjectDefinition is IfcObject ifcObject)
             {
-                IfcRelDefinesByProperties? rpRelDef =  ifcObject.IsDefinedByProperties.FirstOrDefault(prDef => prDef.RelatingPropertyDefinition == PropertySetDefinition.IFCPropertySetDefinition);
+                IfcRelDefinesByProperties? rpRelDef =  ifcObject.IsDefinedByProperties.FirstOrDefault(prDef => prDef.RelatingPropertyDefinition == ifcPropertySetDefinition);
 
                 if (rpRelDef != null)
                 {
                     ModelIFC.DeleteIFCEntity(rpRelDef);
                 }
 
-                ModelIFC.DeleteIFCEntity(PropertySetDefinition.IFCPropertySetDefinition);
+                ModelIFC.DeleteIFCEntity(ifcPropertySetDefinition);
             }
         }
 

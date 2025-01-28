@@ -9,6 +9,7 @@ using RZDP_IFC_Viewer.IFC.Editor.Base;
 using RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base;
 using Xbim.Ifc2x3.PropertyResource;
 using Xbim.Ifc4.Interfaces;
+using Xbim.Common;
 
 namespace Editor_IFC
 {
@@ -58,7 +59,7 @@ namespace Editor_IFC
 
         public void DeletePropertyModel(IPropertyModel<IIfcResourceObjectSelect> propertyModel)
         {
-            ModelObject.ModelIFC.DeleteIFCEntity(propertyModel.Property);
+            ModelObject.ModelIFC.DeleteIFCEntity(new List<IPersistEntity>() { propertyModel.Property });
             OnPropertyChanged("PropertyCollection");
         }
 

@@ -129,7 +129,7 @@
 
             <DockPanel Margin="10,10,0,10" VerticalAlignment="Bottom">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
-                    <TextBlock Text="Найдено элементов:  " VerticalAlignment="Center" DockPanel.Dock="Left" />
+                    <TextBlock Text="Элементов:  " VerticalAlignment="Center" DockPanel.Dock="Left" />
                     <TextBlock Text="{Binding ElementName=dgSearchElements, Path=Items.Count}" VerticalAlignment="Center" DockPanel.Dock="Left" />
                 </StackPanel>
                 <StackPanel>
@@ -200,19 +200,12 @@
 
                     <StackPanel DockPanel.Dock="Left" HorizontalAlignment="Center">
 
-                            <Button Width="300"
-                                Height="20">
-                                <Button.Content>
-                                    <TextBlock Text="Удаление и переименование наборов" Padding="10,0,10,0"/>
-                                    </Button.Content>
-                            </Button>
-                            <Button Width="300"
-                                    Height="20">
-                                <Button.Content>
-                                    <TextBlock Text="Добавление наборов" Padding="10,0,10,0"/>
-                                </Button.Content>
-                            </Button>
-                            <Button Width="300"
+                    <Button Width="300"
+                                Height="20" Command="{Binding OpenGroupEditorPropertySetCommand}" CommandParameter="{Binding ElementName=dgSearchElements, Path=SelectedItems}">
+                        <TextBlock Padding="10,0,10,0" 
+                                       Text="Редактирование наборов"/>
+                    </Button>
+                    <Button Width="300"
                                     Height="20">
                                 <Button.Content>
                                     <TextBlock Text="Добавление наборов по шаблону из базы Accsess" Padding="10,0,10,0"/>
@@ -246,19 +239,15 @@
                 DockPanel.Dock="Top"
                 x:Name="dgSearchElements"
                 Style="{StaticResource NoStyleDataGrid}"
+                MaxHeight="1000"
+                MaxWidth="1000"
                 AutoGenerateColumns="False"
                 IsReadOnly="True"
                 ItemsSource="{Binding Path=FilteredSearchItems, UpdateSourceTrigger=PropertyChanged}" CurrentCellChanged="dgSearchElements_CurrentCellChanged">
                 <DataGrid.Columns>
                     <DataGridTextColumn
-                        x:Name="col0"
-                        MinWidth="80"
-                        Width="auto"
-                        Binding="{Binding Path=IFCObjectGUID}"
-                        Header="IFCObjectGUID" />
-                    <DataGridTextColumn
                         x:Name="col1"
-                        Width="auto"
+                        Width="0.5*"
                         MinWidth="70"
                         Binding="{Binding Path=IFCClass}"
                         Header="Класс IFC" />
@@ -274,6 +263,7 @@
                         <VirtualizingStackPanel />
                     </ItemsPanelTemplate>
                 </DataGrid.ItemsPanel>
+                
             </DataGrid>
         </GroupBox>
         <GridSplitter

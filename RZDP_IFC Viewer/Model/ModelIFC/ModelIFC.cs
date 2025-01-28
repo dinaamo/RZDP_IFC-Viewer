@@ -326,7 +326,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
 
 
 
-        public void DeleteIFCEntity(IPersistEntity persistEntity)
+        public void DeleteIFCEntity(IEnumerable<IPersistEntity> persistEntitySet)
         {
             try
             {
@@ -334,16 +334,21 @@ namespace RZDP_IFC_Viewer.IFC.Model
                 {
                     using (ITransaction trans = IfcStore.Model.BeginTransaction("DeleteIFCEntity"))
                     {
-                        IfcStore.Delete(persistEntity);
-
+                        foreach (IPersistEntity persistEntity in persistEntitySet)
+                        {
+                            IfcStore.Delete(persistEntity);
+                        }
                         trans.Commit();
                     }
                 }
                 else
                 {
-                    IfcStore.Delete(persistEntity);
+                    foreach (IPersistEntity persistEntity in persistEntitySet)
+                    {
+                        IfcStore.Delete(persistEntity);
+                    }
 
-                 }
+                }
             }
             catch (StackOverflowException sEx)
             {
@@ -447,7 +452,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
         /// </summary>
         /// <param name="modelObjects"></param>
         /// <param name="referenceObjects"></param>
-        public void AddReferenceToTheObject(List<ModelItemIFCObject> modelObjects, List<BaseModelReferenceIFC> referenceObjects)
+        public void AddReferenceToTheObject(IEnumerable<ModelItemIFCObject> modelObjects, List<BaseModelReferenceIFC> referenceObjects)
         {
             using (ITransaction trans = IfcStore.Model.BeginTransaction("AddReferenceToTheObject"))
             {
@@ -465,7 +470,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
         /// </summary>
         /// <param name="modelObjects"></param>
         /// <param name="referenceObjects"></param>
-        public void DeleteReferenceToTheObject(List<ModelItemIFCObject> modelObjects, List<BaseModelReferenceIFC> referenceObjects)
+        public void DeleteReferenceToTheObject(IEnumerable<ModelItemIFCObject> modelObjects, IEnumerable<BaseModelReferenceIFC> referenceObjects)
         {
             using (ITransaction trans = IfcStore.Model.BeginTransaction("DeleteReferenceToTheObject"))
             {
@@ -478,7 +483,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
             }
         }
 
-        public void ChangeName<T>(List<(T, string)> tupleCollection)
+        public void ChangeName<T>(IEnumerable<(T, string)> tupleCollection)
         {
             using (ITransaction trans = IfcStore.Model.BeginTransaction("ChangeNameObjects"))
             {
@@ -510,7 +515,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
             }
         }
 
-        public void ChangeValue(List<(Action<string>, string)> tupleCollection)
+        public void ChangeValue(IEnumerable<(Action<string>, string)> tupleCollection)
         {
             using (ITransaction trans = IfcStore.Model.BeginTransaction("ChangeValueProperty"))
             {
@@ -523,7 +528,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
             }
         }
 
-        public void ActionInTransaction(List<Action> actionSet)
+        public void ActionInTransaction(IEnumerable<Action> actionSet)
         {
             using (ITransaction trans = IfcStore.Model.BeginTransaction("ActioninTransaction"))
             {
@@ -536,11 +541,11 @@ namespace RZDP_IFC_Viewer.IFC.Model
             }
         }
 
-        public void ActionInTransactionForPropertySet(List<(Action<BasePropertySetDefinition>, BasePropertySetDefinition)> tupleSet)
+        public void ActionInTransactionForPropertySet(IEnumerable<(Action<IIfcPropertySetDefinition>, IIfcPropertySetDefinition)> tupleSet)
         {
-            using (ITransaction trans = IfcStore.Model.BeginTransaction("AddDublicatePropertySet"))
+            using (ITransaction trans = IfcStore.Model.BeginTransaction("ActionInTransactionForPropertySet"))
             {
-                foreach ((Action<BasePropertySetDefinition>, BasePropertySetDefinition) tuple in tupleSet)
+                foreach ((Action<IIfcPropertySetDefinition>, IIfcPropertySetDefinition) tuple in tupleSet)
                 {
                     tuple.Item1(tuple.Item2);
                 }

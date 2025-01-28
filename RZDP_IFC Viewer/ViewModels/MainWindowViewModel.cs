@@ -20,6 +20,7 @@ using Xbim.ModelGeometry.Scene;
 using Xbim.Presentation;
 using static Microsoft.Isam.Esent.Interop.EnumeratedColumn;
 using static Xbim.Presentation.DrawingControl3D;
+using System.Windows.Media.Media3D;
 
 namespace RZDP_IFC_Viewer.ViewModels
 {
@@ -27,10 +28,9 @@ namespace RZDP_IFC_Viewer.ViewModels
     {
         private BackgroundWorker _worker;
         private ManualResetEvent _signal;
+        HashSet<IPersistEntity> _deleteEntity;
 
         #region Свойства
-
-        HashSet<IPersistEntity> _deleteEntity;
 
         #region Модель
 
@@ -66,6 +66,67 @@ namespace RZDP_IFC_Viewer.ViewModels
                 Set(ref _ProgressValue, value);
             }
         }
+
+        #endregion ProgressValue
+
+        #region Измерения
+
+        private Point3D? _FirstPoint3D;
+
+        public Point3D? FirstPoint3D
+        {
+            get
+            {
+                return _FirstPoint3D;
+            }
+            set
+            {
+                Set(ref _FirstPoint3D, value);
+            }
+        }
+
+        private Point3D? _SecondPoint3D;
+
+        public Point3D? SecondPoint3D
+        {
+            get
+            {
+                return _SecondPoint3D;
+            }
+            set
+            {
+                Set(ref _SecondPoint3D, value);
+            }
+        }
+
+        private double _Length1_2;
+
+        public double Length1_2
+        {
+            get
+            {
+                return _Length1_2;
+            }
+            set
+            {
+                Set(ref _Length1_2, value);
+            }
+        }
+
+        private double _LengthTotal;
+
+        public double LengthTotal
+        {
+            get
+            {
+                return _LengthTotal;
+            }
+            set
+            {
+                Set(ref _LengthTotal, value);
+            }
+        }
+
 
         #endregion ProgressValue
 
@@ -117,6 +178,32 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         #region Методы
 
+        #region Измерения
+        private void DrawingControl_UserModeledDimensionChangedEvent(DrawingControl3D m, Xbim.Presentation.ModelGeomInfo.PolylineGeomInfo e)
+        {
+            LengthTotal = e.GetLenght();
+
+            SecondPoint3D = FirstPoint3D;
+
+            FirstPoint3D = e.Last3DPoint;
+
+            if (FirstPoint3D != null && SecondPoint3D != null)
+            {
+                var ResultVector = SecondPoint3D - FirstPoint3D;
+                Length1_2 = Math.Sqrt(Math.Pow(ResultVector.Value.X, 2) + Math.Pow(ResultVector.Value.Y, 2) + Math.Pow(ResultVector.Value.Z, 2));
+            }
+        }
+
+        private void RefreshMeasure()
+        {
+            LengthTotal = 0;
+            Length1_2 = 0;
+            FirstPoint3D = null;
+            SecondPoint3D = null;
+        }
+
+        #endregion Измерения
+
         #region Загрузка модели
         /// <summary>
         /// Обновление прогресс бара
@@ -134,6 +221,8 @@ namespace RZDP_IFC_Viewer.ViewModels
                     ProgressValue = args.ProgressPercentage;
                     StatusMsg = (string)args.UserState;
                 }));
+
+
         }
 
         private void LoadModel(object sender, DoWorkEventArgs args)
@@ -148,11 +237,15 @@ namespace RZDP_IFC_Viewer.ViewModels
                         window.Close();
                     }
                 }
+
+                RefreshMeasure();
+   
             });
 
             try
             {
                 string path = args.Argument as string;
+
                 /* Версия с потоком
                 FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
                 IfcStore ifcStore = IfcStore.Open(fileStream, StorageType.Ifc, XbimModelType.MemoryModel, null, XbimDBAccess.Read, _worker.ReportProgress);
@@ -677,10 +770,15 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         private void OnOpenHelpCommandExecuted(object o)
         {
-            string fileHelpPath = "IFC Table View.chm";
+            string fileHelpPath = "RZDP IFC Viewer.chm";
             if (System.IO.File.Exists(fileHelpPath))
             {
-                Process.Start(fileHelpPath);
+                Process p = new Process();
+                p.StartInfo = new ProcessStartInfo(fileHelpPath)
+                {
+                    UseShellExecute = true
+                };
+                p.Start();
             }
         }
 
@@ -740,6 +838,9 @@ namespace RZDP_IFC_Viewer.ViewModels
             //IsEnableWindow = true;
             _worker = new BackgroundWorker();
             mainWindow.WPFDrawingControl.DrawingControl.SelectedEntityChanged += DrawingControl_SelectedEntityChanged;
+            mainWindow.WPFDrawingControl.DrawingControl.UserModeledDimensionChangedEvent += DrawingControl_UserModeledDimensionChangedEvent;
+
+
             _worker.ProgressChanged += ProgressChanged;
             _worker.WorkerReportsProgress = true;
 
@@ -806,7 +907,6 @@ namespace RZDP_IFC_Viewer.ViewModels
 
             #endregion Комманды
         }
-
 
     }
 }
