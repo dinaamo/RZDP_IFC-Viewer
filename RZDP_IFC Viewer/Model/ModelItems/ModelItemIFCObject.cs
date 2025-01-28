@@ -296,11 +296,8 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
         #region Действия с наборами характеристик
         public void DeletePropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition)
         {
-            
-            Model.ActionInTransactionForPropertySet(new List<(Action<IIfcPropertySetDefinition>, IIfcPropertySetDefinition)>
-            {
-                (ModelObjectEditor.DeletePropertySet, ifcPropertySetDefinition)
-            });
+            Model.DeleteIFCEntity(ModelObjectEditor.DeletePropertySet(ifcPropertySetDefinition));
+
             OnPropertyChanged("CollectionPropertySet");
         }
 

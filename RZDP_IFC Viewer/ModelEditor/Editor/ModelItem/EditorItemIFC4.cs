@@ -6,6 +6,7 @@ using IFC_Viewer.IFC.Base;
 using Xbim.Ifc4.Interfaces;
 using Xbim.Ifc4.Kernel;
 using Xbim.Ifc4.PropertyResource;
+using Xbim.Common;
 
 namespace IFC_Viewer.IFC.ModelItem
 {
@@ -124,7 +125,7 @@ namespace IFC_Viewer.IFC.ModelItem
         #endregion
 
 
-        public override void DeletePropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition)
+        public override IEnumerable<IPersistEntity> DeletePropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition)
         {
             if (_ifcObjectDefinition is IfcObject ifcObject)
             {
@@ -132,9 +133,9 @@ namespace IFC_Viewer.IFC.ModelItem
 
                 if (rpRelDef != null)
                 {
-                    ModelIFC.DeleteIFCEntity(rpRelDef);
+                    yield return rpRelDef;
                 }
-                ModelIFC.DeleteIFCEntity(ifcPropertySetDefinition);
+                yield return ifcPropertySetDefinition;
             }
             else if (ifcObjectDefinition is IfcContext ifcContext)
             {
@@ -142,10 +143,9 @@ namespace IFC_Viewer.IFC.ModelItem
 
                 if (rpRelDef != null)
                 {
-                    ModelIFC.DeleteIFCEntity(rpRelDef);
-
+                    yield return rpRelDef;
                 }
-                ModelIFC.DeleteIFCEntity(ifcPropertySetDefinition);
+                yield return ifcPropertySetDefinition;
             }
         }
 

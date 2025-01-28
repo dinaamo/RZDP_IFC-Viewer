@@ -7,6 +7,7 @@ using RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base;
 using Xbim.Ifc2x3.Kernel;
 using Xbim.Ifc2x3.PropertyResource;
 using Xbim.Ifc4.Interfaces;
+using Xbim.Common;
 
 namespace IFC_Viewer.IFC.Fabric
 {
@@ -20,7 +21,7 @@ namespace IFC_Viewer.IFC.Fabric
         }
 
 
-        public override void DeletePropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition)
+        public override IEnumerable<IPersistEntity> DeletePropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition)
         {
             if (_ifcObjectDefinition is IfcObject ifcObject)
             {
@@ -28,10 +29,10 @@ namespace IFC_Viewer.IFC.Fabric
 
                 if (rpRelDef != null)
                 {
-                    ModelIFC.DeleteIFCEntity(rpRelDef);
+                    yield return rpRelDef;
                 }
 
-                ModelIFC.DeleteIFCEntity(ifcPropertySetDefinition);
+                yield return ifcPropertySetDefinition;
             }
         }
 

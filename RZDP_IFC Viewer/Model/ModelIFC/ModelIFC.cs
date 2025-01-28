@@ -328,32 +328,23 @@ namespace RZDP_IFC_Viewer.IFC.Model
 
         public void DeleteIFCEntity(IEnumerable<IPersistEntity> persistEntitySet)
         {
-            try
+            if (IfcStore.Model.CurrentTransaction is null)
             {
-                if (IfcStore.Model.CurrentTransaction is null)
-                {
-                    using (ITransaction trans = IfcStore.Model.BeginTransaction("DeleteIFCEntity"))
-                    {
-                        foreach (IPersistEntity persistEntity in persistEntitySet)
-                        {
-                            IfcStore.Delete(persistEntity);
-                        }
-                        trans.Commit();
-                    }
-                }
-                else
+                using (ITransaction trans = IfcStore.Model.BeginTransaction("DeleteIFCEntity"))
                 {
                     foreach (IPersistEntity persistEntity in persistEntitySet)
                     {
                         IfcStore.Delete(persistEntity);
                     }
-
+                    trans.Commit();
                 }
             }
-            catch (StackOverflowException sEx)
+            else
             {
-
-                MessageBox.Show(sEx.Message, "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                foreach (IPersistEntity persistEntity in persistEntitySet)
+                {
+                    IfcStore.Delete(persistEntity);
+                }
             }
         }
 
@@ -391,7 +382,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
                         });
 
                         ///Удаляем объект из XBIM
-                        DeleteIFCEntity(modelItemIFCObject.GetIFCObject());
+                         IfcStore.Delete(modelItemIFCObject.GetIFCObject());
                         
                         //Обновляем прогресс бар
                         UpdateProgress((int)(countToPresent * ++counter), "Удаление элементов");

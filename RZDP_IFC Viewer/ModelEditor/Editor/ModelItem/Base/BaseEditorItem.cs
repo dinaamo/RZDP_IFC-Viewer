@@ -6,6 +6,7 @@ using IFC_Viewer.IFC.Fabric;
 using IFC_Viewer.IFC.ModelItem;
 using RZDP_IFC_Viewer.IFC.Editor.Base;
 using Xbim.Ifc4.Interfaces;
+using Xbim.Common;
 
 namespace IFC_Viewer.IFC.Base
 {
@@ -30,14 +31,14 @@ namespace IFC_Viewer.IFC.Base
 
         public abstract void CreateNewPropertySet();
 
-        public abstract void DeletePropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition);
+        public abstract IEnumerable<IPersistEntity> DeletePropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition);
 
         public void AddDublicatePropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition)
         { 
             AddPropertySet(ifcPropertySetDefinition);
         }
 
-        public void  UnpinPropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition)
+        public void UnpinPropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition)
         {
             foreach (IIfcRelDefinesByProperties RelDef in ifcPropertySetDefinition.DefinesOccurrence)
             {
@@ -91,7 +92,7 @@ namespace IFC_Viewer.IFC.Base
                     if (ifcPropertySet.HasProperties.Count == 0)
                     {
                         PropSetReferenceCollection.Remove(ifcPropertySet);
-                        ModelIFC.DeleteIFCEntity(ifcPropertySet);
+                        ModelIFC.DeleteIFCEntity(new List<IIfcPropertySetDefinition>() { ifcPropertySet });
                     }
                 }
             }

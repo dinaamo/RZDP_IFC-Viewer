@@ -6,7 +6,6 @@ using System.Windows.Media;
 using Editor_IFC;
 using RZDP_IFC_Viewer;
 using RZDP_IFC_Viewer.IFC.ModelItem;
-using PropertyTools.Wpf;
 using RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base;
 using Xbim.Ifc4.Interfaces;
 using RZDP_IFC_Viewer.ViewModels;
@@ -34,7 +33,17 @@ namespace RZDP_IFC_Viewer.View.Controls
         {
             if (e.Key == Key.Delete)
             {
-                
+                if (sender is DataGrid dataGrid)
+                {
+                    if (dataGrid.CurrentCell.Item is BasePropertySetDefinition propertySetDefinitionModel)
+                    {
+                        DeleteProperySet(propertySetDefinitionModel);
+                    }
+                    else if (dataGrid.CurrentCell.Item is IPropertyModel<IIfcResourceObjectSelect> propertyModel)
+                    {
+                        DeleteProperty(propertyModel);
+                    }
+                }
             }
         }
 

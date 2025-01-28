@@ -81,7 +81,7 @@ namespace RZDP_IFC_Viewer.ViewModels
             {
                 if (!list.Any(it => it.Item2 == propertySet.IFCPropertySetDefinition))
                 {
-                    yield return (propertySet.ModelObject.ModelObjectEditor.DeletePropertySet, propertySet.IFCPropertySetDefinition);
+                    yield return (propertySet.ModelObject.DeletePropertySet, propertySet.IFCPropertySetDefinition);
                 }
                 list.Add((propertySet.ModelObject.DeletePropertySet, propertySet.IFCPropertySetDefinition));
             }
