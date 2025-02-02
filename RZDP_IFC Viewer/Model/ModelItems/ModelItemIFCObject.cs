@@ -455,25 +455,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
             OnPropertyChanged("CollectionPropertySet");
         }
 
-        /// <summary>
-        /// Ищем все элементы в дереве по критериям
-        /// </summary>
-        /// <param name="topElement"></param>
-        /// <param name="foundObjects"></param>
-        //public static void FindMultiplyTreeObject(ModelItemIFCObject topElement, IEnumerable<ModelItemIFCObject> foundObjects)
-        //{
-        //    if (foundObjects.Any(it => it == topElement))
-        //    {
-        //        topElement.IsPaint = true;
-        //    }
 
-        //    topElement.IsExpanded = true;
-
-        //    foreach (ModelItemIFCObject item in topElement.ModelItems)
-        //    {
-        //        FindMultiplyTreeObject(item, foundObjects);
-        //    }
-        //}
 
         /// <summary>
         /// Ищем все элементы в дереве по критериям

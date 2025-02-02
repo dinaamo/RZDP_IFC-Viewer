@@ -74,7 +74,7 @@ namespace RZDP_IFC_Viewer.View.Windows
 
         private void dgSearchElements_CurrentCellChanged(object sender, EventArgs e)
         {
-            (dgSearchElements?.SelectedItem as ModelItemIFCObject)?.OnPropertyChanged("CollectionPropertySet");
+            (lwSearchElements?.SelectedItem as ModelItemIFCObject)?.OnPropertyChanged("CollectionPropertySet");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

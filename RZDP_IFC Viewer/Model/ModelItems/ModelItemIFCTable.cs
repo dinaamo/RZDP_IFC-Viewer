@@ -21,6 +21,8 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
         {
             this.IFCTable = ReplaceSymbols(IFCTable);
             dataTable = FillDataTable(this.IFCTable);
+
+
         }
 
         #region Свойства

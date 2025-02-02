@@ -323,7 +323,7 @@
                             Margin="0,0,0,0"
                             Background="Transparent"
                             BorderThickness="0"
-                            ItemsSource="{Binding ElementName=treeViewIFC, Path=SelectedItem.PropertyElement, UpdateSourceTrigger=PropertyChanged}">
+                            ItemsSource="{Binding ElementName=treeViewIFC, Path=SelectedItem.PropertyElement, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
 

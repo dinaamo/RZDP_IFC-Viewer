@@ -10,7 +10,7 @@
         Title="Групповые операции с наборами характеристик" Height="450" Width="800" MinWidth="700" MinHeight="400" Closed="Window_Closed">
     <Window.Resources>
         <Style TargetType="Button">
-            <Setter Property="Margin" Value="0,5,5,5"/>
+            <Setter Property="Margin" Value="5,5,5,5"/>
         </Style>
     </Window.Resources>
     <Window.DataContext>
@@ -30,7 +30,7 @@
             <GroupBox Header="Критерии поиска" Grid.Column="0" Margin="0,0,2,0">
                 <StackPanel  Orientation="Vertical" Margin="8,8,8,8" >
                     <TextBlock Text="Найти:"/>
-                    <TextBox x:Name="tbFindValue"/>
+                    <TextBox x:Name="tbFindValue" TextChanged="tbFindValue_TextChanged"/>
                     
                 </StackPanel>
             </GroupBox >
@@ -57,7 +57,7 @@
                                     <Binding ElementName="rbSetFragment"  Path="IsChecked"/>
                                     <Binding ElementName="rbSetWhole"  Path="IsChecked"/>
                                     <Binding ElementName="rbSetPrefix"  Path="IsChecked"/>
-                                    <Binding ElementName="dgPropertySets"  Path="SelectedItems"/>
+                                    <Binding ElementName="lwPropertySets"  Path="SelectedItems"/>
                                 </MultiBinding>
                             </Button.CommandParameter>
                         </Button>
@@ -79,7 +79,7 @@
                                     <Binding ElementName="rbSetFragment"  Path="IsChecked"/>
                                     <Binding ElementName="rbSetWhole"  Path="IsChecked"/>
                                     <Binding ElementName="rbSetPrefix"  Path="IsChecked"/>
-                                    <Binding ElementName="dgPropertySets"  Path="ItemsSource"/>
+                                    <Binding ElementName="lwPropertySets"  Path="ItemsSource"/>
                                 </MultiBinding>
                             </Button.CommandParameter>
                         </Button>
@@ -106,9 +106,9 @@
         <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
             <GroupBox Header="Поиск">
                 <StackPanel>
-                    <TextBlock Margin="0,5,0,0"
-                        Text="{Binding ElementName=dgPropertySets, Path=Items.Count, StringFormat=Элементов: \{0\}}"/>
-                    <Button Click="Button_Click_Search">
+                    <TextBlock Margin="0,5,0,0" HorizontalAlignment="Center"
+                        Text="{Binding ElementName=lwPropertySets, Path=Items.Count, StringFormat=Элементов: \{0\}}"/>
+                    <Button Click="Button_Click_Search" Visibility="Collapsed">
                         <StackPanel Orientation="Horizontal">
                             <fa:ImageAwesome
                                     Width="10"
@@ -135,7 +135,7 @@
 
             <GroupBox Header="Удалить">
                 <StackPanel>
-                    <Button Command="{Binding DeleteElementCommand}" CommandParameter="{Binding ElementName=dgPropertySets, Path=SelectedItems}">
+                    <Button Command="{Binding DeleteElementCommand}" CommandParameter="{Binding ElementName=lwPropertySets, Path=SelectedItems}">
                         <StackPanel Orientation="Horizontal">
                             <fa:ImageAwesome
                                         Width="10"
@@ -147,7 +147,7 @@
                         </StackPanel>
 
                     </Button>
-                    <Button Command="{Binding DeleteElementCommand}"  CommandParameter="{Binding ElementName=dgPropertySets, Path=ItemsSource}">
+                    <Button Command="{Binding DeleteElementCommand}"  CommandParameter="{Binding ElementName=lwPropertySets, Path=ItemsSource}">
                         <StackPanel Orientation="Horizontal">
                             <fa:ImageAwesome
                                         Width="10"
@@ -164,7 +164,25 @@
         </StackPanel>
 
         <GroupBox Header="Наборы характеристик" DockPanel.Dock="Bottom" Margin="5,0,0,0" Padding="2">
-            <DataGrid
+
+            <ListView x:Name="lwPropertySets"
+                          Foreground="Black"
+                          Width="{Binding ElementName=LBLW, Path=ActualWidth}"
+                          VirtualizingStackPanel.IsVirtualizing="True"
+                          VirtualizingStackPanel.VirtualizationMode="Recycling"
+                          ItemsSource="{Binding Path=FilteredSearchItems, UpdateSourceTrigger=PropertyChanged}">
+
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Наименование элемента" DisplayMemberBinding="{Binding ModelObject.IFCObjectName}" />
+                        <GridViewColumn Header="Наименование набора" DisplayMemberBinding="{Binding NamePropertySet}"/>
+                        <GridViewColumn Header="Экземпляр" DisplayMemberBinding="{Binding CountRelatedObjectsInstanse}"/>
+                        <GridViewColumn Header="Тип" DisplayMemberBinding="{Binding CountRelatedObjectsType}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+            <!--<DataGrid
                 ColumnWidth="*"
                 x:Name="dgPropertySets"
                 AutoGenerateColumns="False"
@@ -204,7 +222,9 @@
                         <VirtualizingStackPanel />
                     </ItemsPanelTemplate>
                 </DataGrid.ItemsPanel>
-            </DataGrid>
+            </DataGrid>-->
+        
+        
         </GroupBox>
 
     </DockPanel>

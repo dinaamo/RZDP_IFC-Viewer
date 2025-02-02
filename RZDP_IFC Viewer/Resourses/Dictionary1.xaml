@@ -135,7 +135,7 @@
     </Style>
 
     <HierarchicalDataTemplate DataType="{x:Type mi:ModelItemIFCFile}" ItemsSource="{Binding Path=ModelItems}">
-        <StackPanel Orientation="Horizontal">
+        <VirtualizingStackPanel Orientation="Horizontal">
 
             <fa:ImageAwesome
                 Height="10"
@@ -155,12 +155,28 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
-        </StackPanel>
+            <VirtualizingStackPanel.ContextMenu>
+                <ContextMenu>
+
+                    <MenuItem
+                             Command="{Binding EditElementsCommand}"
+                             Header="Редактировать">
+                        <MenuItem.Icon>
+                            <fa:ImageAwesome
+                             Height="12"
+                             Margin="0,0,3,0"
+                             Foreground="DarkOrange"
+                             Icon="File"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </VirtualizingStackPanel.ContextMenu>
+        </VirtualizingStackPanel>
     </HierarchicalDataTemplate>
 
     <HierarchicalDataTemplate DataType="{x:Type mi:ModelItemIFCObject}" ItemsSource="{Binding Path=ModelItems}">
 
-        <StackPanel Orientation="Horizontal">
+        <VirtualizingStackPanel Orientation="Horizontal">
 
             <fa:ImageAwesome
                 x:Name="NotContainAnyReferencePropertyIMG"
@@ -213,7 +229,7 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
-            <StackPanel.ContextMenu>
+            <VirtualizingStackPanel.ContextMenu>
                 <ContextMenu>
                     <MenuItem
                             Command="{Binding ZoomElementsCommand}"
@@ -318,12 +334,12 @@
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>
-            </StackPanel.ContextMenu>
-        </StackPanel>
+            </VirtualizingStackPanel.ContextMenu>
+        </VirtualizingStackPanel>
     </HierarchicalDataTemplate>
 
     <DataTemplate DataType="{x:Type mi:ModelItemIFCTable}">
-        <StackPanel Orientation="Horizontal">
+        <VirtualizingStackPanel Orientation="Horizontal">
             <fa:ImageAwesome
                 Height="10"
                 Margin="0,0,3,0"
@@ -351,7 +367,7 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
-            <StackPanel.ContextMenu>
+            <VirtualizingStackPanel.ContextMenu>
                 <ContextMenu>
                     
                     <MenuItem
@@ -380,12 +396,12 @@
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>
-            </StackPanel.ContextMenu>
-        </StackPanel>
+            </VirtualizingStackPanel.ContextMenu>
+        </VirtualizingStackPanel>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type mi:ModelItemDocumentReference}">
-        <StackPanel Orientation="Horizontal">
+        <VirtualizingStackPanel Orientation="Horizontal">
             <fa:ImageAwesome
                 Height="7"
                 Margin="0,0,3,0"
@@ -426,7 +442,7 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
-            <StackPanel.ContextMenu>
+            <VirtualizingStackPanel.ContextMenu>
                 <ContextMenu>
                     <MenuItem
                             Command="{Binding OpenCommand}"
@@ -453,8 +469,8 @@
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>
-            </StackPanel.ContextMenu>
-        </StackPanel>
+            </VirtualizingStackPanel.ContextMenu>
+        </VirtualizingStackPanel>
     </DataTemplate>
 
     <Style TargetType="TabControl">

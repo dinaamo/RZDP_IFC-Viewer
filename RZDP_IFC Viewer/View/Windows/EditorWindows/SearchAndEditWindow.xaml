@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:RZDP_IFC_Viewer.ViewModels"
     xmlns:wind="clr-namespace:RZDP_IFC_Viewer"
+xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:ep="clr-namespace:RZDP_IFC_Viewer.View.Controls"
     Title="Поиск и групповое редактирование элементов"
     Width="auto"
@@ -19,6 +20,19 @@
         <Style TargetType="Button">
             <Setter Property="Margin" Value="5,5,0,0"/>
         </Style>
+
+            <!-- Стиль для строк ListView --><!--
+            <Style TargetType="ListViewItem">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListViewItem">
+                            <Border BorderBrush="Gray" BorderThickness="0 0 0 1">-->
+                                <!--<GridViewRowPresenter Content="{TemplateBinding Content}" />-->
+                            <!--</Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>-->
 
     </Window.Resources>
 
@@ -36,7 +50,7 @@
                 <Grid Margin="5,0,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition MaxWidth="120" MinWidth="125" />
-                        <ColumnDefinition MaxWidth="90" MinWidth="90" />
+                        <ColumnDefinition MaxWidth="90" MinWidth="90"  />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -130,7 +144,7 @@
             <DockPanel Margin="10,10,0,10" VerticalAlignment="Bottom">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
                     <TextBlock Text="Элементов:  " VerticalAlignment="Center" DockPanel.Dock="Left" />
-                    <TextBlock Text="{Binding ElementName=dgSearchElements, Path=Items.Count}" VerticalAlignment="Center" DockPanel.Dock="Left" />
+                    <TextBlock Text="{Binding ElementName=lwSearchElements, Path=Items.Count}" VerticalAlignment="Center" DockPanel.Dock="Left" />
                 </StackPanel>
                 <StackPanel>
 
@@ -166,23 +180,7 @@
                                 DockPanel.Dock="Right"
                                 Margin="5,5,5,5"
                                 Command="{Binding ResetSeachСonditions}" Click="Button_Click">
-                        <!--<Button.CommandParameter>-->
-                            <!--<MultiBinding Converter="{StaticResource ConvertParametersMultibuilding}">
-                                <Binding ElementName="CBGUIDFilter" />
-                                <Binding ElementName="CBGUIDValue" />
-                                <Binding ElementName="CBClassElementFilter" />
-                                <Binding ElementName="CBClassElementValue" />
-                                <Binding ElementName="CBNameElementFilter" />
-                                <Binding ElementName="CBNameElementValue" />
-                                <Binding ElementName="CBPropertySetFilter" />
-                                <Binding ElementName="CBPropertySetValue" />
-                                <Binding ElementName="CBPropertyNameFilter" />
-                                <Binding ElementName="CBPropertyNameValue" />
-                                <Binding ElementName="CBPropertyValueFilter" />
-                                <Binding ElementName="CBPropertyValue" />
-                                <Binding ElementName="dgSearchElements" />
-                            </MultiBinding>
-                        </Button.CommandParameter>-->
+
                     </Button>
 
                     <Button Width="auto"
@@ -200,7 +198,7 @@
                     <StackPanel DockPanel.Dock="Left" HorizontalAlignment="Center">
 
                     <Button Width="300"
-                                Height="20" Command="{Binding OpenGroupEditorPropertySetCommand}" CommandParameter="{Binding ElementName=dgSearchElements, Path=SelectedItems}">
+                                Height="20" Command="{Binding OpenGroupEditorPropertySetCommand}" CommandParameter="{Binding ElementName=lwSearchElements, Path=SelectedItems}">
                         <TextBlock Padding="10,0,10,0" 
                                        Text="Редактирование наборов"/>
                     </Button>
@@ -211,7 +209,7 @@
                         </Button.Content>
                     </Button>
                     <Button Width="300"
-                                Height="20" Command="{Binding OpenGroupEditorPropertiesCommand}" CommandParameter="{Binding ElementName=dgSearchElements, Path=SelectedItems}">
+                                Height="20" Command="{Binding OpenGroupEditorPropertiesCommand}" CommandParameter="{Binding ElementName=lwSearchElements, Path=SelectedItems}">
                         <Button.Content>
                             <TextBlock Text="Групповое редактирование параметров" Padding="10,0,10,0"/>
                         </Button.Content>
@@ -242,8 +240,8 @@
                     Width="20" HorizontalAlignment="Center">
         </GridSplitter>
 
-        <GroupBox DockPanel.Dock="Right" Header="Элементы" Padding="2" Grid.Column="2" Margin="5">
-            <DataGrid
+        <GroupBox DockPanel.Dock="Right" Name="ww"  Header="Элементы" Padding="2" Grid.Column="2" Margin="5" MinWidth="350">
+            <!--<DataGrid
                 DockPanel.Dock="Top"
                 x:Name="dgSearchElements"
                 Style="{StaticResource NoStyleDataGrid}"
@@ -274,7 +272,23 @@
                     </ItemsPanelTemplate>
                 </DataGrid.ItemsPanel>
                 
-            </DataGrid>
+            </DataGrid>-->
+        
+                    <ListView x:Name="lwSearchElements"
+                          Foreground="Black"
+                          Width="{Binding ElementName=LBLW, Path=ActualWidth}"
+                          VirtualizingStackPanel.IsVirtualizing="True"
+                          VirtualizingStackPanel.VirtualizationMode="Recycling"
+                          ItemsSource="{Binding Path=FilteredSearchItems, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" >
+                
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Класс IFC" DisplayMemberBinding="{Binding IFCClass}" />
+                            <GridViewColumn Header="Имя Элемента" DisplayMemberBinding="{Binding IFCObjectName}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+
         </GroupBox>
         <GridSplitter
                     Grid.Column="3" Grid.Row="1" Margin="0,15,0,0"

@@ -43,7 +43,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DevExpress.Data" Version="24.2.3" />
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
     <PackageReference Include="Xbim.Geometry" Version="5.1.796" />
   </ItemGroup>

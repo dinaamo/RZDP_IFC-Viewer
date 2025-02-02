@@ -32,7 +32,7 @@ namespace RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            foreach (IPropertyModel<IIfcResourceObjectSelect> propertySet in dgProperties.ItemsSource)
+            foreach (IPropertyModel<IIfcResourceObjectSelect> propertySet in lwProperties.ItemsSource)
             {
                 //propertySet.PropertySetDefinition.ModelObject.OnPropertyChanged("CollectionPropertySet");
             }
@@ -50,6 +50,13 @@ namespace RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows
             tbSetName.Text = string.Empty;
             tbSearchingValue.Text = string.Empty;
             tbSetValue.Text = string.Empty;
+        }
+
+
+
+        private void tbSearchingValue_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ((GroupEditPropertyViewModel)DataContext).Search(tbSearchingName.Text, tbSearchingValue.Text);
         }
     }
 }

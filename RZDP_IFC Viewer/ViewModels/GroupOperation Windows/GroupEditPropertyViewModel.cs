@@ -49,8 +49,9 @@ namespace RZDP_IFC_Viewer.ViewModels
         public void Search(string nameProperty, string valueStringProperty)
         {
             FilteredSearchItems = new(
-                FilteredSearchItems.Where(it => it.NameProperty.Contains(nameProperty, StringComparison.OrdinalIgnoreCase)).
-                                    Where(it => it.ValueString.Contains(valueStringProperty, StringComparison.OrdinalIgnoreCase)));
+                                    _targetObjects.SelectMany(it => it.CollectionPropertySet).
+                                                   SelectMany(it => it.PropertyCollection).Where(it => it.NameProperty.Contains(nameProperty, StringComparison.OrdinalIgnoreCase)).
+                                                        Where(it => it.ValueString.Contains(valueStringProperty, StringComparison.OrdinalIgnoreCase)));
         }
 
 

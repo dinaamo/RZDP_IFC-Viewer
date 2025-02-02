@@ -1,0 +1,51 @@
+﻿<Window x:Class="RZDP_IFC_Viewer.View.Windows.EditorWindows.FileEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RZDP_IFC_Viewer.View.Windows.EditorWindows"
+        xmlns:vm="clr-namespace:RZDP_IFC_Viewer.IFC.ModelItem"
+        mc:Ignorable="d"
+        Title="Редактирование свойств файла" Height="200" MinHeight="200" MaxHeight="200" MinWidth="520" Width="515" MaxWidth="520" SizeToContent="Height">
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="5,0,5,0"/>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="5,0,5,0"/>
+        </Style>
+    </Window.Resources>
+    <!--<Window.DataContext>
+        <vm:ModelItemIFCFile/>
+    </Window.DataContext>-->
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100" MinWidth="100"/>
+            <ColumnDefinition Width="400" MinWidth="400"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+
+        <TextBlock Grid.Column="0" Grid.Row="0" Text="Имя файла"/>
+        <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Path=FileName, Mode=OneWay}"/>
+
+        <TextBlock Grid.Column="0" Grid.Row="1" Text="Путь к файлу"/>
+        <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Path=Model.IfcStore.Header.FileName.Name, Mode=OneWay}"/>
+
+        <TextBlock Grid.Column="0" Grid.Row="2" Text="Приложение"/>
+        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Path=Application, Mode=TwoWay}"/>
+
+        <TextBlock Grid.Column="0" Grid.Row="3" Text="Автор проекта"/>
+        <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Path=Person, Mode=TwoWay}"/>
+        
+        <TextBlock Grid.Column="0" Grid.Row="4" Text="Организация"/>
+        <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Path=Organization, Mode=TwoWay}"/>
+    </Grid>
+</Window>

@@ -45,10 +45,15 @@ namespace RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            foreach (BasePropertySetDefinition propertySet in dgPropertySets.ItemsSource)
+            foreach (BasePropertySetDefinition propertySet in lwPropertySets.ItemsSource)
             {
                 //propertySet.ModelObject.OnPropertyChanged("CollectionPropertySet");
             }
+        }
+
+        private void tbFindValue_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ((GroupEditPropertySetViewModel)DataContext).Search(tbFindValue.Text);
         }
     }
 }

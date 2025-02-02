@@ -51,6 +51,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
 
         public string FileName { get; private set; }
 
+
         public bool SaveFile(string filePath, ReportProgressDelegate ReportProcess)
         {
             if (filePath == null)
@@ -496,10 +497,19 @@ namespace RZDP_IFC_Viewer.IFC.Model
                     {
                         table.Name = tuple.Item2;
                     }
-                    //else if (tuple.Item1 is IIfcDocumentReference documentReference)
-                    //{
-                    //    documentReference.Name = tuple.Item2;
-                    //}
+                    else if (tuple.Item1 is IIfcApplication application)
+                    {
+                        application.ApplicationFullName= tuple.Item2;
+                        application.ApplicationDeveloper.Name = tuple.Item2;
+                    }
+                    else if (tuple.Item1 is IIfcPerson person)
+                    {
+                        person.GivenName = tuple.Item2;
+                    }
+                    else if (tuple.Item1 is IIfcOrganization organisation)
+                    {
+                        organisation.Name = tuple.Item2;
+                    }
                     else if (tuple.Item1 is IIfcPhysicalQuantity physicalQuantity)
                     {
                         physicalQuantity.Name = tuple.Item2;
