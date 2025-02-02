@@ -1,18 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using NuGet;
 using RZDP_IFC_Viewer.IFC.ModelItem;
 using RZDP_IFC_Viewer.Infracrucrure.Commands;
 using RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows;
 using RZDP_IFC_Viewer.ViewModels.Base;
+using Xbim.Ifc4.Interfaces;
 
 namespace RZDP_IFC_Viewer.ViewModels
 {
     internal class SearchAndEditWindowViewModel : BaseViewModel
     {
         public string[] СonditionsSearch { get; private set; } = { "Равно", "Не равно", "Содержит", "Не содержит" };
-        public ObservableCollection<ModelItemIFCObject> SearchItems { get; private set; }
+        public List<ModelItemIFCObject> SearchItems { get; private set; }
 
         private ObservableCollection<ModelItemIFCObject> _FilteredSearchItems;
 
@@ -31,6 +34,55 @@ namespace RZDP_IFC_Viewer.ViewModels
         }
 
         #region Комманды 
+
+        #region Удалить элементы
+
+        public ICommand DeleteModelObjectsCommand { get; }
+
+        private void OnDeleteModelObjectsCommandExecuted(object o)
+        {
+            if (o is IEnumerable enumerable)
+            {
+
+                HashSet<ModelItemIFCObject> modelObjectsSet = new HashSet<ModelItemIFCObject>();
+
+                foreach (ModelItemIFCObject modelObject in enumerable)
+                {
+                    modelObjectsSet.AddRange(ModelItemIFCObject.SelectionNestedItems(modelObject));
+                }
+
+                if (modelObjectsSet.Count() == 0 )
+                {
+                    return;
+                }
+                if (modelObjectsSet.Any(it => it.GetIFCObject() is IIfcProject))
+                {
+                    MessageBox.Show($"Нельзя удалить IfcProject\n ", "Внимание!", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                MessageBoxResult result = MessageBox.Show($"Удалить элементы?\n" +
+                        $"Будет удалено элементов: {modelObjectsSet.Count}.", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.No)
+                { return; }
+
+                FilteredSearchItems[0].Model.DeleteModelObjects(modelObjectsSet);
+
+                foreach (ModelItemIFCObject modelItemIFCObject in modelObjectsSet)
+                {
+                    SearchItems.Remove(modelItemIFCObject);
+                }
+
+                FilteredSearchItems = new(SearchItems);
+            }
+        }
+
+        private bool CanDeleteModelObjectsCommandExecute(object o)
+        {
+            return FilteredSearchItems != null && FilteredSearchItems.Count() > 0;
+        }
+
+        #endregion Открыть групповой редактор наборов
 
         #region Открыть групповой редактор наборов характеристик
 
@@ -56,6 +108,31 @@ namespace RZDP_IFC_Viewer.ViewModels
         }
 
         #endregion Открыть групповой редактор наборов
+
+        #region Открыть групповой редактор параметров
+        
+        public ICommand OpenGroupEditorPropertiesCommand { get; }
+
+        private void OnOpenGroupEditorPropertiesCommandExecuted(object o)
+        {
+            if (o is IEnumerable enumerable)
+            {
+                List<ModelItemIFCObject> modelObjectsSet = new List<ModelItemIFCObject>();
+
+                foreach (ModelItemIFCObject modelObject in enumerable)
+                {
+                    modelObjectsSet.Add(modelObject);
+                }
+                new GroupEditPropertyWindow(modelObjectsSet).ShowDialog();
+            }
+        }
+
+        private bool CanOpenGroupEditorPropertiesCommandExecute(object o)
+        {
+            return FilteredSearchItems != null && FilteredSearchItems.Count() > 0;
+        }
+
+        #endregion Открыть групповой редактор параметров
 
         #region Покрасить элементы
 
@@ -85,30 +162,30 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         private void OnResetSeachСonditionsCommandExecuted(object o)
         {
-            object[] ControlArray = (object[])o;
+            //object[] ControlArray = (object[])o;
 
-            ((ComboBox)ControlArray[0]).SelectedIndex = 2;
-            ((ComboBox)ControlArray[1]).Text = string.Empty;
+            //((ComboBox)ControlArray[0]).SelectedIndex = 2;
+            //((ComboBox)ControlArray[1]).Text = string.Empty;
 
-            ((ComboBox)ControlArray[2]).SelectedIndex = 2;
-            ((ComboBox)ControlArray[3]).Text = string.Empty;
+            //((ComboBox)ControlArray[2]).SelectedIndex = 2;
+            //((ComboBox)ControlArray[3]).Text = string.Empty;
 
-            ((ComboBox)ControlArray[4]).SelectedIndex = 2;
-            ((ComboBox)ControlArray[5]).Text = string.Empty;
+            //((ComboBox)ControlArray[4]).SelectedIndex = 2;
+            //((ComboBox)ControlArray[5]).Text = string.Empty;
 
-            ((ComboBox)ControlArray[6]).SelectedIndex = 2;
-            ((ComboBox)ControlArray[7]).Text = string.Empty;
+            //((ComboBox)ControlArray[6]).SelectedIndex = 2;
+            //((ComboBox)ControlArray[7]).Text = string.Empty;
 
-            ((ComboBox)ControlArray[8]).SelectedIndex = 2;
-            ((ComboBox)ControlArray[9]).Text = string.Empty;
+            //((ComboBox)ControlArray[8]).SelectedIndex = 2;
+            //((ComboBox)ControlArray[9]).Text = string.Empty;
 
-            ((ComboBox)ControlArray[10]).SelectedIndex = 2;
-            ((ComboBox)ControlArray[11]).Text = string.Empty;
+            //((ComboBox)ControlArray[10]).SelectedIndex = 2;
+            //((ComboBox)ControlArray[11]).Text = string.Empty;
 
-            DataGrid dataGrid = ControlArray[12] as DataGrid;
+            //DataGrid dataGrid = ControlArray[12] as DataGrid;
 
             FilteredSearchItems = new ObservableCollection<ModelItemIFCObject>(SearchItems);
-            dataGrid.ItemsSource = FilteredSearchItems;
+            //dataGrid.ItemsSource = FilteredSearchItems;
         }
 
         private bool CanResetSearchСonditionsCommandExecute(object o)
@@ -126,27 +203,27 @@ namespace RZDP_IFC_Viewer.ViewModels
         {
             object[] ControlArray = (object[])o;
 
-            string FilterSearchValueGUID = ((ComboBox)ControlArray[0]).Text;
-            string textGUID = ((ComboBox)ControlArray[1]).Text;
+            string FilterSearchValueGUID = (string)ControlArray[0];
+            string textGUID = (string)ControlArray[1];
 
-            string FilterSearchValueClassElement = ((ComboBox)ControlArray[2]).Text;
-            string textClassElement = ((ComboBox)ControlArray[3]).Text;
+            string FilterSearchValueClassElement = (string)ControlArray[2];
+            string textClassElement = (string)ControlArray[3];
 
-            string FilterSearchValueNameElement = ((ComboBox)ControlArray[4]).Text;
-            string textNameElement = ((ComboBox)ControlArray[5]).Text;
+            string FilterSearchValueNameElement = (string)ControlArray[4];
+            string textNameElement = (string)ControlArray[5];
 
-            string FilterSearchValuePropertySet = ((ComboBox)ControlArray[6]).Text;
-            string textPropertySet = ((ComboBox)ControlArray[7]).Text;
+            string FilterSearchValuePropertySet = (string)ControlArray[6];
+            string textPropertySet = (string)ControlArray[7];
 
-            string FilterSearchValuePropertyName = ((ComboBox)ControlArray[8]).Text;
-            string textPropertyName = ((ComboBox)ControlArray[9]).Text;
+            string FilterSearchValuePropertyName = (string)ControlArray[8];
+            string textPropertyName = (string)ControlArray[9];
 
-            string FilterSearchValuePropertyValue = ((ComboBox)ControlArray[10]).Text;
-            string textPropertyValue = ((ComboBox)ControlArray[11]).Text;
+            string FilterSearchValuePropertyValue = (string)ControlArray[10];
+            string textPropertyValue = (string)ControlArray[11];
 
-            DataGrid dataGrid = ControlArray[12] as DataGrid;
+            //DataGrid dataGrid = ControlArray[12] as DataGrid;
 
-            dataGrid.ItemsSource = null;
+            //dataGrid.ItemsSource = null;
 
 
             var col1 = SearchItems.Where(it => IsFilterString(new List<string>() { it.IFCObjectGUID }, textGUID, FilterSearchValueGUID));
@@ -158,7 +235,7 @@ namespace RZDP_IFC_Viewer.ViewModels
 
             FilteredSearchItems = new ObservableCollection<ModelItemIFCObject>(col6);
 
-            dataGrid.ItemsSource = FilteredSearchItems;
+            //dataGrid.ItemsSource = FilteredSearchItems;
         }
 
         private bool IsFilterString(IEnumerable<string> stringCollection, string seachString, string seachingFilter)
@@ -207,15 +284,23 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         public SearchAndEditWindowViewModel(IEnumerable<ModelItemIFCObject> modelElementsForSearch)
         {
-            SearchItems = new ObservableCollection<ModelItemIFCObject>(modelElementsForSearch);
+            SearchItems = new(modelElementsForSearch);
 
             FilteredSearchItems = new ObservableCollection<ModelItemIFCObject>(modelElementsForSearch);
 
             #region Комманды
 
+            DeleteModelObjectsCommand = new ActionCommand(
+                OnDeleteModelObjectsCommandExecuted,
+                CanDeleteModelObjectsCommandExecute);
+
             OpenGroupEditorPropertySetCommand = new ActionCommand(
                 OnOpenGroupEditorPropertySetCommandExecuted,
                 CanOpenGroupEditorPropertySetCommandExecute);
+
+            OpenGroupEditorPropertiesCommand = new ActionCommand(
+                OnOpenGroupEditorPropertiesCommandExecuted,
+                CanOpenGroupEditorPropertiesCommandExecute);
 
             PaintElements = new ActionCommand(
                 OnPaintElementCommandExecuted,

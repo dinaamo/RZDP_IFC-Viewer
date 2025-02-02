@@ -143,19 +143,18 @@
                             Command="{Binding FilteredElements}">
                         <Button.CommandParameter>
                             <MultiBinding Converter="{StaticResource ConvertParametersMultibuilding}">
-                                <Binding ElementName="CBGUIDFilter" />
-                                <Binding ElementName="CBGUIDValue" />
-                                <Binding ElementName="CBClassElementFilter" />
-                                <Binding ElementName="CBClassElementValue" />
-                                <Binding ElementName="CBNameElementFilter" />
-                                <Binding ElementName="CBNameElementValue" />
-                                <Binding ElementName="CBPropertySetFilter" />
-                                <Binding ElementName="CBPropertySetValue" />
-                                <Binding ElementName="CBPropertyNameFilter" />
-                                <Binding ElementName="CBPropertyNameValue" />
-                                <Binding ElementName="CBPropertyValueFilter" />
-                                <Binding ElementName="CBPropertyValue" />
-                                <Binding ElementName="dgSearchElements" />
+                                <Binding ElementName="CBGUIDFilter" Path="Text" />
+                                <Binding ElementName="CBGUIDValue" Path="Text"  />
+                                <Binding ElementName="CBClassElementFilter" Path="Text" />
+                                <Binding ElementName="CBClassElementValue" Path="Text" />
+                                <Binding ElementName="CBNameElementFilter" Path="Text" />
+                                <Binding ElementName="CBNameElementValue" Path="Text" />
+                                <Binding ElementName="CBPropertySetFilter" Path="Text" />
+                                <Binding ElementName="CBPropertySetValue" Path="Text" />
+                                <Binding ElementName="CBPropertyNameFilter" Path="Text" />
+                                <Binding ElementName="CBPropertyNameValue" Path="Text" />
+                                <Binding ElementName="CBPropertyValueFilter" Path="Text" />
+                                <Binding ElementName="CBPropertyValue" Path="Text" />
                             </MultiBinding>
                         </Button.CommandParameter>
                     </Button>
@@ -166,9 +165,9 @@
                                 Content="Сбросить"
                                 DockPanel.Dock="Right"
                                 Margin="5,5,5,5"
-                                Command="{Binding ResetSeachСonditions}">
-                        <Button.CommandParameter>
-                            <MultiBinding Converter="{StaticResource ConvertParametersMultibuilding}">
+                                Command="{Binding ResetSeachСonditions}" Click="Button_Click">
+                        <!--<Button.CommandParameter>-->
+                            <!--<MultiBinding Converter="{StaticResource ConvertParametersMultibuilding}">
                                 <Binding ElementName="CBGUIDFilter" />
                                 <Binding ElementName="CBGUIDValue" />
                                 <Binding ElementName="CBClassElementFilter" />
@@ -183,7 +182,7 @@
                                 <Binding ElementName="CBPropertyValue" />
                                 <Binding ElementName="dgSearchElements" />
                             </MultiBinding>
-                        </Button.CommandParameter>
+                        </Button.CommandParameter>-->
                     </Button>
 
                     <Button Width="auto"
@@ -207,27 +206,36 @@
                     </Button>
                     <Button Width="300"
                                     Height="20">
-                                <Button.Content>
-                                    <TextBlock Text="Добавление наборов по шаблону из базы Accsess" Padding="10,0,10,0"/>
-                                </Button.Content>
-                            </Button>
-                            <Button Width="300"
-                                        Height="20">
-                                <Button.Content>
-                                    <TextBlock Text="Групповое редактирование параметров" Padding="10,0,10,0"/>
-                                </Button.Content>
-                            </Button>
-                            <Button Width="300"
-                                        Height="20">
-                                <Button.Content>
-                                    <TextBlock Text="Переименование элементов" Padding="10,0,10,0"/>
-                            </Button.Content>
+                        <Button.Content>
+                            <TextBlock Text="Добавление наборов по шаблону из базы Accsess" Padding="10,0,10,0"/>
+                        </Button.Content>
+                    </Button>
+                    <Button Width="300"
+                                Height="20" Command="{Binding OpenGroupEditorPropertiesCommand}" CommandParameter="{Binding ElementName=dgSearchElements, Path=SelectedItems}">
+                        <Button.Content>
+                            <TextBlock Text="Групповое редактирование параметров" Padding="10,0,10,0"/>
+                        </Button.Content>
+                    </Button>
+                    <Button Width="300"
+                                Height="20">
+                        <Button.Content>
+                            <TextBlock Text="Переименование элементов" Padding="10,0,10,0"/>
+                    </Button.Content>
+                    </Button>
+                    <Button Width="300"
+                        Height="20" Command="{Binding DeleteModelObjectsCommand}" CommandParameter="{Binding ElementName=dgSearchElements, Path=SelectedItems}">
+                        <TextBlock Padding="10,0,10,0" 
+                        Text="Удаление элементов"/>
                     </Button>
                 </StackPanel>
 
      
             </GroupBox>
         </StackPanel>
+
+
+
+
 
         <GridSplitter
                     Grid.Column="1" Grid.Row="1" Margin="0,15,0,0"
@@ -239,15 +247,17 @@
                 DockPanel.Dock="Top"
                 x:Name="dgSearchElements"
                 Style="{StaticResource NoStyleDataGrid}"
+                
+                
                 MaxHeight="1000"
                 MaxWidth="1000"
                 AutoGenerateColumns="False"
                 IsReadOnly="True"
-                ItemsSource="{Binding Path=FilteredSearchItems, UpdateSourceTrigger=PropertyChanged}" CurrentCellChanged="dgSearchElements_CurrentCellChanged">
+                ItemsSource="{Binding Path=FilteredSearchItems, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" CurrentCellChanged="dgSearchElements_CurrentCellChanged">
                 <DataGrid.Columns>
                     <DataGridTextColumn
                         x:Name="col1"
-                        Width="0.5*"
+                        Width="0.6*"
                         MinWidth="70"
                         Binding="{Binding Path=IFCClass}"
                         Header="Класс IFC" />

@@ -17,7 +17,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
         /// </summary>
         /// <param name="IFCTable"></param>
         /// <param name="modelIFC"></param>
-        public ModelItemIFCTable(IfcStore ifcStore, IIfcTable IFCTable, ModelIFC modelIFC) : base(ifcStore, IFCTable, modelIFC)
+        public ModelItemIFCTable(/*IfcStore ifcStore,*/ IIfcTable IFCTable, ModelIFC modelIFC) : base(/*ifcStore, */IFCTable, modelIFC)
         {
             this.IFCTable = ReplaceSymbols(IFCTable);
             dataTable = FillDataTable(this.IFCTable);

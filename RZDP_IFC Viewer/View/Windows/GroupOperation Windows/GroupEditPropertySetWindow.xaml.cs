@@ -28,8 +28,6 @@ namespace RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows
         {
             InitializeComponent();
             DataContext = new GroupEditPropertySetViewModel(FilteredSearchItems);
-
-            var tt = dgPropertySets.SelectedItems;
         }
 
 
@@ -49,7 +47,7 @@ namespace RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows
         {
             foreach (BasePropertySetDefinition propertySet in dgPropertySets.ItemsSource)
             {
-                propertySet.ModelObject.OnPropertyChanged("CollectionPropertySet");
+                //propertySet.ModelObject.OnPropertyChanged("CollectionPropertySet");
             }
         }
     }

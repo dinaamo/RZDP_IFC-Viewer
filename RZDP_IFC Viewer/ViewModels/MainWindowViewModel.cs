@@ -258,11 +258,8 @@ namespace RZDP_IFC_Viewer.ViewModels
                 //Запускаем создание геометрии
                 Task task = Task.Run(() =>
                 {
-                    if (ifcStore.GeometryStore.IsEmpty)
-                    {
-                        var context = new Xbim3DModelContext(ifcStore.Model);
-                        context.CreateContext(_worker.ReportProgress);
-                    }
+                    var context = new Xbim3DModelContext(ifcStore.Model);
+                    context.CreateContext(_worker.ReportProgress);
                 });
 
                 //Создаем модель
@@ -288,10 +285,15 @@ namespace RZDP_IFC_Viewer.ViewModels
                     }
                     else
                     {
+                        tempModel.Dispose();
                         throw new FileLoadException("Ошибка загрузки файла");
                     }
                 }
-                
+                else
+                {
+                    throw new FileLoadException("Ошибка загрузки файла");
+                }
+
             }
             catch(FileLoadException fLex)
             {
@@ -305,7 +307,6 @@ namespace RZDP_IFC_Viewer.ViewModels
             finally
             {
                 Application.Current.Dispatcher.BeginInvoke(() =>{IsEnableWindow = true;});
-                //ProgressValue = 0;
                 _worker.ReportProgress(0);
                 _worker.DoWork -= LoadModel;
             }
@@ -404,13 +405,21 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         private void ZoomSelected(IPersistEntity persistEntity)
         {
-            _camChanged = false;
-            mainWindow.WPFDrawingControl.DrawingControl.Viewport.Camera.Changed += Camera_Changed;
-            mainWindow.WPFDrawingControl.DrawingControl.SelectedEntity = persistEntity;
-            mainWindow.WPFDrawingControl.DrawingControl.ZoomSelected();
-            mainWindow.WPFDrawingControl.DrawingControl.Viewport.Camera.Changed -= Camera_Changed;
-            if (!_camChanged)
-                mainWindow.WPFDrawingControl.DrawingControl.ClipBaseSelected(0.15);
+            try
+            {
+                _camChanged = false;
+                mainWindow.WPFDrawingControl.DrawingControl.Viewport.Camera.Changed += Camera_Changed;
+                mainWindow.WPFDrawingControl.DrawingControl.SelectedEntity = persistEntity;
+                mainWindow.WPFDrawingControl.DrawingControl.ZoomSelected();
+                mainWindow.WPFDrawingControl.DrawingControl.Viewport.Camera.Changed -= Camera_Changed;
+                if (!_camChanged)
+                    mainWindow.WPFDrawingControl.DrawingControl.ClipBaseSelected(0.15);
+            }
+            catch (ArgumentException)
+            {
+
+            }
+
         }
 
         private void Camera_Changed(object sender, EventArgs e)

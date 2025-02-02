@@ -48,7 +48,7 @@ namespace RZDP_IFC_Viewer.ViewModels
                                     Contains(namePropertySet, StringComparison.OrdinalIgnoreCase)));
         }
 
-        IEnumerable<(IIfcRoot, string)> GetTargetCollection(IEnumerable targetPropertySets, string targetString, string filterString, bool setFragment, bool setWhole, bool setPrefix)
+        IEnumerable<(IIfcRoot, string)> GetCollectionForChangeName(IEnumerable targetPropertySets, string targetString, string filterString, bool setFragment, bool setWhole, bool setPrefix)
         {
             foreach (BasePropertySetDefinition propertySet in targetPropertySets)
             {
@@ -104,10 +104,10 @@ namespace RZDP_IFC_Viewer.ViewModels
 
             if (arrParameters[5] is IEnumerable targetPropertySetsSelect)
             {
-                _targetObjects[0].ModelIFC.ChangeName(GetTargetCollection(targetPropertySetsSelect, targetString, filterString, setFragment, setWhole, setPrefix));
+                _targetObjects[0].ModelIFC.ChangeName(GetCollectionForChangeName(targetPropertySetsSelect, targetString, filterString, setFragment, setWhole, setPrefix));
             }
 
-            FilteredSearchItems = new ObservableCollection<BasePropertySetDefinition>(_targetObjects.SelectMany(it => it.CollectionPropertySet));
+            ResetSearchConditions();
         }
 
 
@@ -116,7 +116,7 @@ namespace RZDP_IFC_Viewer.ViewModels
             return FilteredSearchItems != null && FilteredSearchItems.Count() > 0;
         }
 
-        #endregion Заменить
+        #endregion Переименовать набороы
 
         #region Удалить наборы
 
@@ -128,7 +128,7 @@ namespace RZDP_IFC_Viewer.ViewModels
             {
                 _targetObjects[0].ModelIFC.ActionInTransactionForPropertySet(GetPropertySetsToDelete(targetPropertySetsSelect));
             }
-            FilteredSearchItems = new ObservableCollection<BasePropertySetDefinition>(_targetObjects.SelectMany(it => it.CollectionPropertySet));
+            ResetSearchConditions();       
         }
 
         private bool CanDeleteElementCommandExecute(object o)
@@ -149,7 +149,7 @@ namespace RZDP_IFC_Viewer.ViewModels
         {
             _targetObjects = new ObservableCollection<ModelItemIFCObject>(modelElementsForSearch);
 
-            FilteredSearchItems = new ObservableCollection<BasePropertySetDefinition>(_targetObjects.SelectMany(it => it.CollectionPropertySet));
+            ResetSearchConditions();
 
             #region Комманды
 

@@ -53,7 +53,32 @@ namespace RZDP_IFC_Viewer.ViewModels
                                     Where(it => it.ValueString.Contains(valueStringProperty, StringComparison.OrdinalIgnoreCase)));
         }
 
-        IEnumerable<(Action<string>, string)> GetCollectionForChangeValue(IEnumerable targetProperties, string targetString, string searchingString, bool setFragment, bool setWhole)
+
+        IEnumerable<(object, string)> GetCollectionForChangeName(IEnumerable targetProperties, string setString, string searchingString, bool setFragment, bool setWhole, bool setPrefix)
+        {
+            foreach (IPropertyModel<IIfcResourceObjectSelect> property in targetProperties)
+            {
+                string resultName = property.NameProperty;
+
+                if (setFragment)
+                {
+                    if (string.IsNullOrEmpty(searchingString))
+                        continue;
+                    resultName = property.NameProperty.Replace(searchingString, setString, StringComparison.OrdinalIgnoreCase);
+                }
+                else if (setWhole)
+                {
+                    resultName = setString;
+                }
+                else if (setPrefix)
+                {
+                    resultName = setString + property.NameProperty;
+                }
+                yield return (property.Property, resultName);
+            }
+        }
+
+        IEnumerable<(Action<string>, string)> GetCollectionForChangeValue(IEnumerable targetProperties, string setString, string searchingString, bool setFragment, bool setWhole)
         {
             foreach (IPropertyModel<IIfcResourceObjectSelect> property in targetProperties)
             {
@@ -63,11 +88,11 @@ namespace RZDP_IFC_Viewer.ViewModels
                 {
                     if (string.IsNullOrEmpty(searchingString))
                         continue;
-                    resultName = property.ValueString.Replace(searchingString, targetString, StringComparison.OrdinalIgnoreCase);
+                    resultName = property.ValueString.Replace(searchingString, setString, StringComparison.OrdinalIgnoreCase);
                 }
                 else if (setWhole)
                 {
-                    resultName = targetString;
+                    resultName = setString;
                 }
                 yield return (property.SetNewValue, resultName);
             }
@@ -93,20 +118,20 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         private void OnReplaceNamePropertyCommandExecuted(object o)
         {
-            //object[]? arrParameters =  o as object[];
-            //string? targetString = Convert.ToString(arrParameters[0]);
-            //string? filterString = Convert.ToString(arrParameters[1]);
+            object[]? arrParameters = o as object[];
+            string? searchingString = Convert.ToString(arrParameters[0]);
+            string? setString = Convert.ToString(arrParameters[1]);
 
-            //bool setFragment = (bool)arrParameters[2];
-            //bool setWhole = (bool)arrParameters[3];
-            //bool setPrefix = (bool)arrParameters[4];
+            bool setFragment = (bool)arrParameters[2];
+            bool setWhole = (bool)arrParameters[3];
+            bool setPrefix = (bool)arrParameters[4];
 
-            //if (arrParameters[5] is IEnumerable targetPropertySetsSelect)
-            //{
-            //    _targetObjects[0].ModelIFC.ChangeName(GetTargetCollection(targetPropertySetsSelect, targetString, filterString, setFragment, setWhole, setPrefix));
-            //}
-
-            //FilteredSearchItems = new ObservableCollection<BasePropertySetDefinition>(_targetObjects.SelectMany(it => it.CollectionPropertySet));
+            if (arrParameters[5] is IEnumerable targetPropertySetsSelect)
+            {
+                _targetObjects[0].ModelIFC.ChangeName(GetCollectionForChangeName(targetPropertySetsSelect, setString, searchingString, setFragment, setWhole, setPrefix));
+            }
+            //OnPropertyChanged("NameProperty");
+            ResetSearchConditions();
         }
 
 
@@ -124,17 +149,17 @@ namespace RZDP_IFC_Viewer.ViewModels
         private void OnChangeValuePropertyommandExecuted(object o)
         {
             object[]? arrParameters = o as object[];
-            string? targetString = Convert.ToString(arrParameters[0]);
-            string? searchingString = Convert.ToString(arrParameters[1]);
+            string? searchingString = Convert.ToString(arrParameters[0]);
+            string? setString = Convert.ToString(arrParameters[1]);
 
             bool setFragment = (bool)arrParameters[2];
             bool setWhole = (bool)arrParameters[3];
 
-            if (arrParameters[5] is IEnumerable targetPropertySelect)
+            if (arrParameters[4] is IEnumerable targetPropertySelect)
             {
-                _targetObjects[0].ModelIFC.ChangeValue(GetCollectionForChangeValue(targetPropertySelect, targetString, searchingString, setFragment, setWhole));
+                _targetObjects[0].ModelIFC.ChangeValue(GetCollectionForChangeValue(targetPropertySelect, setString, searchingString, setFragment, setWhole));
             }
-
+            //OnPropertyChanged("ValueString");
             ResetSearchConditions();
         }
 

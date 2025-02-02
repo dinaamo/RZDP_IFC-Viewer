@@ -265,11 +265,11 @@ namespace RZDP_IFC_Viewer.IFC.Model
         {
             if (referenceObject is IIfcTable ifcTable)
             {
-                return new ModelItemIFCTable(IfcStore, ifcTable, this);
+                return new ModelItemIFCTable(/*IfcStore, */ifcTable, this);
             }
             else if (referenceObject is IIfcDocumentReference ifcDocumentReference)
             {
-                return new ModelItemDocumentReference(IfcStore, ifcDocumentReference, this);
+                return new ModelItemDocumentReference(/*IfcStore, */ifcDocumentReference, this);
             }
             else
             {
@@ -348,7 +348,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
             }
         }
 
-        public void DeleteModelObjects(List<ModelItemIFCObject> modelItemIFCObjectSet)
+        public void DeleteModelObjects(ICollection<ModelItemIFCObject> modelItemIFCObjectSet)
         {
             var tt = DeleteModelObjectsBackground;
             backgroundWorker.DoWork += DeleteModelObjectsBackground;
@@ -358,7 +358,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
 
         void DeleteModelObjectsBackground(object sender, DoWorkEventArgs args)
         {
-            if (args.Argument is List<ModelItemIFCObject> modelItemIFCObjectSet)
+            if (args.Argument is ICollection< ModelItemIFCObject> modelItemIFCObjectSet)
             {
                 using (ITransaction trans = IfcStore.Model.BeginTransaction("DeleteModelObjects"))
                 {
@@ -372,6 +372,10 @@ namespace RZDP_IFC_Viewer.IFC.Model
                     counter = 0;
                     foreach (var modelItemIFCObject in modelItemIFCObjectSet)
                     {
+                        if (modelItemIFCObject is null || modelItemIFCObject.TopElement is null)
+                        {
+                            continue;
+                        }
                         //Удаляем ссылки на таблицы и документы от объекта
                         modelItemIFCObject.DeleteReferenceToTheObject(allModelReference);
                         

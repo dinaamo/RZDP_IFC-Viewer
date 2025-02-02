@@ -11,7 +11,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 {
     public class ModelItemDocumentReference : BaseModelReferenceIFC
     {
-        public ModelItemDocumentReference(IfcStore ifcStore, IIfcDocumentReference ifcDocumentReference, ModelIFC modelIFC) : base(ifcStore, ifcDocumentReference, modelIFC)
+        public ModelItemDocumentReference(/*IfcStore ifcStore, */IIfcDocumentReference ifcDocumentReference, ModelIFC modelIFC) : base(/*ifcStore, */ifcDocumentReference, modelIFC)
         {
             this.ifcDocumentReference = ifcDocumentReference;
 

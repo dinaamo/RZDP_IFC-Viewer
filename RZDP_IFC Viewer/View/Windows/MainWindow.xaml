@@ -17,7 +17,8 @@
     
     Icon="{StaticResource ResourceKey=RZDP_Image}"
     Loaded="MainWindowIFC_Loaded"
-    AllowDrop="True" Drop="MainWindowIFC_DragLeave" IsEnabled="{Binding Path=IsEnableWindow}">
+    AllowDrop="True" Drop="MainWindowIFC_DragLeave" 
+    IsEnabled="{Binding Path=IsEnableWindow}">
 
     <!--<Window.DataContext>
         <vm:MainWindowViewModel />
@@ -233,7 +234,7 @@
                     <StackPanel.Style>
                         <Style TargetType="StackPanel">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ProgressValue}" Value="0">
+                                        <DataTrigger Binding="{Binding ElementName=MainWindowIFC, Path=IsEnabled}" Value="True">
                                     <Setter Property="Visibility" Value="Collapsed" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -275,15 +276,7 @@
                 <TreeView
                     x:Name="treeViewIFC"
                     ItemContainerStyle="{StaticResource TreeViewStyle}"
-                    ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                    VirtualizingPanel.IsVirtualizing="True"
-                    VirtualizingPanel.VirtualizationMode="Recycling"
-                    VirtualizingPanel.IsContainerVirtualizable="True">
-                    <TreeView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <VirtualizingStackPanel />
-                        </ItemsPanelTemplate>
-                    </TreeView.ItemsPanel>
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 </TreeView>
             </GroupBox>
 

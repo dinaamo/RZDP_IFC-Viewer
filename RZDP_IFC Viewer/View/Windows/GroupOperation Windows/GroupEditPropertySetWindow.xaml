@@ -7,89 +7,49 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows"
         mc:Ignorable="d"
-        Title="Групповые операции с наборами характеристик" Height="450" Width="800" Closed="Window_Closed">
+        Title="Групповые операции с наборами характеристик" Height="450" Width="800" MinWidth="700" MinHeight="400" Closed="Window_Closed">
     <Window.Resources>
         <Style TargetType="Button">
-            <Setter Property="Margin" Value="0,5,0,5"/>
+            <Setter Property="Margin" Value="0,5,5,5"/>
         </Style>
     </Window.Resources>
     <Window.DataContext>
         <vm:GroupEditPropertySetViewModel/>
     </Window.DataContext>
-    <Grid Margin="5">
-        <DockPanel>
-        <GroupBox Header="Критерии поиска" DockPanel.Dock="Top" Margin="5">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="0.5*"/>
-                        <ColumnDefinition Width="0.55*"/>
-                    </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="0" Orientation="Vertical" Margin="8">
-                        <TextBlock Text="Найти:"/>
-                        <TextBox x:Name="tbFindValue"/>
-                    </StackPanel>
+    <DockPanel Margin="10">
 
-                    <StackPanel Grid.Column="1" Orientation="Vertical" Margin="8">
-                        <TextBlock Text="Заменить на:"/>
-                        <TextBox x:Name="tbSetValue"/>
-                    </StackPanel>
+        <Grid DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="200"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*" MinWidth="400"/>
+            </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="2" Orientation="Vertical" Margin="8" VerticalAlignment="Center">
-                        <TextBlock Margin="0,15,0,0"
-                            Text="{Binding ElementName=dgPropertySets, Path=Items.Count, StringFormat=Элементов: \{0\}}"/>
-                    </StackPanel>
 
-                    <StackPanel Grid.Column="3" Orientation="Vertical">
-                        <RadioButton x:Name="rbSetFragment" Content="Заменить фрагмент" IsChecked="True"/>
-                        <RadioButton x:Name="rbSetWhole" Content="Заменить целиком"/>
-                        <RadioButton x:Name="rbSetPrefix" Content="Добавить перфикс"/>
-                    </StackPanel>
-                </Grid>
+            <GroupBox Header="Критерии поиска" Grid.Column="0" Margin="0,0,2,0">
+                <StackPanel  Orientation="Vertical" Margin="8,8,8,8" >
+                    <TextBlock Text="Найти:"/>
+                    <TextBox x:Name="tbFindValue"/>
+                    
+                </StackPanel>
             </GroupBox >
-            
-            <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
-                <GroupBox Header="Поиск">
-                    <StackPanel>
-                        <Button Click="Button_Click_Search">
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+
+            <GroupBox Header="Заменить" Margin="2,0,0,0" Grid.Column="2">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+
+                        <Button Command="{Binding ReplaceNamePropertySetCommand}" Width="100" Height="25" >
                             <StackPanel Orientation="Horizontal">
                                 <fa:ImageAwesome
-                                    Width="10"
-                                    Height="10"
-                                    Margin="2"
-                                    Foreground="DarkGreen"
-                                    Icon="Search"/>
-                                <TextBlock Text="Найти" Margin="2"/>
-                            </StackPanel>
-                        </Button>
-                        <Button Click="Button_Click_Clear">
-                            <StackPanel Orientation="Horizontal">
-                                <fa:ImageAwesome
-                                        Width="10"
-                                        Height="10"
-                                        Margin="2"
-                                        Foreground="DarkMagenta"
-                                        Icon="Refresh"/>
-                                <TextBlock Text="Очистить" Margin="2"/>
-                            </StackPanel>
-                        </Button>
-                    </StackPanel>
-                </GroupBox>
-                <GroupBox Header="Заменить">
-                    <StackPanel>
-                        <Button Command="{Binding ReplaceNamePropertySetCommand}" >
-                            <StackPanel Orientation="Horizontal">
-                                <fa:ImageAwesome
-                                        Width="10"
-                                        Height="10"
-                                        Margin="2"
-                                        Foreground="CadetBlue"
-                                        Icon="Reply"/>
+                                            Width="10"
+                                            Height="10"
+                                            Margin="2"
+                                            Foreground="CadetBlue"
+                                            Icon="Reply"/>
                                 <TextBlock Text="Заменить" Margin="2"/>
                             </StackPanel>
-
                             <Button.CommandParameter>
                                 <MultiBinding Converter="{StaticResource ConvertParametersMultibuilding}">
                                     <Binding ElementName="tbSetValue"  Path="Text"/>
@@ -101,20 +61,21 @@
                                 </MultiBinding>
                             </Button.CommandParameter>
                         </Button>
-                        <Button Command="{Binding ReplaceNamePropertySetCommand}" >
+                        
+                        <Button Command="{Binding ReplaceNamePropertySetCommand}" Width="100" Height="25" >
                             <StackPanel Orientation="Horizontal">
                                 <fa:ImageAwesome
-                                        Width="10"
-                                        Height="10"
-                                        Margin="2"
-                                        Foreground="DarkBlue"
-                                        Icon="ReplyAll"/>
+                                                Width="10"
+                                                Height="10"
+                                                Margin="2"
+                                                Foreground="DarkBlue"
+                                                Icon="ReplyAll"/>
                                 <TextBlock Text="Заменить все" Margin="2"/>
                             </StackPanel>
                             <Button.CommandParameter>
                                 <MultiBinding Converter="{StaticResource ConvertParametersMultibuilding}">
                                     <Binding ElementName="tbSetValue"  Path="Text"/>
-                                    <Binding ElementName="tbFindValue"  Path="Text"/> 
+                                    <Binding ElementName="tbFindValue"  Path="Text"/>
                                     <Binding ElementName="rbSetFragment"  Path="IsChecked"/>
                                     <Binding ElementName="rbSetWhole"  Path="IsChecked"/>
                                     <Binding ElementName="rbSetPrefix"  Path="IsChecked"/>
@@ -122,80 +83,129 @@
                                 </MultiBinding>
                             </Button.CommandParameter>
                         </Button>
+
+                        <StackPanel  Orientation="Vertical" VerticalAlignment="Center" Margin="5,0,0,0">
+                            <RadioButton x:Name="rbSetFragment" Content="Заменить фрагмент" IsChecked="True"/>
+                            <RadioButton x:Name="rbSetWhole" Content="Заменить целиком"/>
+                            <RadioButton x:Name="rbSetPrefix" Content="Добавить перфикс"/>
+                        </StackPanel>
                     </StackPanel>
-                </GroupBox>
-                <GroupBox Header="Удалить">
-                    <StackPanel>
-                        <Button Command="{Binding DeleteElementCommand}" CommandParameter="{Binding ElementName=dgPropertySets, Path=SelectedItems}">
-                            <StackPanel Orientation="Horizontal">
-                                <fa:ImageAwesome
+
+                    <StackPanel Orientation="Vertical" Margin="0,-8,0,0">
+                        <TextBlock Text="Заменить на:"/>
+                        <TextBox x:Name="tbSetValue"/>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+        </Grid>
+
+
+
+
+
+        <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
+            <GroupBox Header="Поиск">
+                <StackPanel>
+                    <TextBlock Margin="0,5,0,0"
+                        Text="{Binding ElementName=dgPropertySets, Path=Items.Count, StringFormat=Элементов: \{0\}}"/>
+                    <Button Click="Button_Click_Search">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:ImageAwesome
+                                    Width="10"
+                                    Height="10"
+                                    Margin="2"
+                                    Foreground="DarkGreen"
+                                    Icon="Search"/>
+                            <TextBlock Text="Найти" Margin="2"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Click="Button_Click_Clear">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:ImageAwesome
+                                        Width="10"
+                                        Height="10"
+                                        Margin="2"
+                                        Foreground="DarkMagenta"
+                                        Icon="Refresh"/>
+                            <TextBlock Text="Очистить" Margin="2"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Удалить">
+                <StackPanel>
+                    <Button Command="{Binding DeleteElementCommand}" CommandParameter="{Binding ElementName=dgPropertySets, Path=SelectedItems}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:ImageAwesome
                                         Width="10"
                                         Height="10"
                                         Margin="2"
                                         Foreground="Red"
                                         Icon="Remove"/>
-                                <TextBlock Text="Удалить" Margin="2"/>
-                            </StackPanel>
-                            
-                        </Button>
-                        <Button Command="{Binding DeleteElementCommand}"  CommandParameter="{Binding ElementName=dgPropertySets, Path=ItemsSource}">
-                            <StackPanel Orientation="Horizontal">
-                                <fa:ImageAwesome
+                            <TextBlock Text="Удалить" Margin="2"/>
+                        </StackPanel>
+
+                    </Button>
+                    <Button Command="{Binding DeleteElementCommand}"  CommandParameter="{Binding ElementName=dgPropertySets, Path=ItemsSource}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:ImageAwesome
                                         Width="10"
                                         Height="10"
                                         Margin="2"
                                         Foreground="DarkRed"
                                         Icon="Remove"/>
-                                <TextBlock Text="Удалить все" Margin="2"/>
-                            </StackPanel>
-                        </Button>
-                    </StackPanel>
-                </GroupBox>
+                            <TextBlock Text="Удалить все" Margin="2"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </GroupBox>
 
-            </StackPanel>
+        </StackPanel>
 
-            <GroupBox Header="Наборы характеристик" DockPanel.Dock="Bottom" Margin="5" Padding="2">
+        <GroupBox Header="Наборы характеристик" DockPanel.Dock="Bottom" Margin="5,0,0,0" Padding="2">
             <DataGrid
+                ColumnWidth="*"
                 x:Name="dgPropertySets"
                 AutoGenerateColumns="False"
                 IsReadOnly="True"
                 Style="{StaticResource NoStyleDataGrid}"
                 ItemsSource="{Binding Path=FilteredSearchItems, UpdateSourceTrigger=PropertyChanged}">
                 <DataGrid.Columns>
-                        <DataGridTextColumn
+                    <DataGridTextColumn
                                 Width="*"
                                 MinWidth="100"
                                 CanUserSort="True"
                                 Header="Наименование элемента"
                                 Binding="{Binding Path=ModelObject.IFCObjectName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        <DataGridTextColumn
+                    <DataGridTextColumn
                                 Width="*"
                                 MinWidth="100"
                                 CanUserSort="True"
                                 Binding="{Binding Path=NamePropertySet, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                 Header="Наименование набора"/>
-                        <DataGridTextColumn
+                    <DataGridTextColumn
                                 Width="70"
                                 MinWidth="70"
                                 CanUserSort="True"
                                 Binding="{Binding Path=CountRelatedObjectsInstanse, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                 Header="Экземпляр"
                                 Visibility="Visible"/>
-                        <DataGridTextColumn
+                    <DataGridTextColumn
                                 Width="40"
                                 MinWidth="40"
                                 Binding="{Binding Path=CountRelatedObjectsType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                 CanUserSort="True"
                                 Header="Тип"
                                 Visibility="Visible"/>
-                    </DataGrid.Columns>
-                    <DataGrid.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <VirtualizingStackPanel />
-                        </ItemsPanelTemplate>
-                    </DataGrid.ItemsPanel>
-                </DataGrid>
+                </DataGrid.Columns>
+                <DataGrid.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </DataGrid.ItemsPanel>
+            </DataGrid>
         </GroupBox>
-        </DockPanel>
-    </Grid>
+
+    </DockPanel>
 </Window>

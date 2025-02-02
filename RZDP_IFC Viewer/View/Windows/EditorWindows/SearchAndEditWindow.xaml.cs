@@ -35,6 +35,12 @@ namespace RZDP_IFC_Viewer.View.Windows
         private SearchAndEditWindow(IEnumerable<ModelItemIFCObject> ModelElementsForSearch)
         {
             InitializeComponent();
+
+            //dgSearchElements.EnableColumnVirtualization = true;
+            //dgSearchElements.EnableRowVirtualization = true;
+
+            
+
             _modelElementsForSearch = ModelElementsForSearch;
 
             SearchAndEditWindowViewModel searchWindowViewModel = new SearchAndEditWindowViewModel(ModelElementsForSearch);
@@ -69,6 +75,22 @@ namespace RZDP_IFC_Viewer.View.Windows
         private void dgSearchElements_CurrentCellChanged(object sender, EventArgs e)
         {
             (dgSearchElements?.SelectedItem as ModelItemIFCObject)?.OnPropertyChanged("CollectionPropertySet");
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            CBGUIDFilter.SelectedIndex = 2;
+            CBGUIDValue.Text = string.Empty;
+            CBClassElementFilter.SelectedIndex = 2;
+            CBClassElementValue.Text = string.Empty;
+            CBNameElementFilter.SelectedIndex = 2;
+            CBNameElementValue.Text = string.Empty;
+            CBPropertySetFilter.SelectedIndex = 2;
+            CBPropertySetValue.Text = string.Empty;
+            CBPropertyNameFilter.SelectedIndex = 2;
+            CBPropertyNameValue.Text = string.Empty;
+            CBPropertyValueFilter.SelectedIndex = 2;
+            CBPropertyValue.Text = string.Empty;
         }
     }
 }

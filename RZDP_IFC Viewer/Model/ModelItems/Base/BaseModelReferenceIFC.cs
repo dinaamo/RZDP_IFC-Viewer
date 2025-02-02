@@ -10,7 +10,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 {
     public abstract class BaseModelReferenceIFC : BaseModelItemIFC
     {
-        public BaseModelReferenceIFC(IfcStore ifcStore, IIfcObjectReferenceSelect ifcObjectReferenceSelect, ModelIFC modelIFC) : base(modelIFC, ifcObjectReferenceSelect)
+        public BaseModelReferenceIFC(/*IfcStore ifcStore, */IIfcObjectReferenceSelect ifcObjectReferenceSelect, ModelIFC modelIFC) : base(modelIFC, ifcObjectReferenceSelect)
         {
             DeleteReferenceCommand = new ActionCommand(
                         OnDeleteReferenceCommandExecuted,

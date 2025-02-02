@@ -10,7 +10,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 {
     public abstract class BaseModelItemIFC : BaseModel, INotifyPropertyChanged
     {
-        protected ModelIFC Model { get; set; }
+        public ModelIFC Model { get; set; }
 
         public BaseModelItemIFC(ModelIFC modelIFC, IPersistEntity ItemIFC = null, BaseModelItemIFC TopElement = null) : base(modelIFC)
         {
@@ -122,7 +122,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
         private bool _IsFocusReference { get; set; } = false;
 
         /// <summary>
-        /// Фокус элемента
+        /// Фокус элемента в дереве
         /// </summary>
         public bool IsFocusReference
         {
