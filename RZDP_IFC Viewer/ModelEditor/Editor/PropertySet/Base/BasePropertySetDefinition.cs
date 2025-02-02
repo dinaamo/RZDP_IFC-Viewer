@@ -22,7 +22,7 @@ namespace Editor_IFC
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected void OnPropertyChanged(string PropertyName)
+        public void OnPropertyChanged(string PropertyName)
         {
             if (PropertyChanged != null)
             {
@@ -123,5 +123,23 @@ namespace Editor_IFC
         public abstract void CreateNewProperty();
 
         public abstract IIfcPropertySetDefinition GetCopyPropertySet();
+
+        public override bool Equals(object? other)
+        {
+            if (other is BasePropertySetDefinition otherPropSet)
+            {
+                bool res = Equals(otherPropSet.IFCPropertySetDefinition, IFCPropertySetDefinition);
+                return res;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return IFCPropertySetDefinition.GetHashCode();
+        }
     }
 }

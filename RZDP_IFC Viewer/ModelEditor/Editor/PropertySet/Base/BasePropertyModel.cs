@@ -18,7 +18,7 @@ namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected void OnPropertyChanged(string PropertyName)
+        public void OnPropertyChanged(string PropertyName)
         {
             if (PropertyChanged != null)
             {
@@ -135,7 +135,7 @@ namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected void OnPropertyChanged(string PropertyName)
+        public void OnPropertyChanged(string PropertyName)
         {
             if (PropertyChanged != null)
             {
@@ -250,5 +250,6 @@ namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
         public string NameProperty { get; set; }
         public BasePropertySetDefinition PropertySetDefinition { get; }
         public void SetNewValue(string stringValue);
+        public void OnPropertyChanged(string PropertyName);
     }
 }

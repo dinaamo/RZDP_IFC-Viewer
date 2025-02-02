@@ -17,7 +17,7 @@ namespace RZDP_IFC_Viewer.ViewModels
 {
     internal class GroupEditPropertyViewModel : BaseViewModel
     {
-        private ObservableCollection<ModelItemIFCObject> _targetObjects;
+        private List<ModelItemIFCObject> _targetModelObjects;
 
         private ObservableCollection<IPropertyModel<IIfcResourceObjectSelect>> _FilteredSearchItems;
 
@@ -39,19 +39,19 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         public void ResetSearchConditions()
         {
-            FilteredSearchItems = new ObservableCollection<IPropertyModel<IIfcResourceObjectSelect>>
-                                (_targetObjects.SelectMany(it => it.CollectionPropertySet).
-                                                SelectMany(it => it.PropertyCollection));
+            FilteredSearchItems = new(_targetModelObjects.SelectMany(it => it.CollectionPropertySet).
+                Distinct().
+                SelectMany(it => it.PropertyCollection));
         }
 
         #endregion Очистить фильтр
 
         public void Search(string nameProperty, string valueStringProperty)
         {
-            FilteredSearchItems = new(
-                                    _targetObjects.SelectMany(it => it.CollectionPropertySet).
-                                                   SelectMany(it => it.PropertyCollection).Where(it => it.NameProperty.Contains(nameProperty, StringComparison.OrdinalIgnoreCase)).
-                                                        Where(it => it.ValueString.Contains(valueStringProperty, StringComparison.OrdinalIgnoreCase)));
+            FilteredSearchItems = new(_targetModelObjects.SelectMany(it => it.CollectionPropertySet).Distinct().
+                                                                SelectMany(it => it.PropertyCollection).
+                                                                    Where(it => it.NameProperty.Contains(nameProperty, StringComparison.OrdinalIgnoreCase)).
+                                                                    Where(it => it.ValueString.Contains(valueStringProperty, StringComparison.OrdinalIgnoreCase)));
         }
 
 
@@ -76,6 +76,7 @@ namespace RZDP_IFC_Viewer.ViewModels
                     resultName = setString + property.NameProperty;
                 }
                 yield return (property.Property, resultName);
+                property.OnPropertyChanged("NameProperty");
             }
         }
 
@@ -96,6 +97,7 @@ namespace RZDP_IFC_Viewer.ViewModels
                     resultName = setString;
                 }
                 yield return (property.SetNewValue, resultName);
+                property.OnPropertyChanged("ValueString");
             }
         }
 
@@ -129,10 +131,11 @@ namespace RZDP_IFC_Viewer.ViewModels
 
             if (arrParameters[5] is IEnumerable targetPropertySetsSelect)
             {
-                _targetObjects[0].ModelIFC.ChangeName(GetCollectionForChangeName(targetPropertySetsSelect, setString, searchingString, setFragment, setWhole, setPrefix));
+                _targetModelObjects[0].ModelIFC.ChangeName(GetCollectionForChangeName(targetPropertySetsSelect, setString, searchingString, setFragment, setWhole, setPrefix));
             }
-            //OnPropertyChanged("NameProperty");
-            ResetSearchConditions();
+
+
+            //ResetSearchConditions();
         }
 
 
@@ -158,10 +161,10 @@ namespace RZDP_IFC_Viewer.ViewModels
 
             if (arrParameters[4] is IEnumerable targetPropertySelect)
             {
-                _targetObjects[0].ModelIFC.ChangeValue(GetCollectionForChangeValue(targetPropertySelect, setString, searchingString, setFragment, setWhole));
+                _targetModelObjects[0].ModelIFC.ChangeValue(GetCollectionForChangeValue(targetPropertySelect, setString, searchingString, setFragment, setWhole));
             }
             //OnPropertyChanged("ValueString");
-            ResetSearchConditions();
+            //ResetSearchConditions();
         }
 
 
@@ -180,7 +183,7 @@ namespace RZDP_IFC_Viewer.ViewModels
         {
             if (o is IEnumerable targetPropertySetsSelect)
             {
-                _targetObjects[0].ModelIFC.DeleteIFCEntity(GetPropertyToDelete(targetPropertySetsSelect));
+                _targetModelObjects[0].ModelIFC.DeleteIFCEntity(GetPropertyToDelete(targetPropertySetsSelect));
             }
             ResetSearchConditions();
         }
@@ -201,7 +204,7 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         public GroupEditPropertyViewModel(IEnumerable<ModelItemIFCObject> modelElementsForSearch)
         {
-            _targetObjects = new ObservableCollection<ModelItemIFCObject>(modelElementsForSearch);
+            _targetModelObjects = new (modelElementsForSearch);
 
             ResetSearchConditions();
 

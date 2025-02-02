@@ -246,8 +246,8 @@
                                         DisplayMemberBinding="{Binding PropertySetDefinition.ModelObject.IFCObjectName}" 
                                         />
                         <GridViewColumn Header="Наименование набора" DisplayMemberBinding="{Binding PropertySetDefinition.NamePropertySet}"/>
-                        <GridViewColumn Header="Наименование параметра" DisplayMemberBinding="{Binding NameProperty}"/>
-                        <GridViewColumn Header="Значение" DisplayMemberBinding="{Binding ValueString}"/>
+                        <GridViewColumn Header="Наименование параметра" DisplayMemberBinding="{Binding NameProperty, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <GridViewColumn Header="Значение" DisplayMemberBinding="{Binding ValueString, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
                         <GridViewColumn Header="Тип данных" DisplayMemberBinding="{Binding DataType}"/>
                     </GridView>
                 </ListView.View>

@@ -299,7 +299,7 @@ xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
             <DockPanel x:Name="SPEditor" >
                 <ListBox DockPanel.Dock="Top" Visibility="Hidden" Name="LBEditor" Margin="0,0,10,0"/>
                 <ep:EditorProperty x:Name="controlEditor"  Width="auto" 
-                   DataContext="{Binding ElementName=dgSearchElements, Path=SelectedItem}" />
+                   DataContext="{Binding ElementName=lwSearchElements, Path=SelectedItem}" />
             </DockPanel>
         </GroupBox>
     </Grid>

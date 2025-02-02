@@ -175,7 +175,7 @@
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Наименование элемента" DisplayMemberBinding="{Binding ModelObject.IFCObjectName}" />
-                        <GridViewColumn Header="Наименование набора" DisplayMemberBinding="{Binding NamePropertySet}"/>
+                        <GridViewColumn Header="Наименование набора" DisplayMemberBinding="{Binding NamePropertySet, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
                         <GridViewColumn Header="Экземпляр" DisplayMemberBinding="{Binding CountRelatedObjectsInstanse}"/>
                         <GridViewColumn Header="Тип" DisplayMemberBinding="{Binding CountRelatedObjectsType}"/>
                     </GridView>

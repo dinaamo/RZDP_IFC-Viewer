@@ -32,10 +32,10 @@ namespace RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            foreach (IPropertyModel<IIfcResourceObjectSelect> propertySet in lwProperties.ItemsSource)
-            {
-                //propertySet.PropertySetDefinition.ModelObject.OnPropertyChanged("CollectionPropertySet");
-            }
+            //foreach (IPropertyModel<IIfcResourceObjectSelect> propertySet in lwProperties?.ItemsSource)
+            //{
+            //    //propertySet.PropertySetDefinition.ModelObject.OnPropertyChanged("CollectionPropertySet");
+            //}
         }
 
         private void Button_Click_Search(object sender, RoutedEventArgs e)

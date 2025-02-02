@@ -134,7 +134,7 @@
         </Setter>
     </Style>
 
-    <HierarchicalDataTemplate DataType="{x:Type mi:ModelItemIFCFile}" ItemsSource="{Binding Path=ModelItems}">
+    <HierarchicalDataTemplate DataType="{x:Type mi:ModelItemIFCFile}" ItemsSource="{Binding Path=ModelItems}" >
         <VirtualizingStackPanel Orientation="Horizontal">
 
             <fa:ImageAwesome
@@ -160,7 +160,7 @@
 
                     <MenuItem
                              Command="{Binding EditElementsCommand}"
-                             Header="Редактировать">
+                             Header="Редактировать" Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}">
                         <MenuItem.Icon>
                             <fa:ImageAwesome
                              Height="12"
