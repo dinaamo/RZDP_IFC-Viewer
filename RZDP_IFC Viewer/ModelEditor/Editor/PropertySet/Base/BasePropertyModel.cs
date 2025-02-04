@@ -123,6 +123,7 @@ namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
         public abstract void SetNewValue(string stringValue);
 
         protected abstract void SetNewValueForProperty<T>(string newValueString, T simpleValue);
+
     }
 
     public abstract class BaseEditorQuantity<T> : BaseItemModel, IPropertyModel<IIfcPhysicalQuantity>
@@ -251,5 +252,7 @@ namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
         public BasePropertySetDefinition PropertySetDefinition { get; }
         public void SetNewValue(string stringValue);
         public void OnPropertyChanged(string PropertyName);
+
+
     }
 }

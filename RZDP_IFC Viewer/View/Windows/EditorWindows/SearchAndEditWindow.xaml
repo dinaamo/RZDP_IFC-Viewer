@@ -221,7 +221,9 @@ xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
                         </Button.Content>
                     </Button>
                     <Button Width="300"
-                                Height="20">
+                                Height="20"
+                                Command="{Binding OpenRenameModelObjectsWindowCommand}" 
+                                CommandParameter="{Binding ElementName=lwSearchElements, Path=SelectedItems}">
                         <Button.Content>
                             <TextBlock Text="Переименование элементов" Padding="10,0,10,0"/>
                     </Button.Content>

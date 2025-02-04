@@ -55,7 +55,7 @@ namespace RZDP_IFC_Viewer.ViewModels
                 {
                     return;
                 }
-                if (modelObjectsSet.Any(it => it.GetIFCObject() is IIfcProject))
+                if (modelObjectsSet.Any(it => it.GetIFCObjectDefinition() is IIfcProject))
                 {
                     MessageBox.Show($"Нельзя удалить IfcProject\n ", "Внимание!", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
@@ -157,7 +157,32 @@ namespace RZDP_IFC_Viewer.ViewModels
             return FilteredSearchItems != null && FilteredSearchItems.Count() > 0;
         }
 
-        #endregion Открыть групповой редактор параметров
+        #endregion Открыть окно бодавления наборов по БД
+
+        #region Открыть групповой редактор имен объектов
+
+        public ICommand OpenRenameModelObjectsWindowCommand { get; }
+
+        private void OnOpenRenameModelObjectsWindowCommandExecuted(object o)
+        {
+            if (o is IEnumerable enumerable)
+            {
+                HashSet<ModelItemIFCObject> modelObjectsSet = new HashSet<ModelItemIFCObject>();
+
+                foreach (ModelItemIFCObject modelObject in enumerable)
+                {
+                    modelObjectsSet.Add(modelObject);
+                }
+                new GroupRenameModelObjectsWindow(modelObjectsSet).ShowDialog();
+            }
+        }
+
+        private bool CanOpenRenameModelObjectsWindowCommandExecute(object o)
+        {
+            return FilteredSearchItems != null && FilteredSearchItems.Count() > 0;
+        }
+
+        #endregion Открыть групповой редактор имен объектов
 
         #region Покрасить элементы
 
@@ -330,6 +355,10 @@ namespace RZDP_IFC_Viewer.ViewModels
             OpenGroupAddPropSetFromDBWindowCommand = new ActionCommand(
                 OnGroupAddPropSetFromDBWindowCommandExecuted,
                 CanGroupAddPropSetFromDBWindowCommandExecute);
+
+            OpenRenameModelObjectsWindowCommand = new ActionCommand(
+                OnOpenRenameModelObjectsWindowCommandExecuted,
+                CanOpenRenameModelObjectsWindowCommandExecute);
 
             PaintElements = new ActionCommand(
                 OnPaintElementCommandExecuted,

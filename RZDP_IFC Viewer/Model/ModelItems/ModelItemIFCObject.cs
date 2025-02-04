@@ -321,7 +321,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
         }
         #endregion
 
-        public IIfcObjectDefinition GetIFCObject()
+        public IIfcObjectDefinition GetIFCObjectDefinition()
         {
             return IFCObjectDefinition;
         }

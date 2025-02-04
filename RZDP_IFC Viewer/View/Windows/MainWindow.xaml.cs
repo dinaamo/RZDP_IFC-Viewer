@@ -278,7 +278,7 @@ namespace RZDP_IFC_Viewer
                     return;
                 }
                 ModelItemIFCObject? project = collectionObjectModel[0].ModelItems.OfType<ModelItemIFCObject>().FirstOrDefault(); 
-                var findObj = ModelItemIFCObject.SelectionNestedItems(project).FirstOrDefault(it => it.GetIFCObject().Equals(item));
+                var findObj = ModelItemIFCObject.SelectionNestedItems(project).FirstOrDefault(it => it.GetIFCObjectDefinition().Equals(item));
 
                 if (findObj != null)
                 {

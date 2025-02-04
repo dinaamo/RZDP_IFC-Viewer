@@ -363,7 +363,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
             {
                 using (ITransaction trans = IfcStore.Model.BeginTransaction("DeleteModelObjects"))
                 {
-                    var entityToDelete = modelItemIFCObjectSet.Select(it => it.GetIFCObject());
+                    var entityToDelete = modelItemIFCObjectSet.Select(it => it.GetIFCObjectDefinition());
 
                     //Получаем все таблицы и документы в файле
                     IEnumerable<BaseModelReferenceIFC> allModelReference = ModelItems[0].ModelItems.OfType<BaseModelReferenceIFC>();
@@ -387,7 +387,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
                         });
 
                         ///Удаляем объект из XBIM
-                         IfcStore.Delete(modelItemIFCObject.GetIFCObject());
+                         IfcStore.Delete(modelItemIFCObject.GetIFCObjectDefinition());
                         
                         //Обновляем прогресс бар
                         UpdateProgress((int)(countToPresent * ++counter), "Удаление элементов");

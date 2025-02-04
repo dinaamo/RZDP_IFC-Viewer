@@ -63,8 +63,8 @@
 
 
         <GroupBox Grid.Column="2" Header="База данных" Margin="5">
-			<StackPanel Orientation="Vertical"  >
-                <StackPanel Orientation="Horizontal">
+			<DockPanel>
+                <StackPanel Orientation="Horizontal"  DockPanel.Dock="Top">
                     <Button Command="{Binding SelectDBCommand}" Width="100" Height="25" Margin="5">
 						<StackPanel Orientation="Horizontal">
 							<fa:ImageAwesome
@@ -77,10 +77,11 @@
 						</StackPanel>
 					</Button>
 				</StackPanel>
-                <TextBlock  Text="Путь:"  Margin="5,0,5,0"/>
-                <TextBox IsReadOnly="True" Text="{Binding Path=DBPath}" Margin="5,0,5,5"/>
+                <TextBlock  Text="Путь:"  Margin="5,0,5,0"  DockPanel.Dock="Top"/>
+                <TextBox  DockPanel.Dock="Top" IsReadOnly="True" Text="{Binding Path=DBPath}" Margin="5,0,5,5"/>
 
 				<DataGrid x:Name="dgControlTable" IsReadOnly="False"
+							DockPanel.Dock="Top"
 							Foreground="Black"
 							Margin="5,0,5,0"
 							ItemsSource="{Binding Path=ControlTables, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -101,7 +102,7 @@
 						IsReadOnly="False" Width="0.3*"/>
 				</DataGrid.Columns>
 			</DataGrid>
-			</StackPanel>
+			</DockPanel>
         </GroupBox>
     </Grid>
 </Window>
