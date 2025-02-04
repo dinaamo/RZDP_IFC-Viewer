@@ -7,7 +7,7 @@ using Xbim.Ifc4.Interfaces;
 
 namespace IFC_Viewer.IFC.Base
 {
-    public abstract class BaseEditorModel : BaseModel
+    public abstract class BaseEditorModel : BaseItemModel
     {
         protected BaseEditorModel(ModelIFC modelIFC) : base(modelIFC)
         { }

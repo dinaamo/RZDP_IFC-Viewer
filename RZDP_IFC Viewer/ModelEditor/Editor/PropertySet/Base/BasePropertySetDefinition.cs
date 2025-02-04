@@ -13,7 +13,7 @@ using Xbim.Common;
 
 namespace Editor_IFC
 {
-    public abstract class BasePropertySetDefinition : BaseModel, INotifyPropertyChanged
+    public abstract class BasePropertySetDefinition : BaseItemModel, INotifyPropertyChanged
     {
         private IIfcObjectDefinition ifcObjectDefinition;
         public IIfcPropertySetDefinition IFCPropertySetDefinition { get; }
@@ -39,41 +39,15 @@ namespace Editor_IFC
 
         }
 
-
-
-
-
         protected abstract IEnumerable<IPropertyModel<IIfcResourceObjectSelect>> FillCollectionProperty();
 
-
         public ObservableCollection<IPropertyModel<IIfcResourceObjectSelect>> PropertyCollection => new ObservableCollection<IPropertyModel<IIfcResourceObjectSelect>>(FillCollectionProperty());
-
-
-        //public void UnpinPropertySet()
-        //{
-        //    foreach (IIfcRelDefinesByProperties RelDef in IFCPropertySetDefinition.DefinesOccurrence)
-        //    {
-        //        RelDef.RelatedObjects.Remove(ifcObjectDefinition);
-        //    }
-        //}
 
         public void DeletePropertyModel(IPropertyModel<IIfcResourceObjectSelect> propertyModel)
         {
             ModelObject.ModelIFC.DeleteIFCEntity(new List<IPersistEntity>() { propertyModel.Property });
             OnPropertyChanged("PropertyCollection");
         }
-
-
-        //private int DeterminingCountRelatedObjects()
-        //{
-        //    int RelatedObjectsCount = default;
-
-        //    RelatedObjectsCount += IFCPropertySetDefinition?.DefinesOccurrence.SelectMany(it => it.RelatedObjects).Count() ?? 0;
-
-        //    RelatedObjectsCount += IFCPropertySetDefinition?.DefinesType.Count() ?? 0;
-
-        //    return RelatedObjectsCount;
-        //}
 
         public int CountRelatedObjectsInstanse => IFCPropertySetDefinition?.DefinesOccurrence.SelectMany(it => it.RelatedObjects).Count() ?? 0;
 
@@ -128,8 +102,7 @@ namespace Editor_IFC
         {
             if (other is BasePropertySetDefinition otherPropSet)
             {
-                bool res = Equals(otherPropSet.IFCPropertySetDefinition, IFCPropertySetDefinition);
-                return res;
+                return Equals(otherPropSet.IFCPropertySetDefinition, IFCPropertySetDefinition);
             }
             else
             {

@@ -198,18 +198,24 @@ xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
                     <StackPanel DockPanel.Dock="Left" HorizontalAlignment="Center">
 
                     <Button Width="300"
-                                Height="20" Command="{Binding OpenGroupEditorPropertySetCommand}" CommandParameter="{Binding ElementName=lwSearchElements, Path=SelectedItems}">
+                                Height="20" 
+                                Command="{Binding OpenGroupEditorPropertySetCommand}" 
+                                CommandParameter="{Binding ElementName=lwSearchElements, Path=SelectedItems}">
                         <TextBlock Padding="10,0,10,0" 
                                        Text="Редактирование наборов"/>
                     </Button>
                     <Button Width="300"
-                                    Height="20">
+                                    Height="20" 
+                                    Command="{Binding OpenGroupAddPropSetFromDBWindowCommand}" 
+                                    CommandParameter="{Binding ElementName=lwSearchElements, Path=SelectedItems}">
                         <Button.Content>
                             <TextBlock Text="Добавление наборов по шаблону из базы Accsess" Padding="10,0,10,0"/>
                         </Button.Content>
                     </Button>
                     <Button Width="300"
-                                Height="20" Command="{Binding OpenGroupEditorPropertiesCommand}" CommandParameter="{Binding ElementName=lwSearchElements, Path=SelectedItems}">
+                                Height="20" 
+                                Command="{Binding OpenGroupEditorPropertiesCommand}" 
+                                CommandParameter="{Binding ElementName=lwSearchElements, Path=SelectedItems}">
                         <Button.Content>
                             <TextBlock Text="Групповое редактирование параметров" Padding="10,0,10,0"/>
                         </Button.Content>

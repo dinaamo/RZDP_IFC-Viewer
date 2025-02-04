@@ -505,6 +505,23 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
             return list;
         }
 
+        public override bool Equals(object? other)
+        {
+            if (other is ModelItemIFCObject otherModelObject)
+            {
+                return Equals(otherModelObject.IFCObjectDefinition, IFCObjectDefinition);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return IFCObjectDefinition.GetHashCode();
+        }
+
         #endregion Методы
 
         #region Свойства
@@ -512,6 +529,27 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
         private IIfcObjectDefinition IFCObjectDefinition;
 
         public string IFCObjectGUID => IFCObjectDefinition.GlobalId.ToString();
+
+        public string IFCObjectType
+        {
+            get 
+            {
+                if (IFCObjectDefinition is IIfcObject ifcobject)
+                {
+                    return ifcobject.ObjectType;
+                }
+                else if (IFCObjectDefinition is IIfcContext ifccontext)
+                {
+                    return ifccontext.ObjectType;
+                }
+                else
+                {
+                    return "NotDefined";
+                }
+            } 
+        }
+
+        public string IFCDescription => IFCObjectDefinition.Description ?? "";
 
         public string IFCObjectName
         {

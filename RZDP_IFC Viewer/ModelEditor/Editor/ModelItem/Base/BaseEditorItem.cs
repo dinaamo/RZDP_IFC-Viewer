@@ -10,7 +10,7 @@ using Xbim.Common;
 
 namespace IFC_Viewer.IFC.Base
 {
-    public abstract class BaseEditorItem : BaseModel
+    public abstract class BaseEditorItem : BaseItemModel
     {
         protected IIfcObjectDefinition ifcObjectDefinition;
 
@@ -28,8 +28,9 @@ namespace IFC_Viewer.IFC.Base
 
         public abstract bool AddReferenceToTheObject(List<BaseModelReferenceIFC> modelReferenceSet);
 
-
         public abstract void CreateNewPropertySet();
+
+        public abstract void CreateNewPropertySet(string namePropertySet, List<(string, string)> collectionParameters);
 
         public abstract IEnumerable<IPersistEntity> DeletePropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition);
 

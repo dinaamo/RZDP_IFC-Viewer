@@ -7,7 +7,7 @@ using Xbim.Ifc4.Interfaces;
 
 namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
 {
-    public abstract class BaseEditorProperty<T> : BaseModel, IPropertyModel<T>
+    public abstract class BaseEditorProperty<T> : BaseItemModel, IPropertyModel<T>
     {
         protected BaseEditorProperty(T value, ModelIFC modelIFC, BasePropertySetDefinition propertySetDefinition) : base(modelIFC)
         {
@@ -125,7 +125,7 @@ namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
         protected abstract void SetNewValueForProperty<T>(string newValueString, T simpleValue);
     }
 
-    public abstract class BaseEditorQuantity<T> : BaseModel, IPropertyModel<IIfcPhysicalQuantity>
+    public abstract class BaseEditorQuantity<T> : BaseItemModel, IPropertyModel<IIfcPhysicalQuantity>
     {
         protected BaseEditorQuantity(IIfcPhysicalQuantity value, ModelIFC modelIFC, BasePropertySetDefinition propertySetDefinition) : base(modelIFC)
         {

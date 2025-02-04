@@ -2,11 +2,11 @@
 
 namespace RZDP_IFC_Viewer.IFC.Editor.Base
 {
-    public abstract class BaseModel
+    public abstract class BaseItemModel
     {
         public ModelIFC ModelIFC { get; }
 
-        protected BaseModel(ModelIFC modelIFC)
+        protected BaseItemModel(ModelIFC modelIFC)
         {
             this.ModelIFC = modelIFC;
         }

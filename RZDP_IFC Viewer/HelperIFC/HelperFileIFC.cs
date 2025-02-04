@@ -4,7 +4,7 @@ internal class HelperFileIFC
 {
     private static string path;
 
-    public static string OpenIFC_File()
+    public static string? OpenIFC_File()
     {
         OpenFileDialog openFileDialog = new OpenFileDialog();
 
@@ -43,7 +43,7 @@ internal class HelperFileIFC
         }
     }
 
-    public static string SaveAsIFC_File(string format)
+    public static string? SaveAsIFC_File(string format)
     {
         if (format != "ifc" && format != "ifcxml")
         { return null; }
@@ -57,6 +57,24 @@ internal class HelperFileIFC
         if (dialog == true)
         {
             return saveFileDialog.FileName;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public static string? OpenFileAccess()
+    {
+        OpenFileDialog openFileDialog = new OpenFileDialog();
+
+        openFileDialog.Filter = "MDB Files|*.mdb";
+
+        bool? dialog = openFileDialog.ShowDialog();
+
+        if (dialog == true)
+        {
+            return openFileDialog.FileName;
         }
         else
         {

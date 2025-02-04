@@ -7,6 +7,7 @@ using Xbim.Ifc4.Interfaces;
 using Xbim.Ifc4.Kernel;
 using Xbim.Ifc4.PropertyResource;
 using Xbim.Common;
+using Xbim.Ifc4.MeasureResource;
 
 namespace IFC_Viewer.IFC.ModelItem
 {
@@ -23,6 +24,25 @@ namespace IFC_Viewer.IFC.ModelItem
         {
             IfcPropertySet newPropertySet = ModelIFC.IfcStore.Model.Instances.New<IfcPropertySet>(prS =>
             { prS.Name = "Новый набор"; });
+            AddPropertySet(newPropertySet);
+        }
+
+        public override void CreateNewPropertySet(string namePropertySet, List<(string, string)> collectionParameters)
+        {
+            IfcPropertySet newPropertySet = ModelIFC.IfcStore.Model.Instances.New<IfcPropertySet>(prS =>
+            {
+                prS.Name = namePropertySet;
+                foreach (var parameter in collectionParameters)
+                {
+                    IfcPropertySingleValue ifcProp = ModelIFC.IfcStore.Model.Instances.New<IfcPropertySingleValue>(prop =>
+                    {
+                        prop.Name = parameter.Item1;
+                        prop.NominalValue = new IfcText(parameter.Item1);
+                    });
+                    prS.HasProperties.Add(ifcProp);
+                }
+            });
+
             AddPropertySet(newPropertySet);
         }
         #endregion

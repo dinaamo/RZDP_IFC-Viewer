@@ -8,7 +8,7 @@ using Xbim.Common;
 
 namespace RZDP_IFC_Viewer.IFC.ModelItem
 {
-    public abstract class BaseModelItemIFC : BaseModel, INotifyPropertyChanged
+    public abstract class BaseModelItemIFC : BaseItemModel, INotifyPropertyChanged
     {
         public ModelIFC Model { get; set; }
 
@@ -133,5 +133,6 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
                 OnPropertyChanged("IsFocusReference");
             }
         }
+
     }
 }

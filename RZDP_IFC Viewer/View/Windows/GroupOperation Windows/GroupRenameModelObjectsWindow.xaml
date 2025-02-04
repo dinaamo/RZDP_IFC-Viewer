@@ -1,0 +1,185 @@
+﻿<Window x:Class="RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows.GroupRenameModelObjectsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:vm="clr-namespace:RZDP_IFC_Viewer.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows"
+        mc:Ignorable="d"
+        Title="Групповое переименование элементов" Height="450" Width="800">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+    </Window.Resources>
+    <Window.DataContext>
+        <vm:GroupRenameModelObjectsViewModel/>
+    </Window.DataContext>
+
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" MinWidth="350"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*" MinWidth="400" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <GroupBox Grid.Column="0" Header="Элементы модели" Margin="5">
+            <DockPanel  >
+
+                <GroupBox Header="Заменить" DockPanel.Dock="Top" Margin="2,0,0,0" Grid.Column="2">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+
+                            <Button Command="{Binding ReplaceNamePropertySetCommand}" Width="100" Height="25">
+                                <StackPanel Orientation="Horizontal">
+                                    <fa:ImageAwesome
+                                Width="10"
+                                Height="10"
+                                Margin="2"
+                                Foreground="CadetBlue"
+                                Icon="Reply"/>
+                                    <TextBlock Text="Заменить" Margin="2"/>
+                                </StackPanel>
+                                <Button.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource ConvertParametersMultibuilding}">
+                                        <Binding ElementName="tbSetValue"  Path="Text"/>
+                                        <Binding ElementName="tbSearchingValue"  Path="Text"/>
+                                        <Binding ElementName="rbSetFragment"  Path="IsChecked"/>
+                                        <Binding ElementName="rbSetWhole"  Path="IsChecked"/>
+                                        <Binding ElementName="rbSetPrefix"  Path="IsChecked"/>
+                                        <Binding ElementName="lwModelObjects"  Path="SelectedItems"/>
+                                    </MultiBinding>
+                                </Button.CommandParameter>
+                            </Button>
+
+                            <Button Command="{Binding ReplaceNamePropertySetCommand}" Width="100" Height="25" >
+                                <StackPanel Orientation="Horizontal">
+                                    <fa:ImageAwesome
+                                    Width="10"
+                                    Height="10"
+                                    Margin="2"
+                                    Foreground="DarkBlue"
+                                    Icon="ReplyAll"/>
+                                    <TextBlock Text="Заменить все" Margin="2"/>
+                                </StackPanel>
+                                <Button.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource ConvertParametersMultibuilding}">
+                                        <Binding ElementName="tbSetValue"  Path="Text"/>
+                                        <Binding ElementName="tbSearchingValue"  Path="Text"/>
+                                        <Binding ElementName="rbSetFragment"  Path="IsChecked"/>
+                                        <Binding ElementName="rbSetWhole"  Path="IsChecked"/>
+                                        <Binding ElementName="rbSetPrefix"  Path="IsChecked"/>
+                                        <Binding ElementName="lwModelObjects"  Path="ItemsSource"/>
+                                    </MultiBinding>
+                                </Button.CommandParameter>
+                            </Button>
+
+                            <StackPanel  Orientation="Vertical" VerticalAlignment="Center" Margin="5,0,0,0">
+                                <RadioButton x:Name="rbSetFragment" Content="Заменить фрагмент" IsChecked="True"/>
+                                <RadioButton x:Name="rbSetWhole" Content="Заменить целиком"/>
+                                <RadioButton x:Name="rbSetPrefix" Content="Добавить перфикс"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Vertical" Margin="0,-8,0,0">
+                            <TextBlock Text="Найти:"/>
+                            <TextBox x:Name="tbSearchingValue" TextChanged="tbSearchingValue_TextChanged"/>
+                            
+                            <TextBlock Text="Заменить на:"/>
+                            <TextBox x:Name="tbSetValue"/>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+
+                <ListView x:Name="lwModelObjects"
+							 Foreground="Black"
+							 Margin="5"
+							 DockPanel.Dock="Top"
+							 VirtualizingStackPanel.IsVirtualizing="True"
+							 VirtualizingStackPanel.VirtualizationMode="Recycling"
+							 ItemsSource="{Binding Path=FilteredSearchItems, UpdateSourceTrigger=PropertyChanged}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Width="100" Header="Класс IFC" DisplayMemberBinding="{Binding IFCClass}" />
+                            <GridViewColumn Width="200" Header="Наименование элемента" DisplayMemberBinding="{Binding IFCObjectName}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+
+            </DockPanel>
+        </GroupBox>
+
+        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Center"/>
+
+
+        <GroupBox Grid.Column="2" Header="Задать из параметра" Margin="5">
+            <StackPanel Orientation="Vertical"  >
+
+                <StackPanel Orientation="Horizontal">
+
+                    <Button Command="{Binding ReplaceNamePropertySetCommand}" 
+                            CommandParameter="{Binding ElementName=lwModelObjects, Path=SelectedItems}"
+                            Width="100" Height="25" >
+                        <StackPanel Orientation="Horizontal">
+                            <fa:ImageAwesome
+                                Width="10"
+                                Height="10"
+                                Margin="2"
+                                Foreground="CadetBlue"
+                                Icon="Reply"/>
+                            <TextBlock Text="Заменить" Margin="2"/>
+                        </StackPanel>
+
+                    </Button>
+
+                    <Button Command="{Binding ReplaceNamePropertySetCommand}" 
+                            CommandParameter="{Binding ElementName=lwModelObjects, Path=ItemsSource}"
+                            Width="100" Height="25" >
+                        <StackPanel Orientation="Horizontal">
+                            <fa:ImageAwesome
+                                    Width="10"
+                                    Height="10"
+                                    Margin="2"
+                                    Foreground="DarkBlue"
+                                    Icon="ReplyAll"/>
+                            <TextBlock Text="Заменить все" Margin="2"/>
+                        </StackPanel>
+
+                    </Button>
+
+
+                </StackPanel>
+                <TextBlock Text="Параметры:" Margin="5,0,5,0"/>
+                <TextBox Text=" " Margin="5,0,5,5"/>
+
+                <DataGrid x:Name="dgControlTable" IsReadOnly="False"
+						Foreground="Black"
+						Margin="5,0,5,0"
+						ItemsSource="{Binding Path=ControlTables, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						AutoGenerateColumns="False"
+						Height="auto">
+                    <DataGrid.Columns>
+                        <DataGridCheckBoxColumn 
+					        Header="Выбор" 
+                            Binding="{Binding Path=[2], Mode=TwoWay}"
+					        IsReadOnly="False" Width="0.2*"/>
+                        <DataGridTextColumn 
+					        Header="Номер" 
+                            Binding="{Binding Path=[1], Mode=TwoWay}"
+					        IsReadOnly="True" Width="0.2*"/>
+                        <DataGridTextColumn 
+					        Header="Наименование параметра" 
+                            Binding="{Binding Path=[0]}"
+					        IsReadOnly="True" Width="*"/>
+
+
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </GroupBox>
+    </Grid>
+</Window>

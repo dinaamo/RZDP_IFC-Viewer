@@ -8,6 +8,7 @@ using RZDP_IFC_Viewer.IFC.ModelItem;
 using RZDP_IFC_Viewer.Infracrucrure.Commands;
 using RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows;
 using RZDP_IFC_Viewer.ViewModels.Base;
+using RZDP_IFC_Viewer.ViewModels.GroupOperation_Windows;
 using Xbim.Ifc4.Interfaces;
 
 namespace RZDP_IFC_Viewer.ViewModels
@@ -43,7 +44,6 @@ namespace RZDP_IFC_Viewer.ViewModels
         {
             if (o is IEnumerable enumerable)
             {
-
                 HashSet<ModelItemIFCObject> modelObjectsSet = new HashSet<ModelItemIFCObject>();
 
                 foreach (ModelItemIFCObject modelObject in enumerable)
@@ -92,7 +92,7 @@ namespace RZDP_IFC_Viewer.ViewModels
         {
             if(o is IEnumerable enumerable)
             {
-                List<ModelItemIFCObject> modelObjectsSet =  new List<ModelItemIFCObject>();
+                HashSet<ModelItemIFCObject> modelObjectsSet =  new HashSet<ModelItemIFCObject>();
 
                 foreach (ModelItemIFCObject modelObject in enumerable)
                 {
@@ -117,7 +117,7 @@ namespace RZDP_IFC_Viewer.ViewModels
         {
             if (o is IEnumerable enumerable)
             {
-                List<ModelItemIFCObject> modelObjectsSet = new List<ModelItemIFCObject>();
+                HashSet<ModelItemIFCObject> modelObjectsSet = new HashSet<ModelItemIFCObject>();
 
                 foreach (ModelItemIFCObject modelObject in enumerable)
                 {
@@ -128,6 +128,31 @@ namespace RZDP_IFC_Viewer.ViewModels
         }
 
         private bool CanOpenGroupEditorPropertiesCommandExecute(object o)
+        {
+            return FilteredSearchItems != null && FilteredSearchItems.Count() > 0;
+        }
+
+        #endregion Открыть групповой редактор параметров
+
+        #region Открыть окно бодавления наборов по БД
+
+        public ICommand OpenGroupAddPropSetFromDBWindowCommand { get; }
+
+        private void OnGroupAddPropSetFromDBWindowCommandExecuted(object o)
+        {
+            if (o is IEnumerable enumerable)
+            {
+                HashSet<ModelItemIFCObject> modelObjectsSet = new HashSet<ModelItemIFCObject>();
+
+                foreach (ModelItemIFCObject modelObject in enumerable)
+                {
+                    modelObjectsSet.Add(modelObject);
+                }
+                new GroupAddPropSetFromDBWindow(modelObjectsSet).ShowDialog();
+            }
+        }
+
+        private bool CanGroupAddPropSetFromDBWindowCommandExecute(object o)
         {
             return FilteredSearchItems != null && FilteredSearchItems.Count() > 0;
         }
@@ -301,6 +326,10 @@ namespace RZDP_IFC_Viewer.ViewModels
             OpenGroupEditorPropertiesCommand = new ActionCommand(
                 OnOpenGroupEditorPropertiesCommandExecuted,
                 CanOpenGroupEditorPropertiesCommandExecute);
+
+            OpenGroupAddPropSetFromDBWindowCommand = new ActionCommand(
+                OnGroupAddPropSetFromDBWindowCommandExecuted,
+                CanGroupAddPropSetFromDBWindowCommandExecute);
 
             PaintElements = new ActionCommand(
                 OnPaintElementCommandExecuted,

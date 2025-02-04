@@ -116,5 +116,23 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
         {
             PropertyElement["Ссылки на объекты"].Remove(deleteReferenceObject);
         }
+
+
+        public override bool Equals(object? other)
+        {
+            if (other is BaseModelReferenceIFC otherModelReferenceIFC)
+            {
+                return Equals(otherModelReferenceIFC.ifcObjectReferenceSelect, ifcObjectReferenceSelect);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return ifcObjectReferenceSelect.GetHashCode();
+        }
     }
 }

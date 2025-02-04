@@ -43,7 +43,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CSharp.OleDb" Version="1.5.2" />
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
+    <PackageReference Include="Tortuga.Chain.Core" Version="4.5.1" />
     <PackageReference Include="Xbim.Geometry" Version="5.1.796" />
   </ItemGroup>
 
