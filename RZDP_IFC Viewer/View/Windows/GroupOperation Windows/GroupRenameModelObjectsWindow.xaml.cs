@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using RZDP_IFC_Viewer.IFC.ModelItem;
+using RZDP_IFC_Viewer.Infracrucrure;
 using RZDP_IFC_Viewer.ViewModels;
 
 namespace RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows
@@ -39,14 +40,21 @@ namespace RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows
             tbSetValue.Text = string.Empty;
         }
 
-        //private void CheckBox_Checked(object sender, RoutedEventArgs e)
-        //{
 
+        //private void ListView_SizeChanged(object sender, SizeChangedEventArgs e)
+        //{
+        //    UpdateColumnsWidth(sender as ListView);
         //}
 
-        //private void dgControlTable_CurrentCellChanged(object sender, EventArgs e)
+        //private void ListView_Loaded(object sender, RoutedEventArgs e)
         //{
-
+        //    UpdateColumnsWidth(sender as ListView);
         //}
+
+        //private void UpdateColumnsWidth(ListView listView)
+        //{
+        //    HelperWPF.UpdateColumnsWidth(listView);
+        //}
+
     }
 }

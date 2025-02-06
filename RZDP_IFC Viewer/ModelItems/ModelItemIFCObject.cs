@@ -13,6 +13,7 @@ using IFC_Viewer.View.Windows;
 using RZDP_IFC_Viewer.View.Windows;
 using Xbim.Ifc4.Interfaces;
 using static Microsoft.Isam.Esent.Interop.EnumeratedColumn;
+using Xbim.Common;
 
 namespace RZDP_IFC_Viewer.IFC.ModelItem
 {
@@ -73,12 +74,25 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
                 OnDeleteModelObject,
                 CanDeleteModelObject);
 
+            HideSelectedModelObjectCommand = new ActionCommand(
+                OnHideSelectedModelObjectCommand,
+                CanHideSelectedModelObjectCommand);
+
+            IsolateSelectedModelObjectCommand = new ActionCommand(
+                OnIsolateSelectedModelObjectCommand,
+                CanIsolateSelectedModelObjectCommand);
+
+            SelectedModelObjectCommand = new ActionCommand(
+                OnSelectedModelObjectCommand,
+                CanSelectedModelObjectCommand);
+
+
             InitializationModelObject();
         }
 
         #region Комманды
 
-        #region Показать элемент
+        #region Фокус на элемент
 
         public ICommand ZoomElementsCommand { get; }
 
@@ -92,7 +106,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
             return true;
         }
 
-        #endregion Показать элемент
+        #endregion Фокус на элемент
 
         #region Добавить свойство
 
@@ -279,6 +293,56 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 
         #endregion Удалить элемент
 
+        #region Скрыть элемент
+
+        public ICommand HideSelectedModelObjectCommand { get; }
+
+        private void OnHideSelectedModelObjectCommand(object o)
+        {
+            Model.HideSelected(new List<IPersistEntity>() { IFCObjectDefinition });
+        }
+
+        private bool CanHideSelectedModelObjectCommand(object o)
+        {
+            return true;
+        }
+
+        #endregion Скрыть элемент
+
+        #region Полказать элемент
+
+        public ICommand SelectedModelObjectCommand { get; }
+
+        private void OnSelectedModelObjectCommand(object o)
+        {
+            Model.ShowSelected(SelectionNestedItems(this).Select(it=> it.IFCObjectDefinition).ToList() );
+        }
+
+        private bool CanSelectedModelObjectCommand(object o)
+        {
+            return true;
+        }
+
+        #endregion Полказать элемент
+
+        #region Изолировать элемент
+
+        public ICommand IsolateSelectedModelObjectCommand { get; }
+
+        private void OnIsolateSelectedModelObjectCommand(object o)
+        {
+            Model.IsolateSelected(new List<IPersistEntity>() { IFCObjectDefinition });
+        }
+
+        private bool CanIsolateSelectedModelObjectCommand(object o)
+        {
+            return true;
+        }
+
+        #endregion Изолировать элемент
+
+ 
+
         #endregion Комманды
 
         #region Методы
@@ -294,28 +358,28 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 
 
         #region Действия с наборами характеристик
-        public void DeletePropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition)
+        public void DeletePropertySet(BasePropertySetDefinition propertySetDefinition)
         {
-            Model.DeleteIFCEntity(ModelObjectEditor.DeletePropertySet(ifcPropertySetDefinition));
+            Model.DeleteIFCEntity(ModelObjectEditor.DeletePropertySet(propertySetDefinition.IFCPropertySetDefinition));
 
             OnPropertyChanged("CollectionPropertySet");
         }
 
 
-        public void AddDublicatePropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition)
+        public void AddDublicatePropertySet(BasePropertySetDefinition propertySetDefinition)
         {
-            Model.ActionInTransactionForPropertySet(new List<(Action<IIfcPropertySetDefinition>, IIfcPropertySetDefinition)>
+            Model.ActionInTransactionForPropertySet(new List<(Action<BasePropertySetDefinition>, BasePropertySetDefinition)>
             {
-                (ModelObjectEditor.AddDublicatePropertySet, ifcPropertySetDefinition)
+                (ModelObjectEditor.AddDublicatePropertySet, propertySetDefinition)
             });
             OnPropertyChanged("CollectionPropertySet");
         }
 
-        public void UnpinPropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition)
+        public void UnpinPropertySet(BasePropertySetDefinition propertySetDefinition)
         {
-            Model.ActionInTransactionForPropertySet(new List<(Action<IIfcPropertySetDefinition>, IIfcPropertySetDefinition)>
+            Model.ActionInTransactionForPropertySet(new List<(Action<BasePropertySetDefinition>, BasePropertySetDefinition)>
             {
-                (ModelObjectEditor.UnpinPropertySet, ifcPropertySetDefinition)
+                (ModelObjectEditor.UnpinPropertySet, propertySetDefinition)
             });
             OnPropertyChanged("CollectionPropertySet");
         }

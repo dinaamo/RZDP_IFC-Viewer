@@ -34,14 +34,14 @@ namespace IFC_Viewer.IFC.Base
 
         public abstract IEnumerable<IPersistEntity> DeletePropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition);
 
-        public void AddDublicatePropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition)
-        { 
-            AddPropertySet(ifcPropertySetDefinition);
+        public void AddDublicatePropertySet(BasePropertySetDefinition propertySetDefinition)
+        {
+            AddPropertySet(propertySetDefinition.GetCopyPropertySet());
         }
 
-        public void UnpinPropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition)
+        public void UnpinPropertySet(BasePropertySetDefinition PropertySetDefinition)
         {
-            foreach (IIfcRelDefinesByProperties RelDef in ifcPropertySetDefinition.DefinesOccurrence)
+            foreach (IIfcRelDefinesByProperties RelDef in PropertySetDefinition.IFCPropertySetDefinition.DefinesOccurrence)
             {
                 RelDef.RelatedObjects.Remove(ifcObjectDefinition);
             }

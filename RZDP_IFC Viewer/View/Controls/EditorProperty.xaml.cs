@@ -99,7 +99,7 @@ namespace RZDP_IFC_Viewer.View.Controls
                 { return; }
             }
                  //Удаляем
-                 (DataContext as ModelItemIFCObject)?.DeletePropertySet(propertySetDefinitionModel.IFCPropertySetDefinition);
+                 (DataContext as ModelItemIFCObject)?.DeletePropertySet(propertySetDefinitionModel);
         }
 
         void DeleteProperty(IPropertyModel<IIfcResourceObjectSelect> propertyModel)
@@ -124,7 +124,7 @@ namespace RZDP_IFC_Viewer.View.Controls
             if (menuItem?.DataContext is BasePropertySetDefinition propertySetDefinitionModel)
             {
                 //Создаем дубликат
-                 (DataContext as ModelItemIFCObject)?.AddDublicatePropertySet(propertySetDefinitionModel.IFCPropertySetDefinition);
+                 (DataContext as ModelItemIFCObject)?.AddDublicatePropertySet(propertySetDefinitionModel);
             }
         }
 
@@ -137,7 +137,7 @@ namespace RZDP_IFC_Viewer.View.Controls
             if (menuItem?.DataContext is BasePropertySetDefinition propertySetDefinitionModel)
             {
                 //Открепляем
-                 (DataContext as ModelItemIFCObject)?.UnpinPropertySet(propertySetDefinitionModel.IFCPropertySetDefinition);
+                 (DataContext as ModelItemIFCObject)?.UnpinPropertySet(propertySetDefinitionModel);
             }
         }
 

@@ -1,7 +1,9 @@
 ﻿using System.CodeDom;
 using System.Windows;
+using System.Windows.Controls;
 using RZDP_IFC_Viewer.IFC.ModelItem;
 using RZDP_IFC_Viewer.ViewModels;
+using RZDP_IFC_Viewer.Infracrucrure;
 
 namespace RZDP_IFC_Viewer.View.Windows
 {
@@ -92,5 +94,21 @@ namespace RZDP_IFC_Viewer.View.Windows
             CBPropertyValueFilter.SelectedIndex = 2;
             CBPropertyValue.Text = string.Empty;
         }
+
+
+        //private void ListView_SizeChanged(object sender, SizeChangedEventArgs e)
+        //{
+        //    UpdateColumnsWidth(sender as ListView);
+        //}
+
+        //private void ListView_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    UpdateColumnsWidth(sender as ListView);
+        //}
+
+        //private void UpdateColumnsWidth(ListView listView)
+        //{
+        //    HelperWPF.UpdateColumnsWidth(listView);
+        //}
     }
 }

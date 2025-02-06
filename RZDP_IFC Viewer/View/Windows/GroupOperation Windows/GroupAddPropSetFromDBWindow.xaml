@@ -3,6 +3,7 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:fa="http://schemas.fontawesome.io/icons/"
 		xmlns:vm="clr-namespace:RZDP_IFC_Viewer.ViewModels"
+        xmlns:util="clr-namespace:RZDP_IFC_Viewer.Infracrucrure"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:RZDP_IFC_Viewer.ViewModels.GroupOperation_Windows"
@@ -44,14 +45,27 @@
                 <ListView x:Name="lwModelObjects"
 								 Foreground="Black"
 								 Margin="5"
+								 util:GridViewSort.AutoSort="True"
+
 								 DockPanel.Dock="Bottom"
 								 VirtualizingStackPanel.IsVirtualizing="True"
 								 VirtualizingStackPanel.VirtualizationMode="Recycling"
 								 ItemsSource="{Binding Path=TargetModelObjects, UpdateSourceTrigger=PropertyChanged}">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Width="100" Header="Класс IFC" DisplayMemberBinding="{Binding IFCClass}" />
-                            <GridViewColumn Width="200" Header="Наименование элемента" DisplayMemberBinding="{Binding IFCObjectName}"/>
+                            <!--<GridView.ColumnHeaderContainerStyle>
+                                <Style TargetType="GridViewColumnHeader">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </GridView.ColumnHeaderContainerStyle>-->
+                            <GridViewColumn 
+                                            Header="Класс IFC" 
+                                            util:GridViewSort.PropertyName="IFCClass"
+                                            DisplayMemberBinding="{Binding IFCClass}" />
+                            <GridViewColumn 
+                                            Header="Наименование элемента" 
+                                            util:GridViewSort.PropertyName="IFCObjectName"
+                                            DisplayMemberBinding="{Binding IFCObjectName}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>

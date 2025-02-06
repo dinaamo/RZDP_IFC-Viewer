@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using RZDP_IFC_Viewer.IFC.ModelItem;
@@ -23,14 +24,22 @@ namespace RZDP_IFC_Viewer.View.Windows
 
         private static TableWindow instance;
 
-        public static void CreateTableWindow(ModelItemIFCTable modelItemIFCTable)
+        public  static void CreateTableWindow(ModelItemIFCTable modelItemIFCTable)
         {
             if (instance == null)
             {
                 instance = new TableWindow(modelItemIFCTable);
                 instance.Show();
                 instance.Topmost = true;
-                instance.Topmost = false;
+                
+                Task.Run(() => {
+                    Thread.Sleep(500);
+                        Application.Current.Dispatcher.BeginInvoke(() =>
+                        {
+                            instance.Activate();
+                            instance.Topmost = false;}); });
+                
+
             }
             else
             {

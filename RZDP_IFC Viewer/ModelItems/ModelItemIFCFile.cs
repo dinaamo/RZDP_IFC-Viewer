@@ -116,7 +116,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
                 { "Путь к файлу", new HashSet<object>() { Model.IfcStore.Header.FileName.Name } },
                 { "Версия", new HashSet<object>() { Convert.ToString(Model.IfcStore.SchemaVersion) } },
                 { "Время создания файла", new HashSet<object>() { Convert.ToString(Model.IfcStore.Header.TimeStamp) } },
-                { "Приложение", new HashSet<object>() { Convert.ToString(Project.OwnerHistory.OwningApplication.ApplicationFullName) } },
+                { "Приложение", new HashSet<object>() { Convert.ToString(Project.OwnerHistory?.OwningApplication.ApplicationFullName) } },
                 { "Автор проекта", new HashSet<object>() { Convert.ToString(Project.OwnerHistory?.OwningUser?.ThePerson?.GivenName) }},
                 { "Организация", new HashSet<object>() { Convert.ToString(Project.OwnerHistory?.OwningUser?.TheOrganization?.Name) }},
             };

@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using Editor_IFC;
 using RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base;
 using RZDP_IFC_Viewer.IFC.ModelItem;
+using RZDP_IFC_Viewer.Infracrucrure;
 using RZDP_IFC_Viewer.ViewModels;
 using Xbim.Ifc4.Interfaces;
 
@@ -58,5 +59,20 @@ namespace RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows
         {
             ((GroupEditPropertyViewModel)DataContext).Search(tbSearchingName.Text, tbSearchingValue.Text);
         }
+
+        //private void ListView_SizeChanged(object sender, SizeChangedEventArgs e)
+        //{
+        //    UpdateColumnsWidth(sender as ListView);
+        //}
+
+        //private void ListView_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    UpdateColumnsWidth(sender as ListView);
+        //}
+
+        //private void UpdateColumnsWidth(ListView listView)
+        //{
+        //    HelperWPF.UpdateColumnsWidth(listView);
+        //}
     }
 }

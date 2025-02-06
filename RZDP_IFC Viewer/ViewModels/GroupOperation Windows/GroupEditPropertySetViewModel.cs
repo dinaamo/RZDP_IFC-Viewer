@@ -77,16 +77,16 @@ namespace RZDP_IFC_Viewer.ViewModels
 
 
 
-        IEnumerable<(Action<IIfcPropertySetDefinition>, IIfcPropertySetDefinition)> GetPropertySetsToDelete(IEnumerable targetPropertySetsSelect)
+        IEnumerable<(Action<BasePropertySetDefinition>, BasePropertySetDefinition)> GetPropertySetsToDelete(IEnumerable targetPropertySetsSelect)
         {
-            List<(Action<IIfcPropertySetDefinition>, IIfcPropertySetDefinition)> list = new();
+            List<(Action<BasePropertySetDefinition>, BasePropertySetDefinition)> list = new();
             foreach (BasePropertySetDefinition propertySet in targetPropertySetsSelect)
             {
-                if (!list.Any(it => it.Item2 == propertySet.IFCPropertySetDefinition))
+                if (!list.Any(it => it.Item2 == propertySet))
                 {
-                    yield return (propertySet.ModelObject.DeletePropertySet, propertySet.IFCPropertySetDefinition);
+                    yield return (propertySet.ModelObject.DeletePropertySet, propertySet);
                 }
-                list.Add((propertySet.ModelObject.DeletePropertySet, propertySet.IFCPropertySetDefinition));
+                list.Add((propertySet.ModelObject.DeletePropertySet, propertySet));
             }
         }
         #region Комманды 

@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using RZDP_IFC_Viewer.IFC.ModelItem;
+using RZDP_IFC_Viewer.Infracrucrure;
 
 namespace RZDP_IFC_Viewer.ViewModels.GroupOperation_Windows
 {
@@ -35,9 +36,19 @@ namespace RZDP_IFC_Viewer.ViewModels.GroupOperation_Windows
             DataContext = _groupAddPropSetFromDBViewModel;
         }
 
-        //private void Button_Click_Fill_Table(object sender, RoutedEventArgs e)
+        //private void ListView_SizeChanged(object sender, SizeChangedEventArgs e)
         //{
+        //    UpdateColumnsWidth(sender as ListView);
+        //}
 
+        //private void ListView_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    UpdateColumnsWidth(sender as ListView);
+        //}
+
+        //private void UpdateColumnsWidth(ListView listView)
+        //{
+        //    HelperWPF.UpdateColumnsWidth(listView);
         //}
     }
 }

@@ -29,6 +29,10 @@ namespace RZDP_IFC_Viewer.ViewModels
         private BackgroundWorker _worker;
         private ManualResetEvent _signal;
         HashSet<IPersistEntity> _deleteEntity;
+        HashSet<IPersistEntity> _hideEntity;
+        private readonly MainWindow mainWindow;
+        private DrawingControl3D _DrawingControl { get { return mainWindow.WPFDrawingControl.DrawingControl; } }
+
 
         #region Свойства
 
@@ -263,8 +267,14 @@ namespace RZDP_IFC_Viewer.ViewModels
                 });
 
                 //Создаем модель
-                ModelIFC tempModel = ModelIFC.Create(ifcStore, ZoomSelected, SelectElement,
-                    _worker, RefreshDCAfterDeleteEntity);
+                ModelIFC tempModel = ModelIFC.Create(ifcStore,
+                                                        _worker,
+                                                        ZoomSelected, 
+                                                        SelectElement,
+                                                        HideAfterDelete,
+                                                        HideSelected,
+                                                        IsolateSelected, 
+                                                        ShowSelected);
 
                 //Ждем создания геометрии из задачи 
                 task.Wait();
@@ -281,6 +291,7 @@ namespace RZDP_IFC_Viewer.ViewModels
                             Model = tempModel;
                             mainWindow.WPFDrawingControl.ModelProvider.ObjectInstance = ifcStore;
                             _deleteEntity = new HashSet<IPersistEntity>();
+                            _hideEntity = new HashSet<IPersistEntity>();
                     });
                     }
                     else
@@ -316,16 +327,86 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         #endregion Загрузка модели
 
-        #region Скрываем объекты после удаления
-        void RefreshDCAfterDeleteEntity(IEnumerable<IPersistEntity> persistEntitySet)
+        #region Удалить, скрыть, изолировать.
+
+        /// <summary>
+        /// Скрываем объекты после удаления
+        /// </summary>
+        void HideAfterDelete(IEnumerable<IPersistEntity> persistEntitiesAfterDelete)
         {
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                _deleteEntity.AddRange(persistEntitySet);
-                mainWindow.WPFDrawingControl.DrawingControl.HiddenInstances = new List<IPersistEntity>(_deleteEntity);
-                mainWindow.WPFDrawingControl.DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
+                _deleteEntity.AddRange(persistEntitiesAfterDelete);
+
+                _DrawingControl.HiddenInstances = null;
+                _DrawingControl.HiddenInstances = _hideEntity.ToList();
+                _DrawingControl.HiddenInstances.AddRange(_deleteEntity);
+
+                _DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
             });
         }
+
+        /// <summary>
+        /// Скрыть выбранные
+        /// </summary>
+        private void HideSelected(IEnumerable<IPersistEntity> persistEntitiesForHide)
+        {
+            _hideEntity.AddRange(persistEntitiesForHide);
+
+            _DrawingControl.HiddenInstances = null;
+            _DrawingControl.HiddenInstances = _hideEntity.ToList();
+            _DrawingControl.HiddenInstances.AddRange(_deleteEntity);
+
+            _DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
+        }
+
+        /// <summary>
+        /// Показать выбранные
+        /// </summary>
+        private void ShowSelected(IEnumerable<IPersistEntity> persistEntitiesForShow)
+        {
+            foreach (var persistEntity in persistEntitiesForShow)
+            {
+                _hideEntity.Remove(persistEntity);
+
+                if (_DrawingControl.IsolateInstances != null && _DrawingControl.IsolateInstances.Count >0)
+                {
+                    if (!_DrawingControl.IsolateInstances.Contains(persistEntity))
+                    { 
+                        _DrawingControl.IsolateInstances.Add(persistEntity);
+                    }
+                }
+            }
+
+            _DrawingControl.HiddenInstances = null;
+            _DrawingControl.HiddenInstances = _hideEntity.ToList();
+            _DrawingControl.HiddenInstances.AddRange(_deleteEntity);
+
+            _DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
+        }
+
+
+        /// <summary>
+        /// Изолировать выбранные
+        /// </summary>
+        private void IsolateSelected(IEnumerable<IPersistEntity> persistEntitiesForIsolate)
+        {
+            _DrawingControl.IsolateInstances = persistEntitiesForIsolate.ToList();
+            _DrawingControl.HiddenInstances = _deleteEntity.ToList();
+            _DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
+        }
+
+        /// <summary>
+        /// Показать все
+        /// </summary>
+        private void RestoreView()
+        {
+            _hideEntity = new HashSet<IPersistEntity>();
+            _DrawingControl.IsolateInstances = null;
+            _DrawingControl.HiddenInstances = _deleteEntity.ToList();
+            _DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
+        }
+
         #endregion
 
         #region Закрыть файл
@@ -408,12 +489,12 @@ namespace RZDP_IFC_Viewer.ViewModels
             try
             {
                 _camChanged = false;
-                mainWindow.WPFDrawingControl.DrawingControl.Viewport.Camera.Changed += Camera_Changed;
-                mainWindow.WPFDrawingControl.DrawingControl.SelectedEntity = persistEntity;
-                mainWindow.WPFDrawingControl.DrawingControl.ZoomSelected();
-                mainWindow.WPFDrawingControl.DrawingControl.Viewport.Camera.Changed -= Camera_Changed;
+                _DrawingControl.Viewport.Camera.Changed += Camera_Changed;
+                _DrawingControl.SelectedEntity = persistEntity;
+                _DrawingControl.ZoomSelected();
+                _DrawingControl.Viewport.Camera.Changed -= Camera_Changed;
                 if (!_camChanged)
-                    mainWindow.WPFDrawingControl.DrawingControl.ClipBaseSelected(0.15);
+                    _DrawingControl.ClipBaseSelected(0.15);
             }
             catch (ArgumentException)
             {
@@ -441,7 +522,7 @@ namespace RZDP_IFC_Viewer.ViewModels
 
             //DrawingControl_SelectedEntityChanged(this , a);
 
-            mainWindow.WPFDrawingControl.DrawingControl.SelectedEntity = persistEntity;
+            _DrawingControl.SelectedEntity = persistEntity;
         }
 
         private void DrawingControl_SelectedEntityChanged(object sender, SelectionChangedEventArgs e)
@@ -833,21 +914,77 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         #endregion Действие с раскрывающимися списками
 
+        #region Показать все
+
+        public ICommand RestoreViewCommand { get; }
+
+        private void OnRestoreViewCommand(object o)
+        {
+            RestoreView();
+        }
+
+        private bool CanRestoreViewCommand(object o)
+        {
+            return Model is not null;
+        }
+
+        #endregion Показать все
+
+        #region Скрыть выделенные
+
+        public ICommand HideSelectedModelObjectCommand { get; }
+
+        private void OnHideSelectedModelObjectCommand(object o)
+        {
+            ModelItemIFCObject ifcProject = Model.ModelItems[0].ModelItems[0] as ModelItemIFCObject;
+
+            HideSelected(ModelItemIFCObject.SelectionNestedItems(ifcProject).
+                                                    Where(it => it.IsPaint).
+                                                    Select(it => it.GetIFCObjectDefinition()));
+        }
+
+        private bool CanHideSelectedModelObjectCommand(object o)
+        {
+            return Model is not null;
+        }
+
+        #endregion Скрыть выделенные
+
+        #region Изолировать выделенные
+
+        public ICommand IsolateSelectedModelObjectCommand { get; }
+
+        private void OnIsolateSelectedModelObjectCommand(object o)
+        {
+            ModelItemIFCObject ifcProject = Model.ModelItems[0].ModelItems[0] as ModelItemIFCObject;
+
+            IsolateSelected(ModelItemIFCObject.SelectionNestedItems(ifcProject). 
+                                                    Where(it => it.IsPaint).
+                                                    Select(it => it.GetIFCObjectDefinition()));
+        }
+
+        private bool CanIsolateSelectedModelObjectCommand(object o)
+        {
+            return Model is not null;
+        }
+
+        #endregion Изолировать выделенные
+
         #endregion Комманды
 
         public MainWindowViewModel()
         {
         }
 
-        private readonly MainWindow mainWindow;
+        
 
         public MainWindowViewModel(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
             //IsEnableWindow = true;
             _worker = new BackgroundWorker();
-            mainWindow.WPFDrawingControl.DrawingControl.SelectedEntityChanged += DrawingControl_SelectedEntityChanged;
-            mainWindow.WPFDrawingControl.DrawingControl.UserModeledDimensionChangedEvent += DrawingControl_UserModeledDimensionChangedEvent;
+            _DrawingControl.SelectedEntityChanged += DrawingControl_SelectedEntityChanged;
+            _DrawingControl.UserModeledDimensionChangedEvent += DrawingControl_UserModeledDimensionChangedEvent;
 
 
             _worker.ProgressChanged += ProgressChanged;
@@ -913,6 +1050,18 @@ namespace RZDP_IFC_Viewer.ViewModels
             ActionExpanders = new ActionCommand(
                 OnActionExpandedCommandExecuted,
                 CanActionExpandedCommandExecute);
+
+            RestoreViewCommand = new ActionCommand(
+                OnRestoreViewCommand,
+                CanRestoreViewCommand);
+
+            HideSelectedModelObjectCommand = new ActionCommand(
+                    OnHideSelectedModelObjectCommand,
+                    CanHideSelectedModelObjectCommand);
+
+            IsolateSelectedModelObjectCommand = new ActionCommand(
+                    OnIsolateSelectedModelObjectCommand,
+                    CanIsolateSelectedModelObjectCommand);
 
             #endregion Комманды
         }

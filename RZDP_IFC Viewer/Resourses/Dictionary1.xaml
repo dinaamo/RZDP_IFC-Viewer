@@ -74,7 +74,8 @@
         <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="True"/>
     </Style>
 
-
+    
+    
     <Style x:Key="TreeViewStyle" TargetType="{x:Type TreeViewItem}">
         <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <Setter Property="IsExpanded" Value="{Binding Path=IsExpanded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -234,7 +235,7 @@
                     <MenuItem
                             Command="{Binding ZoomElementsCommand}"
                             CommandParameter="{Binding}"
-                            Header="Показать элемент">
+                            Header="Фокус на элемент">
                         <MenuItem.Icon>
                             <fa:ImageAwesome
                             Height="12"
@@ -256,6 +257,7 @@
                             Icon="PaintBrush" />
                         </MenuItem.Icon>
                     </MenuItem>
+
                     <MenuItem
                              Command="{Binding ResetSearchCommand}"
                              CommandParameter="{Binding}"
@@ -268,6 +270,49 @@
                              Icon="Refresh" />
                         </MenuItem.Icon>
                     </MenuItem>
+
+                    <Separator />
+                    <MenuItem
+                            Command="{Binding SelectedModelObjectCommand}"
+                            CommandParameter="{Binding}"
+                            Header="Показать">
+                        <MenuItem.Icon>
+                            <fa:ImageAwesome
+                            Height="12"
+                            Margin="0,0,3,0"
+                            Foreground="CornflowerBlue"
+                            Icon="Eye" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    
+                    <MenuItem
+                        Command="{Binding IsolateSelectedModelObjectCommand}"
+                        CommandParameter="{Binding}"
+                        Header="Изолировать">
+                        <MenuItem.Icon>
+                            <fa:ImageAwesome
+                        Height="12"
+                        Margin="0,0,3,0"
+                        Foreground="DarkOrange"
+                        Icon="Eye" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+
+                    <MenuItem
+                            Command="{Binding HideSelectedModelObjectCommand}"
+                            CommandParameter="{Binding}"
+                            Header="Скрыть">
+                        <MenuItem.Icon>
+                            <fa:ImageAwesome
+                            Height="12"
+                            Margin="0,0,3,0"
+                            Foreground="DarkViolet"
+                            Icon="EyeSlash" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+
+    
+
                     <Separator />
                     <MenuItem
                         Command="{Binding EditElementsCommand}"

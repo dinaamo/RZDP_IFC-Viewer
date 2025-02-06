@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Editor_IFC;
 using RZDP_IFC_Viewer.IFC.ModelItem;
+using RZDP_IFC_Viewer.Infracrucrure;
 using RZDP_IFC_Viewer.ViewModels;
 
 namespace RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows
@@ -43,17 +44,26 @@ namespace RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows
             tbSetValue.Text = string.Empty;
         }
 
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            //foreach (BasePropertySetDefinition propertySet in lwPropertySets.ItemsSource)
-            //{
-            //    propertySet.ModelObject.OnPropertyChanged("CollectionPropertySet");
-            //}
-        }
-
         private void tbFindValue_TextChanged(object sender, TextChangedEventArgs e)
         {
             ((GroupEditPropertySetViewModel)DataContext).Search(tbFindValue.Text);
         }
+
+
+        //private void ListView_SizeChanged(object sender, SizeChangedEventArgs e)
+        //{
+        //    UpdateColumnsWidth(sender as ListView);
+        //}
+
+        //private void ListView_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    UpdateColumnsWidth(sender as ListView);
+        //}
+
+        //private void UpdateColumnsWidth(ListView listView)
+        //{
+        //    HelperWPF.UpdateColumnsWidth(listView);
+        //}
+
     }
 }

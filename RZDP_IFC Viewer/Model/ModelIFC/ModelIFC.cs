@@ -93,53 +93,79 @@ namespace RZDP_IFC_Viewer.IFC.Model
             }
         }
 
+ 
+        /// <summary>
+        /// Процесс загрузки
+        /// </summary>
+        private BackgroundWorker backgroundWorker;
+
         /// <summary>
         /// Делегат для фокуса на объекте
         /// </summary>
         public Action<IPersistEntity> ZoomObject;
 
         /// <summary>
-        /// Делегат для выделения объекта
+        /// Выделение объекта
         /// </summary>
         public Action<IPersistEntity> SelectObject;
 
         /// <summary>
-        /// Процесс загрузки
+        /// Скрываем элементы после удаления
         /// </summary>
-        private BackgroundWorker backgroundWorker;
-
-
-        /// <summary>
-        /// Процесс загрузки
-        /// </summary>
-        private Action<IEnumerable<IPersistEntity>> RefreshDCAfterDeleteEntity;
+        private Action<IEnumerable<IPersistEntity>> HideAfterDelete;
 
         /// <summary>
-        /// ///////////////
+        /// Скрываем элементы
         /// </summary>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
-        //Загружаем базу данных
-        public static ModelIFC Create(IfcStore ifcStore, Action<IPersistEntity> ZoomObject, Action<IPersistEntity> SelectObject, BackgroundWorker ReportProcess, Action<IEnumerable<IPersistEntity>> RefreshDCAfterDeleteEntity)
+        public Action<IEnumerable<IPersistEntity>> HideSelected;
+
+        /// <summary>
+        /// Изолируем элементы
+        /// </summary>
+        public Action<IEnumerable<IPersistEntity>> IsolateSelected;
+
+        /// <summary>
+        /// Показать элементы
+        /// </summary>
+        public Action<IEnumerable<IPersistEntity>> ShowSelected;
+
+        /// <summary>
+        /// Создаем модель
+        /// </summary>
+        public static ModelIFC Create(IfcStore ifcStore, BackgroundWorker backgroundWorker, 
+                                Action<IPersistEntity> ZoomObject, Action<IPersistEntity> SelectObject,  
+                                Action<IEnumerable<IPersistEntity>> HideAfterDelete, Action<IEnumerable<IPersistEntity>> HideSelected, 
+                                Action<IEnumerable<IPersistEntity>> IsolateSelected,
+                                Action<IEnumerable<IPersistEntity>> ShowSelected)
         {
-            return new ModelIFC(ifcStore).LoadDataBase(ifcStore, ZoomObject, SelectObject, ReportProcess, RefreshDCAfterDeleteEntity);
+            return new ModelIFC(ifcStore).LoadDataBase(ifcStore, backgroundWorker, 
+                                                                        ZoomObject, 
+                                                                        SelectObject,  
+                                                                        HideAfterDelete,
+                                                                        HideSelected,
+                                                                        IsolateSelected,
+                                                                        ShowSelected);
         }
 
         private BaseEditorModel baseEditorModel;
 
         /// <summary>
-        /// Открываем файл
+        /// Загружаем базу данных
         /// </summary>
-        /// <param name="filePath"></param>
-        private ModelIFC LoadDataBase(IfcStore ifcStore, Action<IPersistEntity> ZoomObject, Action<IPersistEntity> SelectObject, BackgroundWorker ReportProcess, Action<IEnumerable<IPersistEntity>> RefreshDCAfterDeleteEntity)
+        private ModelIFC LoadDataBase(IfcStore ifcStore, BackgroundWorker backgroundWorker, 
+                                Action<IPersistEntity> ZoomObject,  Action<IPersistEntity> SelectObject,  
+                                Action<IEnumerable<IPersistEntity>> HideAfterDelete,Action<IEnumerable<IPersistEntity>> HideSelected,
+                                Action<IEnumerable<IPersistEntity>> IsolateSelected,
+                                Action<IEnumerable<IPersistEntity>> ShowSelected)
         {
-            this.ZoomObject = ZoomObject;
 
+            this.backgroundWorker = backgroundWorker;
             this.SelectObject = SelectObject;
-
-            this.backgroundWorker = ReportProcess;
-
-            this.RefreshDCAfterDeleteEntity = RefreshDCAfterDeleteEntity;
+            this.ZoomObject = ZoomObject;
+            this.HideAfterDelete = HideAfterDelete;
+            this.HideSelected = HideSelected;
+            this.IsolateSelected = IsolateSelected;
+            this.ShowSelected = ShowSelected;
 
             FilePath = ifcStore.FileName;
 
@@ -392,7 +418,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
                         //Обновляем прогресс бар
                         UpdateProgress((int)(countToPresent * ++counter), "Удаление элементов");
                     }
-                    RefreshDCAfterDeleteEntity(entityToDelete);
+                    HideAfterDelete(entityToDelete);
                     UpdateProgress(0);
                     trans.Commit();
                 }
@@ -501,6 +527,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
                     {
                         application.ApplicationFullName= tuple.Item2;
                         application.ApplicationDeveloper.Name = tuple.Item2;
+                        application.Version = "";
                     }
                     else if (tuple.Item1 is IIfcPerson person)
                     {
@@ -546,11 +573,11 @@ namespace RZDP_IFC_Viewer.IFC.Model
             }
         }
 
-        public void ActionInTransactionForPropertySet(IEnumerable<(Action<IIfcPropertySetDefinition>, IIfcPropertySetDefinition)> tupleSet)
+        public void ActionInTransactionForPropertySet(IEnumerable<(Action<BasePropertySetDefinition>, BasePropertySetDefinition)> tupleSet)
         {
             using (ITransaction trans = IfcStore.Model.BeginTransaction("ActionInTransactionForPropertySet"))
             {
-                foreach ((Action<IIfcPropertySetDefinition>, IIfcPropertySetDefinition) tuple in tupleSet)
+                foreach ((Action<BasePropertySetDefinition>, BasePropertySetDefinition) tuple in tupleSet)
                 {
                     tuple.Item1(tuple.Item2);
                 }

@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:util="clr-namespace:RZDP_IFC_Viewer.Infracrucrure"
         xmlns:vm="clr-namespace:RZDP_IFC_Viewer.ViewModels"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows"
@@ -28,7 +29,7 @@
                     <GroupBox Header="Критерии поиска" Grid.Column="0" Margin="0,0,2,0">
                         <StackPanel  Orientation="Vertical" Margin="8,8,8,8" >
                             <TextBlock Text="Найти по наименованию:"/>
-                            <TextBox x:Name="tbSearchingName" TextChanged="tbSearchingValue_TextChanged"/>
+                            <TextBox x:Name="tbSearchingName" />
                         </StackPanel>
                     </GroupBox >
 
@@ -106,7 +107,7 @@
                     <GroupBox Header="Критерии поиска" Grid.Column="0" Margin="0,0,2,0">
                         <StackPanel  Orientation="Vertical" Margin="8,8,8,8" >
                             <TextBlock Text="Найти по значению:"/>
-                            <TextBox x:Name="tbSearchingValue" TextChanged="tbSearchingValue_TextChanged"/>
+                            <TextBox x:Name="tbSearchingValue" />
                         </StackPanel>
                     </GroupBox >
                     <GroupBox Header="Изменить значение" Margin="2,0,0,0" Grid.Column="1">
@@ -176,7 +177,7 @@
                 <StackPanel>
                     <TextBlock Margin="0,5,0,0" HorizontalAlignment="Center"
                                 Text="{Binding ElementName=lwProperties, Path=Items.Count, StringFormat=Элементов: \{0\}}"/>
-                    <Button Click="Button_Click_Search" Visibility="Collapsed">
+                    <Button Click="Button_Click_Search" >
                         <StackPanel Orientation="Horizontal">
                             <fa:ImageAwesome
                                  Width="10"
@@ -235,20 +236,43 @@
 
             <ListView x:Name="lwProperties"
               Foreground="Black"
-              Width="{Binding ElementName=LBLW, Path=ActualWidth}"
+              util:GridViewSort.AutoSort="True"
+
               VirtualizingStackPanel.IsVirtualizing="True"
               VirtualizingStackPanel.VirtualizationMode="Recycling"
               ItemsSource="{Binding Path=FilteredSearchItems, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-
+                <!--<ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>-->
                 <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Наименование элемента" 
-                                        DisplayMemberBinding="{Binding PropertySetDefinition.ModelObject.IFCObjectName}" 
-                                        />
-                        <GridViewColumn Header="Наименование набора" DisplayMemberBinding="{Binding PropertySetDefinition.NamePropertySet}"/>
-                        <GridViewColumn Header="Наименование параметра" DisplayMemberBinding="{Binding NameProperty, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        <GridViewColumn Header="Значение" DisplayMemberBinding="{Binding ValueString, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        <GridViewColumn Header="Тип данных" DisplayMemberBinding="{Binding DataType}"/>
+                    <GridView >
+                        <!--<GridView.ColumnHeaderContainerStyle>
+                            <Style TargetType="GridViewColumnHeader">
+                                <Setter Property="HorizontalContentAlignment" Value="Right" />
+                            </Style>
+                        </GridView.ColumnHeaderContainerStyle>-->
+                        <GridViewColumn Header="Наименование элемента"
+                                        
+                                        util:GridViewSort.PropertyName="IFCObjectName"
+                                        DisplayMemberBinding="{Binding PropertySetDefinition.ModelObject.IFCObjectName}"/>
+                        <GridViewColumn Header="Наименование набора" 
+                                        
+                                        util:GridViewSort.PropertyName="NamePropertySet"
+                                        DisplayMemberBinding="{Binding PropertySetDefinition.NamePropertySet}"/>
+                        <GridViewColumn Header="Наименование параметра" 
+                                        
+                                        util:GridViewSort.PropertyName="NameProperty"
+                                        DisplayMemberBinding="{Binding NameProperty, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <GridViewColumn Header="Значение" 
+                                        
+                                        util:GridViewSort.PropertyName="ValueString"
+                                        DisplayMemberBinding="{Binding ValueString, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <GridViewColumn Header="Тип данных" 
+                                        
+                                        util:GridViewSort.PropertyName="DataType"
+                                        DisplayMemberBinding="{Binding DataType}"/>
                     </GridView>
                 </ListView.View>
             </ListView>

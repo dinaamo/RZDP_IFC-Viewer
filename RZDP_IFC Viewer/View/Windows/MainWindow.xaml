@@ -110,7 +110,8 @@
                             Icon="Table" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Command="{Binding AddDocumentCommand}" Header="Добавить в файл ссылку на документ" Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}">
+                <MenuItem Command="{Binding AddDocumentCommand}" 
+                          Header="Добавить в файл ссылку на документ" Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}">
                     <MenuItem.Icon>
                         <fa:ImageAwesome
                             Height="12"
@@ -143,16 +144,58 @@
                             Icon="Remove" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Command="{Binding RemovePaintCommand}" Header="Снять все выделение">
+                <Separator/>
+
+                <MenuItem Command="{Binding RestoreViewCommand}" 
+                          Header="Показать все">
                     <MenuItem.Icon>
                         <fa:ImageAwesome
                             Height="12"
                             Margin="0,0,3,0"
-                            Foreground="DarkBlue"
-                            Icon="Refresh" />
+                            Foreground="CornflowerBlue"
+                            Icon="Eye" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <MenuItem
+                         Command="{Binding IsolateSelectedModelObjectCommand}"
+                         CommandParameter="{Binding}"
+                         Header="Изолировать выделенные">
+                    <MenuItem.Icon>
+                        <fa:ImageAwesome
+                         Height="12"
+                         Margin="0,0,3,0"
+                         Foreground="DarkOrange"
+                         Icon="Eye" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <MenuItem
+                         Command="{Binding HideSelectedModelObjectCommand}"
+                         CommandParameter="{Binding}"
+                         Header="Скрыть выделенные">
+                    <MenuItem.Icon>
+                        <fa:ImageAwesome
+                         Height="12"
+                         Margin="0,0,3,0"
+                        Foreground="DarkViolet"
+                        Icon="EyeSlash" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <Separator/>
+                <MenuItem Command="{Binding RemovePaintCommand}" 
+                      Header="Снять все выделение">
+                    <MenuItem.Icon>
+                        <fa:ImageAwesome
+                        Height="12"
+                        Margin="0,0,3,0"
+                        Foreground="DarkBlue"
+                        Icon="Refresh" />
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
+
             <!--  kKKKKKKKKKKKKKKKKKKKK  -->
             <MenuItem Header="Справка">
                 <MenuItem Command="{Binding OpenHelp}" Header="Справка по программе">

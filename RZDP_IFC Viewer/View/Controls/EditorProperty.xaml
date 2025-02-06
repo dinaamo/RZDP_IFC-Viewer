@@ -92,6 +92,7 @@
                 <TextBox
                     x:Name="tbName"
                     IsEnabled="{Binding Path=(wind:MainWindow.IsEnabled)}"
+                    IsReadOnly="{Binding Path=(wind:MainWindow.IsReadOnly)}"
                     Focusable="False"
                     LostFocus="tbName_LostFocus"
                     MouseDoubleClick="TextBox_MouseDoubleClick"
