@@ -241,16 +241,7 @@
                     </StatusBarItem>
 
                     <Separator Width="10" Visibility="Hidden"/>
-                    <!--<Separator.Style>
-                                <Style TargetType="Separator">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding LengthTotal}" Value="0">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Separator.Style>
-                    </Separator>-->
+
                     
                     <StatusBarItem VerticalAlignment="Top" HorizontalAlignment="Right">
                         <StackPanel Orientation="Vertical">
@@ -319,7 +310,7 @@
                 <TreeView
                     x:Name="treeViewIFC"
                     ItemContainerStyle="{StaticResource TreeViewStyle}"
-                    ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
                 </TreeView>
             </GroupBox>
 
@@ -329,8 +320,7 @@
                 Header="3D вид">
 
                 <xbimSample:WinformsAccessibleControl
-                    x:Name="WPFDrawingControl"
-                    SelectionChanged="DrawingControl_SelectionChanged" />
+                    x:Name="WPFDrawingControl" SelectionChanged="DrawingControl_SelectedEntityChanged"/>
             </GroupBox>
 
             <TabControl

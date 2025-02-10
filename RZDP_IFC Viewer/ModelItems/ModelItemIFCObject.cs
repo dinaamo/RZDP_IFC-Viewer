@@ -98,7 +98,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 
         private void OnZoomElementsCommandExecuted(object o)
         {
-            Model.ZoomObject(IFCObjectDefinition);
+            Model.ZoomObjects(SelectionNestedItems(this).Select(it => it.IFCObjectDefinition));
         }
 
         private bool CanZoomElementsCommandExecute(object o)
@@ -315,7 +315,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 
         private void OnSelectedModelObjectCommand(object o)
         {
-            Model.ShowSelected(SelectionNestedItems(this).Select(it=> it.IFCObjectDefinition).ToList() );
+            Model.ShowSelected(SelectionNestedItems(this).Select(it=> it.IFCObjectDefinition));
         }
 
         private bool CanSelectedModelObjectCommand(object o)
@@ -331,7 +331,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 
         private void OnIsolateSelectedModelObjectCommand(object o)
         {
-            Model.IsolateSelected(new List<IPersistEntity>() { IFCObjectDefinition });
+            Model.IsolateSelected(SelectionNestedItems(this).Select(it => it.IFCObjectDefinition));
         }
 
         private bool CanIsolateSelectedModelObjectCommand(object o)
@@ -351,7 +351,8 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 
         public void SelectElements()
         {
-            Model.SelectObject(IFCObjectDefinition);
+            var tt = SelectionNestedItems(this).Select(it => it.IFCObjectDefinition);
+            Model.SelectObjects(tt);
         }
 
         #endregion Выделить элемент

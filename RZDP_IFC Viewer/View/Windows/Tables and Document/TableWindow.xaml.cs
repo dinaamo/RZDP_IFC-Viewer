@@ -24,7 +24,7 @@ namespace RZDP_IFC_Viewer.View.Windows
 
         private static TableWindow instance;
 
-        public  static void CreateTableWindow(ModelItemIFCTable modelItemIFCTable)
+        public async static void CreateTableWindow(ModelItemIFCTable modelItemIFCTable)
         {
             if (instance == null)
             {
@@ -32,14 +32,9 @@ namespace RZDP_IFC_Viewer.View.Windows
                 instance.Show();
                 instance.Topmost = true;
                 
-                Task.Run(() => {
-                    Thread.Sleep(500);
-                        Application.Current.Dispatcher.BeginInvoke(() =>
-                        {
-                            instance.Activate();
-                            instance.Topmost = false;}); });
-                
-
+                await Task.Delay(500);
+                instance.Activate();
+                instance.Topmost = false;
             }
             else
             {

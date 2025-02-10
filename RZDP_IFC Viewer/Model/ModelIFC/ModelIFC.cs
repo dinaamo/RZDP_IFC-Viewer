@@ -102,12 +102,12 @@ namespace RZDP_IFC_Viewer.IFC.Model
         /// <summary>
         /// Делегат для фокуса на объекте
         /// </summary>
-        public Action<IPersistEntity> ZoomObject;
+        public Action<IEnumerable<IPersistEntity>> ZoomObjects;
 
         /// <summary>
         /// Выделение объекта
         /// </summary>
-        public Action<IPersistEntity> SelectObject;
+        public Action<IEnumerable<IPersistEntity>> SelectObjects;
 
         /// <summary>
         /// Скрываем элементы после удаления
@@ -133,14 +133,16 @@ namespace RZDP_IFC_Viewer.IFC.Model
         /// Создаем модель
         /// </summary>
         public static ModelIFC Create(IfcStore ifcStore, BackgroundWorker backgroundWorker, 
-                                Action<IPersistEntity> ZoomObject, Action<IPersistEntity> SelectObject,  
-                                Action<IEnumerable<IPersistEntity>> HideAfterDelete, Action<IEnumerable<IPersistEntity>> HideSelected, 
+                                Action<IEnumerable<IPersistEntity>> ZoomObject, 
+                                Action<IEnumerable<IPersistEntity>> SelectObjects,  
+                                Action<IEnumerable<IPersistEntity>> HideAfterDelete, 
+                                Action<IEnumerable<IPersistEntity>> HideSelected, 
                                 Action<IEnumerable<IPersistEntity>> IsolateSelected,
                                 Action<IEnumerable<IPersistEntity>> ShowSelected)
         {
             return new ModelIFC(ifcStore).LoadDataBase(ifcStore, backgroundWorker, 
-                                                                        ZoomObject, 
-                                                                        SelectObject,  
+                                                                        ZoomObject,
+                                                                        SelectObjects,  
                                                                         HideAfterDelete,
                                                                         HideSelected,
                                                                         IsolateSelected,
@@ -153,15 +155,17 @@ namespace RZDP_IFC_Viewer.IFC.Model
         /// Загружаем базу данных
         /// </summary>
         private ModelIFC LoadDataBase(IfcStore ifcStore, BackgroundWorker backgroundWorker, 
-                                Action<IPersistEntity> ZoomObject,  Action<IPersistEntity> SelectObject,  
-                                Action<IEnumerable<IPersistEntity>> HideAfterDelete,Action<IEnumerable<IPersistEntity>> HideSelected,
+                                Action<IEnumerable<IPersistEntity>> ZoomObject,  
+                                Action<IEnumerable<IPersistEntity>> SelectObjects,  
+                                Action<IEnumerable<IPersistEntity>> HideAfterDelete,
+                                Action<IEnumerable<IPersistEntity>> HideSelected,
                                 Action<IEnumerable<IPersistEntity>> IsolateSelected,
                                 Action<IEnumerable<IPersistEntity>> ShowSelected)
         {
 
             this.backgroundWorker = backgroundWorker;
-            this.SelectObject = SelectObject;
-            this.ZoomObject = ZoomObject;
+            this.SelectObjects = SelectObjects;
+            this.ZoomObjects = ZoomObject;
             this.HideAfterDelete = HideAfterDelete;
             this.HideSelected = HideSelected;
             this.IsolateSelected = IsolateSelected;

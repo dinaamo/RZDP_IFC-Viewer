@@ -2,25 +2,20 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Media3D;
+using IFC_Viewer.View.Windows;
+using NuGet;
 using RZDP_IFC_Viewer.IFC.Model;
 using RZDP_IFC_Viewer.IFC.ModelItem;
 using RZDP_IFC_Viewer.Infracrucrure.Commands;
 using RZDP_IFC_Viewer.View.Windows;
 using RZDP_IFC_Viewer.ViewModels.Base;
-using IFC_Viewer.View.Windows;
-using NuGet;
 using Xbim.Common;
 using Xbim.Ifc;
 using Xbim.IO;
-using Xbim.IO.Memory;
-using Xbim.IO.Parser;
 using Xbim.ModelGeometry.Scene;
 using Xbim.Presentation;
-using static Microsoft.Isam.Esent.Interop.EnumeratedColumn;
-using static Xbim.Presentation.DrawingControl3D;
-using System.Windows.Media.Media3D;
 
 namespace RZDP_IFC_Viewer.ViewModels
 {
@@ -269,8 +264,8 @@ namespace RZDP_IFC_Viewer.ViewModels
                 //Создаем модель
                 ModelIFC tempModel = ModelIFC.Create(ifcStore,
                                                         _worker,
-                                                        ZoomSelected, 
-                                                        SelectElement,
+                                                        ZoomSelected,
+                                                        SelectElements,
                                                         HideAfterDelete,
                                                         HideSelected,
                                                         IsolateSelected, 
@@ -327,7 +322,7 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         #endregion Загрузка модели
 
-        #region Удалить, скрыть, изолировать.
+        #region 3D модель
 
         /// <summary>
         /// Скрываем объекты после удаления
@@ -407,7 +402,75 @@ namespace RZDP_IFC_Viewer.ViewModels
             _DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
         }
 
-        #endregion
+        #region Фокус на элемент
+
+        private bool _simpleFastExtrusion = false;
+        private bool _camChanged;
+
+        private void ZoomSelected(IEnumerable<IPersistEntity> persistEntityForSelect)
+        {
+            try
+            {
+                _camChanged = false;
+                _DrawingControl.Viewport.Camera.Changed += Camera_Changed;
+
+                SelectElements(persistEntityForSelect);
+
+                _DrawingControl.ZoomSelected();
+                _DrawingControl.Viewport.Camera.Changed -= Camera_Changed;
+                if (!_camChanged)
+                    _DrawingControl.ClipBaseSelected(0.15);
+            }
+            catch (ArgumentException)
+            {
+
+            }
+
+        }
+
+
+        private void Camera_Changed(object sender, EventArgs e)
+        {
+            _camChanged = true;
+        }
+
+        #endregion Фокус на элемент
+
+        #region Выбрать элемент
+
+        private void SelectElements(IEnumerable<IPersistEntity> persistEntityForSelect)
+        {
+            _DrawingControl.Selection.Clear();
+
+            foreach (var item in persistEntityForSelect)
+            {
+                SetSelectElementAsync(item);
+            }
+        }
+
+        private async Task SetSelectElementAsync(IPersistEntity persistEntity)
+        {
+            await Task.Run(() =>
+            {
+                Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    if (_DrawingControl.Selection.Toggle(persistEntity))
+                    {
+                        _DrawingControl.HighlighSelected(persistEntity);
+                    }
+                });
+
+            });
+        }
+
+
+        #endregion Выбрать элемент
+
+
+
+
+
+        #endregion 3D модель
 
         #region Закрыть файл
 
@@ -479,60 +542,7 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         #endregion Сохранение модели
 
-        #region Фокус на элемент
 
-        private bool _simpleFastExtrusion = false;
-        private bool _camChanged;
-
-        private void ZoomSelected(IPersistEntity persistEntity)
-        {
-            try
-            {
-                _camChanged = false;
-                _DrawingControl.Viewport.Camera.Changed += Camera_Changed;
-                _DrawingControl.SelectedEntity = persistEntity;
-                _DrawingControl.ZoomSelected();
-                _DrawingControl.Viewport.Camera.Changed -= Camera_Changed;
-                if (!_camChanged)
-                    _DrawingControl.ClipBaseSelected(0.15);
-            }
-            catch (ArgumentException)
-            {
-
-            }
-
-        }
-
-        private void Camera_Changed(object sender, EventArgs e)
-        {
-            _camChanged = true;
-        }
-
-        #endregion Фокус на элемент
-
-        #region Выделить элемент
-
-        private void SelectElement(IPersistEntity persistEntity)
-        {
-            //SelectionChangedEventArgs a = new SelectionChangedEventArgs(
-            //SelectedEntityChangedEvent,
-            //        new[] { SelectedEntityProperty },
-            //        new[] { persistEntity }
-            //        );
-
-            //DrawingControl_SelectedEntityChanged(this , a);
-
-            _DrawingControl.SelectedEntity = persistEntity;
-        }
-
-        private void DrawingControl_SelectedEntityChanged(object sender, SelectionChangedEventArgs e)
-        {
-            
-        }
-
-
-
-        #endregion Выделить элемент
 
         #region Блокировка окна при загрузке
         private void Worker_DoWork(object? sender, DoWorkEventArgs e)
@@ -983,9 +993,8 @@ namespace RZDP_IFC_Viewer.ViewModels
             this.mainWindow = mainWindow;
             //IsEnableWindow = true;
             _worker = new BackgroundWorker();
-            _DrawingControl.SelectedEntityChanged += DrawingControl_SelectedEntityChanged;
+            //_DrawingControl.SelectedEntityChanged += DrawingControl_SelectedEntityChanged;
             _DrawingControl.UserModeledDimensionChangedEvent += DrawingControl_UserModeledDimensionChangedEvent;
-
 
             _worker.ProgressChanged += ProgressChanged;
             _worker.WorkerReportsProgress = true;

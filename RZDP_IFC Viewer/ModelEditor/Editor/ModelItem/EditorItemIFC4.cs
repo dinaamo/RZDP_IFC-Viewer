@@ -37,7 +37,7 @@ namespace IFC_Viewer.IFC.ModelItem
                     IfcPropertySingleValue ifcProp = ModelIFC.IfcStore.Model.Instances.New<IfcPropertySingleValue>(prop =>
                     {
                         prop.Name = parameter.Item1;
-                        prop.NominalValue = new IfcText(parameter.Item1);
+                        prop.NominalValue = new IfcText(parameter.Item2);
                     });
                     prS.HasProperties.Add(ifcProp);
                 }

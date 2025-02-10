@@ -29,23 +29,23 @@ namespace RZDP_IFC_Viewer.View.Controls
 
         }
 
-        private void Window_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Delete)
-            {
-                if (sender is DataGrid dataGrid)
-                {
-                    if (dataGrid.CurrentCell.Item is BasePropertySetDefinition propertySetDefinitionModel)
-                    {
-                        DeleteProperySet(propertySetDefinitionModel);
-                    }
-                    else if (dataGrid.CurrentCell.Item is IPropertyModel<IIfcResourceObjectSelect> propertyModel)
-                    {
-                        DeleteProperty(propertyModel);
-                    }
-                }
-            }
-        }
+        //private void Window_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    if (e.Key == Key.Delete)
+        //    {
+        //        if (sender is DataGrid dataGrid)
+        //        {
+        //            if (dataGrid.CurrentCell.Item is BasePropertySetDefinition propertySetDefinitionModel)
+        //            {
+        //                DeleteProperySet(propertySetDefinitionModel);
+        //            }
+        //            else if (dataGrid.CurrentCell.Item is IPropertyModel<IIfcResourceObjectSelect> propertyModel)
+        //            {
+        //                DeleteProperty(propertyModel);
+        //            }
+        //        }
+        //    }
+        //}
 
 
         private void TextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)

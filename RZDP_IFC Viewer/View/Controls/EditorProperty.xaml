@@ -140,7 +140,7 @@
                     Grid.Row="1"
                     Width="auto"
                     CanUserDeleteRows="False"
-                    PreviewKeyDown="Window_KeyDown"
+
                     SelectionMode="Single" 
                     AutoGenerateColumns="False"
                     IsSynchronizedWithCurrentItem="True"
@@ -243,7 +243,7 @@
                     x:Name="dgProperty"
                     Grid.Row="1"
                     Width="auto"
-                    PreviewKeyDown="Window_KeyDown"
+
                     SelectionMode="Single" 
                     SelectionUnit="Cell"
                     AutoGenerateColumns="False"

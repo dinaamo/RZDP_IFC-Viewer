@@ -29,6 +29,7 @@ namespace RZDP_IFC_Viewer
         public MainWindow()
         {
             InitializeComponent();
+            treeViewIFC.SelectedItemChanged += treeViewIFC_SelectedItemChanged;
         }
 
         //IProgress<(double percente, string message)> progress;
@@ -234,35 +235,39 @@ namespace RZDP_IFC_Viewer
 
         #endregion Дерево и свойства
 
-        #region 3D просмотрщик
-
-        private void DrawingControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void DrawingControl_SelectedEntityChanged(object sender, SelectionChangedEventArgs e)
         {
             foreach (var item in e.AddedItems)
             {
-                //ModelItemIFCObject findObj = tree FindModelObject(item);
-
                 ObservableCollection<BaseModelItemIFC>? collectionObjectModel = treeViewIFC.ItemsSource as ObservableCollection<BaseModelItemIFC>;
 
                 if (collectionObjectModel is null)
                 {
                     return;
                 }
-                ModelItemIFCObject? project = collectionObjectModel[0].ModelItems.OfType<ModelItemIFCObject>().FirstOrDefault(); 
+                ModelItemIFCObject? project = collectionObjectModel[0].ModelItems.OfType<ModelItemIFCObject>().FirstOrDefault();
                 var findObj = ModelItemIFCObject.SelectionNestedItems(project).FirstOrDefault(it => it.GetIFCObjectDefinition().Equals(item));
 
                 if (findObj != null)
                 {
                     findObj.ExpandOver();
+                    treeViewIFC.SelectedItemChanged -= treeViewIFC_SelectedItemChanged;
                     findObj.IsSelected = true;
                     findObj.IsFocusReference = false;
+                    treeViewIFC.SelectedItemChanged += treeViewIFC_SelectedItemChanged;
                 }
             }
         }
 
-
-        #endregion 3D просмотрщик
-
-
+        private void treeViewIFC_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            if (sender is TreeView item)
+            {
+                if (item.SelectedItem is ModelItemIFCObject modelItemIFCObject)
+                {
+                    modelItemIFCObject.SelectElements();
+                }
+            }
+        }
     }
 }

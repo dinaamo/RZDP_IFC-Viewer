@@ -179,7 +179,7 @@
 
                 </StackPanel>
                 <TextBlock Text="Выбранные параметры:" Margin="5,0,5,0"  DockPanel.Dock="Top"/>
-                <TextBox Text="{Binding Path=SelectedParameters, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,5,5" IsReadOnly="False"  DockPanel.Dock="Top"/>
+                <TextBox IsEnabled="False" IsReadOnly="True" Text="{Binding Path=SelectedParameters, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,5,5"  DockPanel.Dock="Top"/>
 
                 <DataGrid x:Name="dgControlTable" IsReadOnly="False"
                             DockPanel.Dock="Top"
