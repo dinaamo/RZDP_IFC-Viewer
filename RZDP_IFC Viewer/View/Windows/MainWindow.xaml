@@ -7,14 +7,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:cmnd="clr-namespace:RZDP_IFC_Viewer.Infracrucrure.Commands"
     xmlns:wind="clr-namespace:RZDP_IFC_Viewer"
-    xmlns:xbimSample="clr-namespace:Xbim.WinformsSample"
+    xmlns:xbimSample="clr-namespace:Xbim.WinformsSample" xmlns:presentation="http://schemas.Xbim.com/Presentation"
     x:Name="MainWindowIFC"
     mc:Ignorable="d"
     Closing="MainWindowIFC_Closing"
     Title="{Binding Title, Mode=OneWay, TargetNullValue=RZDP_IFC Viewer, UpdateSourceTrigger=PropertyChanged}"
     Width="1027"
     Height="552"
-    
+    PreviewKeyDown="MainWindowIFC_KeyDown"
     Icon="{StaticResource ResourceKey=RZDP_Image}"
     Loaded="MainWindowIFC_Loaded"
     AllowDrop="True" Drop="MainWindowIFC_DragLeave" 
@@ -99,53 +99,8 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
-            <!--  kKKKKKKKKKKKKKKKKKKKK  -->
-            <MenuItem Header="Инструменты" Visibility="Visible">
-                <MenuItem Command="{Binding AddIFCTableCommand}" Header="Добавить в файл таблицу" Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}">
-                    <MenuItem.Icon>
-                        <fa:ImageAwesome
-                            Height="12"
-                            Margin="0,0,3,0"
-                            Foreground="OrangeRed"
-                            Icon="Table" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Command="{Binding AddDocumentCommand}" 
-                          Header="Добавить в файл ссылку на документ" Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}">
-                    <MenuItem.Icon>
-                        <fa:ImageAwesome
-                            Height="12"
-                            Margin="0,0,3,0"
-                            Foreground="SteelBlue"
-                            Icon="FileText" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem
-                    Command="{Binding AddReferenceToTheElements}"
-                    Header="Задать ссылки"
-                    ToolTip="Групповое задание ссылок" Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}">
-                    <MenuItem.Icon>
-                        <fa:ImageAwesome
-                            Height="12"
-                            Margin="0,0,3,0"
-                            Foreground="DarkGreen"
-                            Icon="ExternalLinkSquare" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem
-                    Command="{Binding DeleteReferenceToTheElements}"
-                    Header="Удалить ссылки"
-                    ToolTip="Групповое удаление ссылок" Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}">
-                    <MenuItem.Icon>
-                        <fa:ImageAwesome
-                            Height="12"
-                            Margin="0,0,3,0"
-                            Foreground="DarkRed"
-                            Icon="Remove" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <Separator/>
 
+            <MenuItem Header="Вид" Visibility="Visible">
                 <MenuItem Command="{Binding RestoreViewCommand}" 
                           Header="Показать все">
                     <MenuItem.Icon>
@@ -195,8 +150,55 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
+            
+            <MenuItem Header="Инструменты" Visibility="Visible">
+                <MenuItem Command="{Binding AddIFCTableCommand}" Header="Добавить в файл таблицу" Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}">
+                    <MenuItem.Icon>
+                        <fa:ImageAwesome
+                            Height="12"
+                            Margin="0,0,3,0"
+                            Foreground="OrangeRed"
+                            Icon="Table" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding AddDocumentCommand}" 
+                          Header="Добавить в файл ссылку на документ" Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}">
+                    <MenuItem.Icon>
+                        <fa:ImageAwesome
+                            Height="12"
+                            Margin="0,0,3,0"
+                            Foreground="SteelBlue"
+                            Icon="FileText" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem
+                    Command="{Binding AddReferenceToTheElements}"
+                    Header="Задать ссылки"
+                    ToolTip="Групповое задание ссылок" Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}">
+                    <MenuItem.Icon>
+                        <fa:ImageAwesome
+                            Height="12"
+                            Margin="0,0,3,0"
+                            Foreground="DarkGreen"
+                            Icon="ExternalLinkSquare" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem
+                    Command="{Binding DeleteReferenceToTheElements}"
+                    Header="Удалить ссылки"
+                    ToolTip="Групповое удаление ссылок" Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}">
+                    <MenuItem.Icon>
+                        <fa:ImageAwesome
+                            Height="12"
+                            Margin="0,0,3,0"
+                            Foreground="DarkRed"
+                            Icon="Remove" />
+                    </MenuItem.Icon>
+                </MenuItem>
 
-            <!--  kKKKKKKKKKKKKKKKKKKKK  -->
+
+            </MenuItem>
+            
             <MenuItem Header="Справка">
                 <MenuItem Command="{Binding OpenHelp}" Header="Справка по программе">
                     <MenuItem.Icon>
@@ -312,6 +314,7 @@
                     ItemContainerStyle="{StaticResource TreeViewStyle}"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
                 </TreeView>
+                
             </GroupBox>
 
             <GroupBox

@@ -139,7 +139,7 @@ namespace RZDP_IFC_Viewer.ViewModels
                 foreach (var column in dataGrid.Columns)
                 {
                     TextBlock cell = column.GetCellContent(row) as TextBlock;
-                    string cellstring = cell.Text;
+                    string cellstring = cell?.Text ?? "";
 
                     if (!isIgnorRegister)
                     {
@@ -196,7 +196,7 @@ namespace RZDP_IFC_Viewer.ViewModels
                 {
                     TextBlock cell = column.GetCellContent(row) as TextBlock;
 
-                    cell.Background = null;
+                   if(cell != null)  cell.Background = null;
                 }
             }
 

@@ -27,7 +27,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 
         #region Свойства
 
-        public IIfcTable IFCTable { get; set; }
+        public IIfcTable IFCTable { get; }
 
         public string IFCTableName { 
             get

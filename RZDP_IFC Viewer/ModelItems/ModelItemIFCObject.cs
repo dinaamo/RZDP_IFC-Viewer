@@ -98,7 +98,10 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 
         private void OnZoomElementsCommandExecuted(object o)
         {
+            //Вариант для выбора под элементов
             Model.ZoomObjects(SelectionNestedItems(this).Select(it => it.IFCObjectDefinition));
+
+            //Model.ZoomObjects(new List<IIfcRoot>() { IFCObjectDefinition });
         }
 
         private bool CanZoomElementsCommandExecute(object o)
@@ -299,7 +302,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 
         private void OnHideSelectedModelObjectCommand(object o)
         {
-            Model.HideSelected(new List<IPersistEntity>() { IFCObjectDefinition });
+            Model.HideSelected(SelectionNestedItems(this).Select(it => it.IFCObjectDefinition));
         }
 
         private bool CanHideSelectedModelObjectCommand(object o)
@@ -349,10 +352,12 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 
         #region Выделить элемент
 
-        public void SelectElements()
+        public void SelectElement()
         {
-            var tt = SelectionNestedItems(this).Select(it => it.IFCObjectDefinition);
-            Model.SelectObjects(tt);
+            //Вариант для выбора под элементов
+            //Model.SelectObjects(SelectionNestedItems(this).Select(it => it.IFCObjectDefinition));
+
+            Model.SelectObjects(new List<IIfcRoot>() { IFCObjectDefinition });
         }
 
         #endregion Выделить элемент
@@ -591,7 +596,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 
         #region Свойства
 
-        private IIfcObjectDefinition IFCObjectDefinition;
+        private readonly IIfcObjectDefinition IFCObjectDefinition;
 
         public string IFCObjectGUID => IFCObjectDefinition.GlobalId.ToString();
 

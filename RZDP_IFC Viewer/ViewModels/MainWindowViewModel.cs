@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
@@ -16,6 +17,7 @@ using Xbim.Ifc;
 using Xbim.IO;
 using Xbim.ModelGeometry.Scene;
 using Xbim.Presentation;
+using static Xbim.Presentation.DrawingControl3D;
 
 namespace RZDP_IFC_Viewer.ViewModels
 {
@@ -413,13 +415,32 @@ namespace RZDP_IFC_Viewer.ViewModels
             {
                 _camChanged = false;
                 _DrawingControl.Viewport.Camera.Changed += Camera_Changed;
+                //mainWindow.treeViewIFC.SelectedItemChanged -= mainWindow.treeViewIFC_SelectedItemChanged;
+                mainWindow.WPFDrawingControl.SelectionChanged -= mainWindow.DrawingControl_SelectedEntityChanged;
+   
+                _DrawingControl.SelectedEntity = persistEntityForSelect.ToArray()[0];
 
+                if (!_DrawingControl.ZoomSelectedBool())
+                {
+                    foreach (IPersistEntity persistEntity in persistEntityForSelect)
+                    {
+                        _DrawingControl.SelectedEntity = persistEntity;
+
+                        if (_DrawingControl.ZoomSelectedBool())
+                        {
+                            break;
+                        }
+                    }
+                }
                 SelectElements(persistEntityForSelect);
+                //_DrawingControl.SelectedEntity = persistEntityForSelect.ToArray()[0];
 
-                _DrawingControl.ZoomSelected();
                 _DrawingControl.Viewport.Camera.Changed -= Camera_Changed;
                 if (!_camChanged)
-                    _DrawingControl.ClipBaseSelected(0.15);
+                    { _DrawingControl.ClipBaseSelected(0.15); }
+
+                //mainWindow.treeViewIFC.SelectedItemChanged += mainWindow.treeViewIFC_SelectedItemChanged;
+                mainWindow.WPFDrawingControl.SelectionChanged += mainWindow.DrawingControl_SelectedEntityChanged;
             }
             catch (ArgumentException)
             {
@@ -428,7 +449,6 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         }
 
-
         private void Camera_Changed(object sender, EventArgs e)
         {
             _camChanged = true;
@@ -436,33 +456,39 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         #endregion Фокус на элемент
 
-        #region Выбрать элемент
+        #region Выбрать несколько элементов (не получилось, зависает вьюер)
 
         private void SelectElements(IEnumerable<IPersistEntity> persistEntityForSelect)
         {
             _DrawingControl.Selection.Clear();
+            var persistEntityForSelectDistinct =  persistEntityForSelect.Distinct();
+            
+            _DrawingControl.Selection.AddRange(persistEntityForSelectDistinct);
 
-            foreach (var item in persistEntityForSelect)
-            {
-                SetSelectElementAsync(item);
-            }
+            HightSelectElementAsync(persistEntityForSelect);
         }
 
-        private async Task SetSelectElementAsync(IPersistEntity persistEntity)
+
+        private void HightSelectElementAsync(IEnumerable<IPersistEntity> persistEntityForSelect)
         {
-            await Task.Run(() =>
+
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
+  
+            Parallel.ForEach(persistEntityForSelect, persistEntity =>
             {
                 Application.Current.Dispatcher.BeginInvoke(() =>
                 {
-                    if (_DrawingControl.Selection.Toggle(persistEntity))
+                    if (cancellationToken.IsCancellationRequested)
                     {
-                        _DrawingControl.HighlighSelected(persistEntity);
+                        return;
                     }
+                    _DrawingControl.HighlighSelected(persistEntity);
                 });
-
             });
-        }
+            cancellationTokenSource.CancelAfter(10);
 
+        }
 
         #endregion Выбрать элемент
 
@@ -996,6 +1022,7 @@ namespace RZDP_IFC_Viewer.ViewModels
             //_DrawingControl.SelectedEntityChanged += DrawingControl_SelectedEntityChanged;
             _DrawingControl.UserModeledDimensionChangedEvent += DrawingControl_UserModeledDimensionChangedEvent;
 
+            _DrawingControl.ViewHome();
             _worker.ProgressChanged += ProgressChanged;
             _worker.WorkerReportsProgress = true;
 

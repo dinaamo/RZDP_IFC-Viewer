@@ -10,7 +10,7 @@
     Name="Win"
     Title="{Binding Path=Title}"
     SizeToContent="WidthAndHeight"
-    mc:Ignorable="d" MinWidth="1000" MinHeight="300" Closing="Win_Closing">
+    mc:Ignorable="d" MinWidth="1100" MinHeight="300" Closing="Win_Closing">
 
     <Window.Resources>
         <Style  TargetType="GroupBox">
@@ -20,138 +20,126 @@
     </Window.Resources>
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="641*" />
-            <ColumnDefinition Width="200*" />
-        </Grid.ColumnDefinitions>
-        <DockPanel Grid.ColumnSpan="2">
-            <Grid
-                Margin="10,5,10,0"
-                DockPanel.Dock="Top">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto" />
-                    <ColumnDefinition Width="auto" />
-                    <ColumnDefinition Width="auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="auto" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                </Grid.RowDefinitions>
 
-                <GroupBox Header="Размер текста" Grid.Column="0" Margin="0,0,0,0">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" Margin="0,0,0,0">
-                    <Button
+        <DockPanel>
+            <DockPanel
+                Margin="10,5,10,0"
+                DockPanel.Dock="Top" >
+
+
+                <GroupBox Header="Размер текста" Grid.Column="0" Margin="0,0,5,0">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"  Margin="0,0,0,0">
+                        <Button
                             Width="20"
                             Height="20"
                             Margin="0,0,0,0"
                             VerticalAlignment="Center"
                             Command="{Binding LessSizeFontCommand}"
                             Click="Button_Click">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="10" />
-                            </Style>
-                        </Button.Resources>
-                        <fa:ImageAwesome
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="10" />
+                                </Style>
+                            </Button.Resources>
+                            <fa:ImageAwesome
                                 Width="15"
                                 Height="15"
                                 Margin="0,1,1,0"
                                 Foreground="Black"
                                 Icon="ArrowLeft" />
-                    </Button>
-                    <TextBox
+                        </Button>
+                        <TextBox
                     Margin="10,0,10,0"
                     BorderThickness="0"
                     VerticalAlignment="Center"
                     Text="{Binding Path=FontSizeTable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <Button
+                        <Button
                         Width="20"
                         Height="20"
                         Command="{Binding MoreSizeFontCommand}"
                         Click="Button_Click">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="10" />
-                            </Style>
-                        </Button.Resources>
-                        <fa:ImageAwesome
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="10" />
+                                </Style>
+                            </Button.Resources>
+                            <fa:ImageAwesome
                             Width="15"
                             Height="15"
                             Margin="0,1,1,0"
                             Foreground="Black"
                             Icon="ArrowRight" />
-                    </Button>
-                </StackPanel>
-                        </GroupBox>
-
-                <GroupBox Header="Наименование таблицы" Grid.Column="1" Margin="0,0,0,0">
-                    <TextBox Text="{Binding Path=NameTable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             Height="22" MinWidth="200"  Margin="5,0,5,0" HorizontalAlignment="Left"/>
+                        </Button>
+                    </StackPanel>
                 </GroupBox>
 
-                    <GroupBox Header="Поиск" Grid.Column="2" Margin="5,0,5,0" Padding="5,0,5,0">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,0">
-                    <StackPanel Orientation="Vertical">
-                        <CheckBox Name="CHBСonditionsFilter" Content="Текст целиком"  HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,5,5,0" />
-                        <CheckBox Name="CHBIgnorRegister" Content="Учитывать регистр"  HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,5,5,0" />
-                    </StackPanel>
-                    <TextBox x:Name="TBСonditionsSearch" Height="22" MinWidth="200" Margin="5,0,5,0" HorizontalAlignment="Left" />
+                <GroupBox Header="Наименование таблицы"  Margin="0,0,5,0" HorizontalAlignment="Left">
+                    <TextBox Text="{Binding Path=NameTable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Height="auto" MinWidth="300" MaxWidth="300" Margin="5,0,5,0"  TextWrapping="Wrap"/>
+                </GroupBox>
 
-                    <Button Width="60"
+                <GroupBox Header="Поиск" Grid.Column="2" Margin="5,0,5,0" Padding="5,0,5,0" >
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
+                        <StackPanel Orientation="Vertical">
+                            <CheckBox Name="CHBСonditionsFilter" Content="Текст целиком"  HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,5,5,0" />
+                            <CheckBox Name="CHBIgnorRegister" Content="Учитывать регистр"  HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,5,5,0" />
+                        </StackPanel>
+                        <TextBox x:Name="TBСonditionsSearch" Height="22" MinWidth="200" Margin="5,0,5,0" HorizontalAlignment="Left" />
+
+                        <Button Width="60"
                         Height="22"
                         Content="Найти"
                         Margin="5,0,5,0"
                         Command="{Binding SearchCellsCommand}">
-                        <Button.CommandParameter>
-                            <MultiBinding Converter="{StaticResource ConvertParametersMultibuilding}">
-                                <Binding ElementName="dgTable" />
-                                <Binding Path="IsChecked" ElementName="CHBСonditionsFilter" />
-                                <Binding Path="IsChecked" ElementName="CHBIgnorRegister" />
-                                <Binding Path="Text" ElementName="TBСonditionsSearch" />
-                                <Binding ElementName="TBCountFound" />
-                            </MultiBinding>
-                        </Button.CommandParameter>
-                    </Button>
+                            <Button.CommandParameter>
+                                <MultiBinding Converter="{StaticResource ConvertParametersMultibuilding}">
+                                    <Binding ElementName="dgTable" />
+                                    <Binding Path="IsChecked" ElementName="CHBСonditionsFilter" />
+                                    <Binding Path="IsChecked" ElementName="CHBIgnorRegister" />
+                                    <Binding Path="Text" ElementName="TBСonditionsSearch" />
+                                    <Binding ElementName="TBCountFound" />
+                                </MultiBinding>
+                            </Button.CommandParameter>
+                        </Button>
 
-                    <Button Width="60"
+                        <Button Width="60"
                             Height="22"
                             Content="Сброс"
                             Margin="5,0,5,0"
                             Command="{Binding ResetSearchCommand}">
                             <Button.CommandParameter>
-                            <MultiBinding Converter="{StaticResource ConvertParametersMultibuilding}">
-                                <Binding ElementName="dgTable" />
-                                <Binding ElementName="CHBСonditionsFilter" />
-                                <Binding ElementName="CHBIgnorRegister" />
-                                <Binding ElementName="TBСonditionsSearch" />
-                                <Binding ElementName="TBCountFound" />
-                            </MultiBinding>
-                        </Button.CommandParameter>
-                    </Button>
+                                <MultiBinding Converter="{StaticResource ConvertParametersMultibuilding}">
+                                    <Binding ElementName="dgTable" />
+                                    <Binding ElementName="CHBСonditionsFilter" />
+                                    <Binding ElementName="CHBIgnorRegister" />
+                                    <Binding ElementName="TBСonditionsSearch" />
+                                    <Binding ElementName="TBCountFound" />
+                                </MultiBinding>
+                            </Button.CommandParameter>
+                        </Button>
                         <TextBlock x:Name="TBCountFound" HorizontalAlignment="Left" Margin="5,0,5,0" VerticalAlignment="Center" />
                     </StackPanel>
                 </GroupBox>
 
-                <GroupBox Header="Экспорт в Excel" Grid.Column="4" Margin="5,0,0,0">
+                <GroupBox Header="Экспорт в Excel" Grid.Column="4" Margin="5,0,0,0" HorizontalAlignment="Right">
                     <StackPanel Orientation="Vertical" Grid.Column="2" Grid.Row="1">
 
-                    <Button
+                        <Button
                         Width="30"
                         Height="30"
                         HorizontalAlignment="Center" VerticalAlignment="Center"
                         Margin="0,0,0,0"
                         Command="{Binding ExportToExcelCommand}">
-                        <fa:ImageAwesome
+                            <fa:ImageAwesome
                             Width="25"
                             Height="25"
                             Margin="0,0,0,0"
                             Foreground="DarkGreen"
                             Icon="FileExcelOutline" />
-                    </Button>
-                </StackPanel>
+                        </Button>
+                    </StackPanel>
                 </GroupBox>
-            </Grid>
+            </DockPanel>
 
             <GroupBox
                 x:Name="grBox"

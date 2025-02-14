@@ -235,7 +235,7 @@ namespace RZDP_IFC_Viewer
 
         #endregion Дерево и свойства
 
-        private void DrawingControl_SelectedEntityChanged(object sender, SelectionChangedEventArgs e)
+        public void DrawingControl_SelectedEntityChanged(object sender, SelectionChangedEventArgs e)
         {
             foreach (var item in e.AddedItems)
             {
@@ -259,13 +259,35 @@ namespace RZDP_IFC_Viewer
             }
         }
 
-        private void treeViewIFC_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+
+
+        public void treeViewIFC_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            if (sender is TreeView item)
+            if (treeViewIFC.SelectedItem is ModelItemIFCObject modelItemIFCObject)
             {
-                if (item.SelectedItem is ModelItemIFCObject modelItemIFCObject)
+                modelItemIFCObject.SelectElement();
+            }
+        }
+
+        private void MainWindowIFC_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (treeViewIFC.SelectedItem is ModelItemIFCObject modelItemIFCObject)
+            {
+                if (e.KeyboardDevice.Modifiers == ModifierKeys.Control  && e.Key == Key.H)
                 {
-                    modelItemIFCObject.SelectElements();
+                    modelItemIFCObject.HideSelectedModelObjectCommand.Execute(null);
+                }
+                if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.J)
+                {
+                    modelItemIFCObject.SelectedModelObjectCommand.Execute(null);
+                }
+                if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.K)
+                {
+                    modelItemIFCObject.IsolateSelectedModelObjectCommand.Execute(null);
+                }
+                if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.F)
+                {
+                    modelItemIFCObject.ZoomElementsCommand.Execute(null);
                 }
             }
         }

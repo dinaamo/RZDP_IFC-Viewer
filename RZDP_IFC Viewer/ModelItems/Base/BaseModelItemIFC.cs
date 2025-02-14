@@ -28,7 +28,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
         public virtual ObservableCollection<BaseModelItemIFC> ModelItems { get; }
 
         //IPersistEntity _ItemTreeView;
-        public IPersistEntity ItemIFC { get; set; }
+        public IPersistEntity ItemIFC { get; }
 
         public abstract Dictionary<string, HashSet<object>> PropertyElement { get; protected set; }
 

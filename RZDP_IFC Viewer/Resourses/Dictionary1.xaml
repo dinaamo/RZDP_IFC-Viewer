@@ -235,7 +235,7 @@
                     <MenuItem
                             Command="{Binding ZoomElementsCommand}"
                             CommandParameter="{Binding}"
-                            Header="Фокус на элемент">
+                            Header="Фокус на элемент (Ctrl+F)">
                         <MenuItem.Icon>
                             <fa:ImageAwesome
                             Height="12"
@@ -275,7 +275,7 @@
                     <MenuItem
                             Command="{Binding SelectedModelObjectCommand}"
                             CommandParameter="{Binding}"
-                            Header="Показать">
+                            Header="Показать (Ctrl+J)">
                         <MenuItem.Icon>
                             <fa:ImageAwesome
                             Height="12"
@@ -288,7 +288,7 @@
                     <MenuItem
                         Command="{Binding IsolateSelectedModelObjectCommand}"
                         CommandParameter="{Binding}"
-                        Header="Изолировать">
+                        Header="Изолировать (Ctrl+K)">
                         <MenuItem.Icon>
                             <fa:ImageAwesome
                         Height="12"
@@ -301,7 +301,7 @@
                     <MenuItem
                             Command="{Binding HideSelectedModelObjectCommand}"
                             CommandParameter="{Binding}"
-                            Header="Скрыть">
+                            Header="Скрыть (Ctrl+H)">
                         <MenuItem.Icon>
                             <fa:ImageAwesome
                             Height="12"
