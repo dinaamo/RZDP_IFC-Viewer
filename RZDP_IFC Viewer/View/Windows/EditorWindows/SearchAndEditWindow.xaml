@@ -193,6 +193,14 @@
                                     Command="{Binding OpenGroupAddPropSetFromDBWindowCommand}" 
                                     CommandParameter="{Binding ElementName=lwSearchElements, Path=SelectedItems}">
                         <Button.Content>
+                            <TextBlock Text="О" Padding="10,0,10,0"/>
+                        </Button.Content>
+                    </Button>
+                    <Button Width="300"
+                                    Height="20" 
+                                    Command="{Binding OpenGroupAddPropSetFromDBWindowCommand}" 
+                                    CommandParameter="{Binding ElementName=lwSearchElements, Path=SelectedItems}">
+                        <Button.Content>
                             <TextBlock Text="Добавление наборов по шаблону из базы Accsess" Padding="10,0,10,0"/>
                         </Button.Content>
                     </Button>

@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:cmnd="clr-namespace:RZDP_IFC_Viewer.Infracrucrure.Commands"
     xmlns:wind="clr-namespace:RZDP_IFC_Viewer"
-    xmlns:xbimSample="clr-namespace:Xbim.WinformsSample" xmlns:presentation="http://schemas.Xbim.com/Presentation"
+    xmlns:xbimSample="clr-namespace:Xbim.WinformsSample" 
     x:Name="MainWindowIFC"
     mc:Ignorable="d"
     Closing="MainWindowIFC_Closing"
@@ -150,9 +150,9 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
-            
-            <MenuItem Header="Инструменты" Visibility="Visible">
-                <MenuItem Command="{Binding AddIFCTableCommand}" Header="Добавить в файл таблицу" Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}">
+
+            <MenuItem Header="Инструменты" Visibility="{Binding Path=(wind:MainWindow.IsVisibility)}">
+                <MenuItem Command="{Binding AddIFCTableCommand}" Header="Добавить в файл таблицу" >
                     <MenuItem.Icon>
                         <fa:ImageAwesome
                             Height="12"

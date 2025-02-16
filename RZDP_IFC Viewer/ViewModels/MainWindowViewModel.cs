@@ -6,12 +6,12 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
 using IFC_Viewer.View.Windows;
-using NuGet;
 using RZDP_IFC_Viewer.IFC.Model;
 using RZDP_IFC_Viewer.IFC.ModelItem;
 using RZDP_IFC_Viewer.Infracrucrure.Commands;
 using RZDP_IFC_Viewer.View.Windows;
 using RZDP_IFC_Viewer.ViewModels.Base;
+using Tedd;
 using Xbim.Common;
 using Xbim.Ifc;
 using Xbim.IO;
@@ -432,8 +432,8 @@ namespace RZDP_IFC_Viewer.ViewModels
                         }
                     }
                 }
-                SelectElements(persistEntityForSelect);
-                //_DrawingControl.SelectedEntity = persistEntityForSelect.ToArray()[0];
+                //SelectElements(persistEntityForSelect);
+                _DrawingControl.SelectedEntity = persistEntityForSelect.ToArray()[0];
 
                 _DrawingControl.Viewport.Camera.Changed -= Camera_Changed;
                 if (!_camChanged)
@@ -456,16 +456,15 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         #endregion Фокус на элемент
 
-        #region Выбрать несколько элементов (не получилось, зависает вьюер)
+        #region Выбрать несколько элементов (не корректно)
 
         private void SelectElements(IEnumerable<IPersistEntity> persistEntityForSelect)
         {
             _DrawingControl.Selection.Clear();
-            var persistEntityForSelectDistinct =  persistEntityForSelect.Distinct();
             
-            _DrawingControl.Selection.AddRange(persistEntityForSelectDistinct);
+            //_DrawingControl.Selection.AddRange(persistEntityForSelectDistinct);
 
-            HightSelectElementAsync(persistEntityForSelect);
+            HightSelectElementAsync(persistEntityForSelect.Distinct());
         }
 
 
@@ -483,6 +482,7 @@ namespace RZDP_IFC_Viewer.ViewModels
                     {
                         return;
                     }
+                    _DrawingControl.Selection.Toggle(persistEntity);
                     _DrawingControl.HighlighSelected(persistEntity);
                 });
             });

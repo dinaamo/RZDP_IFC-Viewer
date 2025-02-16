@@ -250,8 +250,8 @@ namespace RZDP_IFC_Viewer
 
                 if (findObj != null)
                 {
-                    findObj.ExpandOver();
                     treeViewIFC.SelectedItemChanged -= treeViewIFC_SelectedItemChanged;
+                    findObj.ExpandOver();
                     findObj.IsSelected = true;
                     findObj.IsFocusReference = false;
                     treeViewIFC.SelectedItemChanged += treeViewIFC_SelectedItemChanged;

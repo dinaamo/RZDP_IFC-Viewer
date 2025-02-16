@@ -243,7 +243,7 @@ namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
         protected abstract IIfcPhysicalSimpleQuantity SetNewPhysicalSimpleQuantityValue(string newValueString, IIfcPhysicalSimpleQuantity ifcPhisSimpQuantity);
     }
 
-    public interface IPropertyModel<out T> : INotifyPropertyChanged
+    public interface IPropertyModel<out T> : INotifyPropertyChanged 
     {
         public T Property { get; }
         public string DataType { get; }

@@ -45,7 +45,7 @@
   <ItemGroup>
     <PackageReference Include="CSharp.OleDb" Version="1.5.2" />
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
-    <PackageReference Include="Tortuga.Chain.Core" Version="4.5.1" />
+    <PackageReference Include="Tedd.HashSetExtensions" Version="1.0.2" />
     <PackageReference Include="Xbim.Geometry" Version="5.1.796" />
   </ItemGroup>
 
@@ -60,8 +60,9 @@
     <ProjectReference Include="..\..\..\XbimEssentials-master\Xbim.IO.MemoryModel\Xbim.IO.MemoryModel.csproj" />
     <ProjectReference Include="..\..\..\XbimEssentials-master\Xbim.Tessellator\Xbim.Tessellator.csproj" />
     <ProjectReference Include="..\..\..\XBimToolKit\XbimWindowsUI-master\Xbim.Presentation\Xbim.Presentation.csproj" />
-    <ProjectReference Include="..\..\..\XBimToolKit\XbimWindowsUI-master\Xbim.WinformsSample\Xbim.WinformsSample.csproj" />
-    <ProjectReference Include="..\..\..\XBimToolKit\XbimWindowsUI-master\XbimXplorer\XbimXplorer.csproj" />
+    <ProjectReference Include="..\..\..\XBimToolKit\XbimWindowsUI-master\Xbim.WinformsSample\Xbim.WinformsSample.csproj">
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>

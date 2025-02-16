@@ -3,12 +3,12 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using NuGet;
 using RZDP_IFC_Viewer.IFC.ModelItem;
 using RZDP_IFC_Viewer.Infracrucrure.Commands;
 using RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows;
 using RZDP_IFC_Viewer.ViewModels.Base;
 using RZDP_IFC_Viewer.ViewModels.GroupOperation_Windows;
+using Tedd;
 using Xbim.Ifc4.Interfaces;
 
 namespace RZDP_IFC_Viewer.ViewModels
