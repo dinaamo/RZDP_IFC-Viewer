@@ -22,7 +22,7 @@ namespace RZDP_IFC_Viewer.View.Windows.GroupOperation_Windows
         public GroupCombinePropertySetWindow(IEnumerable<ModelItemIFCObject> FilteredSearchItems)
         {
             InitializeComponent();
-            DataContext = new GroupRenameModelObjectsViewModel(FilteredSearchItems);
+            DataContext = new GroupCombinePropertySetViewModel(FilteredSearchItems);
         }
     }
 }

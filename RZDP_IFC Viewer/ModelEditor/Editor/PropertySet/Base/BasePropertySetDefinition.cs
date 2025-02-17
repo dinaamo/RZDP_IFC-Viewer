@@ -15,8 +15,8 @@ namespace Editor_IFC
 {
     public abstract class BasePropertySetDefinition : BaseItemModel, INotifyPropertyChanged
     {
-        private IIfcObjectDefinition ifcObjectDefinition;
-        public IIfcPropertySetDefinition IFCPropertySetDefinition { get; }
+        private readonly IIfcObjectDefinition ifcObjectDefinition;
+        public  IIfcPropertySetDefinition IFCPropertySetDefinition { get; }
         public ModelItemIFCObject ModelObject { get; }
 
 

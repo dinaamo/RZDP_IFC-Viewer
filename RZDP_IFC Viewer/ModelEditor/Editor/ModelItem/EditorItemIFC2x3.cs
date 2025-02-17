@@ -90,14 +90,14 @@ namespace IFC_Viewer.IFC.Fabric
         #endregion Добавление ссылок
 
         #region Создать набор характеристик
-        public override void CreateNewPropertySet()
+        public override IIfcPropertySetDefinition CreateNewPropertySet(string namePropertySet = "Новый набор")
         {
             IfcPropertySet newPropertySet = ModelIFC.IfcStore.Model.Instances.New<IfcPropertySet>(prS =>
-            { prS.Name = "Новый набор"; });
-            AddPropertySet(newPropertySet);
+            { prS.Name = namePropertySet; });
+            return AddPropertySet(newPropertySet);
         }
 
-        public override void CreateNewPropertySet(string namePropertySet, List<(string, string)> collectionParameters)
+        public override IIfcPropertySetDefinition CreateNewPropertySet(string namePropertySet, List<(string, object)> collectionParameters)
         {
             IfcPropertySet newPropertySet = ModelIFC.IfcStore.Model.Instances.New<IfcPropertySet>(prS =>
             {
@@ -107,29 +107,42 @@ namespace IFC_Viewer.IFC.Fabric
                     IfcPropertySingleValue ifcProp = ModelIFC.IfcStore.Model.Instances.New<IfcPropertySingleValue>(prop =>
                     {
                         prop.Name = parameter.Item1;
-                        prop.NominalValue = new IfcText(parameter.Item2);
+                        if (parameter.Item2 is IfcValue ifcValue)
+                        {
+                            prop.NominalValue = ifcValue;
+                        }
+                        else if (parameter.Item2 is string text)
+                        {
+                            prop.NominalValue = new IfcText(text);
+                        }
+
                     });
                     prS.HasProperties.Add(ifcProp);
                 }
             });
 
-            AddPropertySet(newPropertySet);
+            return AddPropertySet(newPropertySet);
         }
         #endregion
 
         #region Добавить набор характеристик
 
-        protected override void AddPropertySet(IIfcPropertySetDefinition iIfcPropertySet)
+        protected override IIfcPropertySetDefinition AddPropertySet(IIfcPropertySetDefinition iIfcPropertySet)
         {
-            IfcPropertySetDefinition? ifcPropertySetdefinition = iIfcPropertySet as IfcPropertySetDefinition;
+            IfcPropertySetDefinition? ifcPropertySetDefinition = iIfcPropertySet as IfcPropertySetDefinition;
 
             if (ifcObjectDefinition is IfcObject ifcObject)
             {
                 IfcRelDefinesByProperties ifcRelDefinesByProperties = ModelIFC.IfcStore.Instances.New<IfcRelDefinesByProperties>(relDef =>
                 {
                     relDef.RelatedObjects.Add(ifcObject);
-                    relDef.RelatingPropertyDefinition = ifcPropertySetdefinition;
+                    relDef.RelatingPropertyDefinition = ifcPropertySetDefinition;
                 });
+                return ifcPropertySetDefinition;
+            }
+            else
+            {
+                throw new ArgumentException($"Объект {ifcObjectDefinition.Name}, не является типом IfcObject");
             }
         }
 

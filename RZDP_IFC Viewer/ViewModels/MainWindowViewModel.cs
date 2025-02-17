@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -314,7 +315,7 @@ namespace RZDP_IFC_Viewer.ViewModels
             }
             finally
             {
-                Application.Current.Dispatcher.BeginInvoke(() =>{IsEnableWindow = true;});
+                //Application.Current.Dispatcher.BeginInvoke(() => { IsEnableWindow = true; });
                 _worker.ReportProgress(0);
                 _worker.DoWork -= LoadModel;
             }
@@ -334,12 +335,8 @@ namespace RZDP_IFC_Viewer.ViewModels
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 _deleteEntity.AddRange(persistEntitiesAfterDelete);
+                HideAndUpdate();
 
-                _DrawingControl.HiddenInstances = null;
-                _DrawingControl.HiddenInstances = _hideEntity.ToList();
-                _DrawingControl.HiddenInstances.AddRange(_deleteEntity);
-
-                _DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
             });
         }
 
@@ -349,10 +346,14 @@ namespace RZDP_IFC_Viewer.ViewModels
         private void HideSelected(IEnumerable<IPersistEntity> persistEntitiesForHide)
         {
             _hideEntity.AddRange(persistEntitiesForHide);
+            HideAndUpdate();
+        }
 
-            _DrawingControl.HiddenInstances = null;
+
+        private void HideAndUpdate()
+        {
+            _hideEntity.AddRange(_deleteEntity);
             _DrawingControl.HiddenInstances = _hideEntity.ToList();
-            _DrawingControl.HiddenInstances.AddRange(_deleteEntity);
 
             _DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
         }
@@ -375,11 +376,7 @@ namespace RZDP_IFC_Viewer.ViewModels
                 }
             }
 
-            _DrawingControl.HiddenInstances = null;
-            _DrawingControl.HiddenInstances = _hideEntity.ToList();
-            _DrawingControl.HiddenInstances.AddRange(_deleteEntity);
-
-            _DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
+            HideAndUpdate();
         }
 
 
@@ -389,8 +386,9 @@ namespace RZDP_IFC_Viewer.ViewModels
         private void IsolateSelected(IEnumerable<IPersistEntity> persistEntitiesForIsolate)
         {
             _DrawingControl.IsolateInstances = persistEntitiesForIsolate.ToList();
-            _DrawingControl.HiddenInstances = _deleteEntity.ToList();
-            _DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
+            //_DrawingControl.HiddenInstances = _deleteEntity.ToList();
+            //_DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
+            HideAndUpdate();
         }
 
         /// <summary>
@@ -400,8 +398,9 @@ namespace RZDP_IFC_Viewer.ViewModels
         {
             _hideEntity = new HashSet<IPersistEntity>();
             _DrawingControl.IsolateInstances = null;
-            _DrawingControl.HiddenInstances = _deleteEntity.ToList();
-            _DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
+            //_DrawingControl.HiddenInstances = _deleteEntity.ToList();
+            //_DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
+            HideAndUpdate();
         }
 
         #region Фокус на элемент
@@ -567,8 +566,6 @@ namespace RZDP_IFC_Viewer.ViewModels
         }
 
         #endregion Сохранение модели
-
-
 
         #region Блокировка окна при загрузке
         private void Worker_DoWork(object? sender, DoWorkEventArgs e)
@@ -896,7 +893,8 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         private void OnOpenHelpCommandExecuted(object o)
         {
-            string fileHelpPath = "RZDP IFC Viewer.chm";
+            string fileHelpPath = AppDomain.CurrentDomain.BaseDirectory + "RZDP IFC Viewer.chm";
+
             if (System.IO.File.Exists(fileHelpPath))
             {
                 Process p = new Process();
@@ -906,6 +904,7 @@ namespace RZDP_IFC_Viewer.ViewModels
                 };
                 p.Start();
             }
+
         }
 
         private bool CanOpenHelpCommandExecute(object o)
@@ -1034,7 +1033,6 @@ namespace RZDP_IFC_Viewer.ViewModels
             {
                 _worker.DoWork += LoadModel;
                 _worker.RunWorkerAsync(Environment.GetCommandLineArgs()[1]);
-                _worker.DoWork += LoadModel;
             }
 
             #region Комманды

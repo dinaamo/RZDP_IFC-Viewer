@@ -21,6 +21,22 @@ namespace Editor_IFC
             }
         }
 
+        public override object Value
+        {
+            get
+            {
+                if (Property is IfcPropertySingleValue ifcValue)
+                {
+                    return ifcValue.NominalValue == null ? string.Empty : ifcValue.NominalValue;
+                }
+                else if (Property is IfcPropertyReferenceValue ifcRefValue)
+                {
+                    return ifcRefValue.PropertyReference;
+                }
+                return string.Empty;
+            }
+        }
+
         protected override void SetNewValueForProperty<T>(string newValueString, T simpleValue)
         {
             newValueString = newValueString.Replace(',', '.');
@@ -165,6 +181,40 @@ namespace Editor_IFC
     {
         public EditorQuantity2x3(IfcPhysicalQuantity ifcPhysicalQuantity, ModelIFC modelIFC, BasePropertySetDefinition propertySetDefinition) : base(ifcPhysicalQuantity, modelIFC, propertySetDefinition)
         { }
+
+        public override object Value
+        {
+            get
+            {
+                if (Property is IfcQuantityArea quantityArea)
+                {
+                    return quantityArea.AreaValue;
+                }
+                else if (Property is IfcQuantityCount quantityCount)
+                {
+                    return quantityCount.CountValue;
+                }
+                else if (Property is IfcQuantityLength quantityLength)
+                {
+                    return quantityLength.LengthValue;
+                }
+                else if (Property is IfcQuantityTime quantityTime)
+                {
+                    return quantityTime.TimeValue;
+                }
+                else if (Property is IfcQuantityVolume quantityVolume)
+                {
+                    return quantityVolume.VolumeValue;
+                }
+                else if (Property is IfcQuantityWeight quantityWeight)
+                {
+                    return quantityWeight.WeightValue;
+                }
+
+                throw new ArgumentException("Exception ValueString");
+            }
+        }
+
 
         protected override IIfcValue GetPhysicalSimpleQuantityValue()
         {

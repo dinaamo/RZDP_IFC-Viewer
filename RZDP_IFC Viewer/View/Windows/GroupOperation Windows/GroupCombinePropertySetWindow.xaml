@@ -39,12 +39,12 @@
                     </StackPanel>
                 </Button>
 
-                <TextBlock Text="{Binding Path=Status}" Height="65" DockPanel.Dock="Top" />
+                <TextBlock Text="{Binding Path=Status}" Height="30" DockPanel.Dock="Top" />
                 <ListView x:Name="lwModelObjects"
 							 Foreground="Black"
 							 Margin="5"
 							 util:GridViewSort.AutoSort="True"
-
+                             SelectionMode="Single"
 							 DockPanel.Dock="Bottom"
 							 VirtualizingStackPanel.IsVirtualizing="True"
 							 VirtualizingStackPanel.VirtualizationMode="Recycling"
@@ -71,7 +71,8 @@
 
         <GroupBox Grid.Column="2" Header="Наборы характеристик" Margin="5">
             <DockPanel>
-
+                <TextBlock Text="Наименование нового набора характеристик:" DockPanel.Dock="Top" Margin="10,10,10,0"/>
+                <TextBox Text="{Binding Path=NameNewPropertySet}" DockPanel.Dock="Top" Margin="10,5,10,10"/>
                 <DataGrid x:Name="dgControlTable" IsReadOnly="False"
 						DockPanel.Dock="Top"
 						Foreground="Black"

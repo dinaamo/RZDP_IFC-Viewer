@@ -276,7 +276,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
             if (objDef is IIfcSpatialStructureElement spatialElement)
             {
                 foreach (IIfcObjectDefinition obj in spatialElement.ContainsElements.SelectMany(it => it.RelatedElements).OfType<IIfcObjectDefinition>())
-                {
+                { 
                     CreationHierarchyIFCObjects(obj, nestItem.ModelItems, nestItem);
                 }
             }
@@ -531,6 +531,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
                     {
                         application.ApplicationFullName= tuple.Item2;
                         application.ApplicationDeveloper.Name = tuple.Item2;
+                        application.ApplicationIdentifier = tuple.Item2;
                         application.Version = "";
                     }
                     else if (tuple.Item1 is IIfcPerson person)
@@ -566,7 +567,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
 
         public void ActionInTransaction(IEnumerable<Action> actionSet)
         {
-            using (ITransaction trans = IfcStore.Model.BeginTransaction("ActioninTransaction"))
+            using (ITransaction trans = IfcStore.Model.BeginTransaction("ActionInTransaction"))
             {
                 foreach (Action action in actionSet)
                 {

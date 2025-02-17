@@ -71,7 +71,7 @@ namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
             {
                 if (Property is IIfcPropertySingleValue ifcValue)
                 {
-                    return ifcValue?.NominalValue?.UnderlyingSystemType.Name;
+                    return ifcValue.NominalValue?.UnderlyingSystemType.Name;
                 }
                 else if (Property is IIfcPropertyReferenceValue ifcRefValue)
                 {
@@ -88,6 +88,8 @@ namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
                 return "Неизвестный тип";
             }
         }
+
+        public abstract object Value { get; }
 
         public string ValueString
         {
@@ -195,36 +197,14 @@ namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
             }
         }
 
+        public abstract object Value { get; }
+
+
         public string ValueString
         {
             get
             {
-                if (Property is IIfcQuantityArea quantityArea)
-                {
-                    return Convert.ToString(quantityArea.AreaValue);
-                }
-                else if (Property is IIfcQuantityCount quantityCount)
-                {
-                    return Convert.ToString(quantityCount.CountValue);
-                }
-                else if (Property is IIfcQuantityLength quantityLength)
-                {
-                    return Convert.ToString(quantityLength.LengthValue);
-                }
-                else if (Property is IIfcQuantityTime quantityTime)
-                {
-                    return Convert.ToString(quantityTime.TimeValue);
-                }
-                else if (Property is IIfcQuantityVolume quantityVolume)
-                {
-                    return Convert.ToString(quantityVolume.VolumeValue);
-                }
-                else if (Property is IIfcQuantityWeight quantityWeight)
-                {
-                    return Convert.ToString(quantityWeight.WeightValue);
-                }
-
-                throw new ArgumentException("Exception ValueString");
+                return Convert.ToString(Value);
             }
             set
             {
@@ -246,6 +226,7 @@ namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
     public interface IPropertyModel<out T> : INotifyPropertyChanged 
     {
         public T Property { get; }
+        public object Value { get; }
         public string DataType { get; }
         public string ValueString { get; set; }
         public string NameProperty { get; set; }

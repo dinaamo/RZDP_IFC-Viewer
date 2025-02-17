@@ -138,7 +138,7 @@ namespace RZDP_IFC_Viewer.ViewModels
                         DataRow row = dt.Rows[rowIndex]; //Получаем текущую строку
 
                         // Заполняем коллекцию параметров
-                        List<(string, string)> collectionParameters = new();
+                        List<(string, object)> collectionParameters = new();
                         for (int cellIndex = 4; cellIndex < row.ItemArray.Count(); cellIndex++) // Проходим по всем ячейкам строки
                         {
                             collectionParameters.Add(
@@ -204,12 +204,12 @@ namespace RZDP_IFC_Viewer.ViewModels
 
                             if (targetProp is not null)//Если находим то задаем значение
                             {
-                                targetProp.SetNewValue(property.Item2);
+                                targetProp.SetNewValue(property.Item2.ToString());
                                 countRecordProperty++;
                             }
                             else //Если нет то добавляем новый параметр
                             {
-                                propertySetDef.AddProperty(property.Item1, property.Item2);
+                                propertySetDef.AddProperty(property.Item1, property.Item2.ToString());
                                 countAddProperty++;
                             }
                         }
@@ -303,7 +303,7 @@ namespace RZDP_IFC_Viewer.ViewModels
 
     struct ElementTable
     {
-        public ElementTable(string name, string type, string objectType, string description, string namePropertySet, List<(string, string)> collectionParameters)
+        public ElementTable(string name, string type, string objectType, string description, string namePropertySet, List<(string, object)> collectionParameters)
         {
             NameFragment = name;
             IFCClass = type;
@@ -317,6 +317,6 @@ namespace RZDP_IFC_Viewer.ViewModels
         public string IFCType { get; }
         public string Description { get; }
         public string NamePropertySet {  get; }
-        public List<(string, string)> CollectionParameters { get; }
+        public List<(string, object)> CollectionParameters { get; }
     }
 }

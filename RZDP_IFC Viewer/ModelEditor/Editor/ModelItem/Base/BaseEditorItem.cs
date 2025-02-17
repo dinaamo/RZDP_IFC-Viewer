@@ -28,9 +28,9 @@ namespace IFC_Viewer.IFC.Base
 
         public abstract bool AddReferenceToTheObject(List<BaseModelReferenceIFC> modelReferenceSet);
 
-        public abstract void CreateNewPropertySet();
+        public abstract IIfcPropertySetDefinition CreateNewPropertySet(string namePropertySet = "Новый набор");
 
-        public abstract void CreateNewPropertySet(string namePropertySet, List<(string, string)> collectionParameters);
+        public abstract IIfcPropertySetDefinition CreateNewPropertySet(string namePropertySet, List<(string, object)> collectionParameters);
 
         public abstract IEnumerable<IPersistEntity> DeletePropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition);
 
@@ -103,7 +103,7 @@ namespace IFC_Viewer.IFC.Base
             
         }
 
-        protected abstract void AddPropertySet(IIfcPropertySetDefinition iIfcPropertySet);
+        protected abstract IIfcPropertySetDefinition AddPropertySet(IIfcPropertySetDefinition iIfcPropertySet);
 
         #region Заполнение характеристик элемента
 

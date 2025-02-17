@@ -109,11 +109,11 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         #endregion Открыть групповой редактор наборов
 
-        #region Открыть групповой редактор параметров
-        
-        public ICommand OpenGroupEditorPropertiesCommand { get; }
+        #region Открыть групповой редактор объединения параметров
 
-        private void OnOpenGroupEditorPropertiesCommandExecuted(object o)
+        public ICommand OpenGroupCombinePropertySetCommand { get; }
+
+        private void OnOpenGroupCombinePropertySetCommandExecuted(object o)
         {
             if (o is IEnumerable enumerable)
             {
@@ -123,16 +123,16 @@ namespace RZDP_IFC_Viewer.ViewModels
                 {
                     modelObjectsSet.Add(modelObject);
                 }
-                new GroupEditPropertyWindow(modelObjectsSet).ShowDialog();
+                new GroupCombinePropertySetWindow(modelObjectsSet).ShowDialog();
             }
         }
 
-        private bool CanOpenGroupEditorPropertiesCommandExecute(object o)
+        private bool CanOpenGroupCombinePropertySetCommandExecute(object o)
         {
             return FilteredSearchItems != null && FilteredSearchItems.Count() > 0;
         }
 
-        #endregion Открыть групповой редактор параметров
+        #endregion Открыть групповой редактор объединения параметров
 
         #region Открыть окно бодавления наборов по БД
 
@@ -158,6 +158,31 @@ namespace RZDP_IFC_Viewer.ViewModels
         }
 
         #endregion Открыть окно бодавления наборов по БД
+
+        #region Открыть групповой редактор параметров
+
+        public ICommand OpenGroupEditorPropertiesCommand { get; }
+
+        private void OnOpenGroupEditorPropertiesCommandExecuted(object o)
+        {
+            if (o is IEnumerable enumerable)
+            {
+                HashSet<ModelItemIFCObject> modelObjectsSet = new HashSet<ModelItemIFCObject>();
+
+                foreach (ModelItemIFCObject modelObject in enumerable)
+                {
+                    modelObjectsSet.Add(modelObject);
+                }
+                new GroupEditPropertyWindow(modelObjectsSet).ShowDialog();
+            }
+        }
+
+        private bool CanOpenGroupEditorPropertiesCommandExecute(object o)
+        {
+            return FilteredSearchItems != null && FilteredSearchItems.Count() > 0;
+        }
+
+        #endregion Открыть групповой редактор параметров
 
         #region Открыть групповой редактор имен объектов
 
@@ -347,6 +372,10 @@ namespace RZDP_IFC_Viewer.ViewModels
             OpenGroupEditorPropertySetCommand = new ActionCommand(
                 OnOpenGroupEditorPropertySetCommandExecuted,
                 CanOpenGroupEditorPropertySetCommandExecute);
+
+            OpenGroupCombinePropertySetCommand = new ActionCommand(
+                OnOpenGroupCombinePropertySetCommandExecuted,
+                CanOpenGroupCombinePropertySetCommandExecute);
 
             OpenGroupEditorPropertiesCommand = new ActionCommand(
                 OnOpenGroupEditorPropertiesCommandExecuted,

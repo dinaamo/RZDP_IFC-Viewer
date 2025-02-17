@@ -136,13 +136,19 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 
         private void OnAddPropertySetCommandExecuted(object o)
         {
-            Model.ActionInTransaction(new List<Action> { ModelObjectEditor.CreateNewPropertySet });
+            Model.ActionInTransaction(new List<Action> { AddPropertySet });
             OnPropertyChanged("CollectionPropertySet");
         }
+
 
         private bool CanAddPropertySetCommandExecute(object o)
         {
             return this is not null;
+        }
+
+        void AddPropertySet()
+        {
+            ModelObjectEditor.CreateNewPropertySet();
         }
 
         #endregion Добавить набор характеристик
@@ -403,7 +409,6 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
         {
             ModelObjectEditor = BaseEditorItem.CreateEditor(this, ModelIFC, IFCObjectDefinition);
 
-            //CollectionPropertySet = modelEditor.FillCollectionPropertySet();
 
             PropertyElement = ModelObjectEditor.GetPropertyObject();
 
@@ -418,6 +423,11 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
             }
        
         }
+
+        //private async Task InitializationModelObjectAsync()
+        //{
+        //    await Task.Run(InitializationModelObject);
+        //}
 
         public event EventHandler<PropertyReferenceChangedEventArg> PropertyReferenceChanged;
 

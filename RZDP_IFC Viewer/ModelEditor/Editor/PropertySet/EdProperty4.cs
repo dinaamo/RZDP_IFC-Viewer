@@ -5,6 +5,7 @@ using Xbim.Ifc4.DateTimeResource;
 using Xbim.Ifc4.Interfaces;
 using Xbim.Ifc4.MeasureResource;
 using Xbim.Ifc4.QuantityResource;
+using Xbim.Ifc4.PropertyResource;
 
 namespace Editor_IFC
 {
@@ -12,6 +13,22 @@ namespace Editor_IFC
     {
         public EditorProperty4(T Value, ModelIFC modelIFC, BasePropertySetDefinition propertySetDefinition) : base(Value, modelIFC, propertySetDefinition)
         { }
+
+        public override object Value
+        {
+            get
+            {
+                if (Property is IfcPropertySingleValue ifcValue)
+                {
+                    return ifcValue.NominalValue;
+                }
+                else if (Property is IfcPropertyReferenceValue ifcRefValue)
+                {
+                    return ifcRefValue.PropertyReference;
+                }
+                return string.Empty;
+            }
+        }
 
         public override void SetNewValue(string stringValue)
         {
@@ -169,6 +186,39 @@ namespace Editor_IFC
     {
         public EditorQuantity4(IIfcPhysicalQuantity ifcPhysicalQuantity, ModelIFC modelIFC, BasePropertySetDefinition propertySetDefinition) : base(ifcPhysicalQuantity, modelIFC, propertySetDefinition)
         { }
+
+        public override object Value
+        {
+            get
+            {
+                if (Property is IfcQuantityArea quantityArea)
+                {
+                    return quantityArea.AreaValue;
+                }
+                else if (Property is IfcQuantityCount quantityCount)
+                {
+                    return quantityCount.CountValue;
+                }
+                else if (Property is IfcQuantityLength quantityLength)
+                {
+                    return quantityLength.LengthValue;
+                }
+                else if (Property is IfcQuantityTime quantityTime)
+                {
+                    return quantityTime.TimeValue;
+                }
+                else if (Property is IfcQuantityVolume quantityVolume)
+                {
+                    return quantityVolume.VolumeValue;
+                }
+                else if (Property is IfcQuantityWeight quantityWeight)
+                {
+                    return quantityWeight.WeightValue;
+                }
+
+                throw new ArgumentException("Exception ValueString");
+            }
+        }
 
         protected override IfcValue GetPhysicalSimpleQuantityValue()
         {
