@@ -130,6 +130,11 @@ namespace RZDP_IFC_Viewer.IFC.Model
         public Action<IEnumerable<IPersistEntity>> ShowSelected;
 
         /// <summary>
+        /// Сброс выбора
+        /// </summary>
+        public Action RefreshSelect;
+
+        /// <summary>
         /// Создаем модель
         /// </summary>
         public static ModelIFC Create(IfcStore ifcStore, BackgroundWorker backgroundWorker, 
@@ -138,7 +143,8 @@ namespace RZDP_IFC_Viewer.IFC.Model
                                 Action<IEnumerable<IPersistEntity>> HideAfterDelete, 
                                 Action<IEnumerable<IPersistEntity>> HideSelected, 
                                 Action<IEnumerable<IPersistEntity>> IsolateSelected,
-                                Action<IEnumerable<IPersistEntity>> ShowSelected)
+                                Action<IEnumerable<IPersistEntity>> ShowSelected,
+                                Action RefreshSelect)
         {
             return new ModelIFC(ifcStore).LoadDataBase(ifcStore, backgroundWorker, 
                                                                         ZoomObject,
@@ -146,7 +152,8 @@ namespace RZDP_IFC_Viewer.IFC.Model
                                                                         HideAfterDelete,
                                                                         HideSelected,
                                                                         IsolateSelected,
-                                                                        ShowSelected);
+                                                                        ShowSelected,
+                                                                        RefreshSelect);
         }
 
         private BaseEditorModel baseEditorModel;
@@ -160,7 +167,8 @@ namespace RZDP_IFC_Viewer.IFC.Model
                                 Action<IEnumerable<IPersistEntity>> HideAfterDelete,
                                 Action<IEnumerable<IPersistEntity>> HideSelected,
                                 Action<IEnumerable<IPersistEntity>> IsolateSelected,
-                                Action<IEnumerable<IPersistEntity>> ShowSelected)
+                                Action<IEnumerable<IPersistEntity>> ShowSelected,
+                                Action RefreshSelect)
         {
 
             this.backgroundWorker = backgroundWorker;
@@ -170,6 +178,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
             this.HideSelected = HideSelected;
             this.IsolateSelected = IsolateSelected;
             this.ShowSelected = ShowSelected;
+            this.RefreshSelect = RefreshSelect;
 
             FilePath = ifcStore.FileName;
 
@@ -195,7 +204,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
             return this;
         }
 
-        private ModelItemIFCFile FileItem;
+        public ModelItemIFCFile FileItem;
 
         private ObservableCollection<BaseModelReferenceIFC> tempReferenceObjectSet;
 
@@ -238,7 +247,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
             }
 
             //Составляем дерево объектов модели
-            CreationHierarchyIFCObjects(FileItem.Project, FileItem.ModelItems, FileItem);
+            CreationHierarchyIFCObjects(FileItem.IFCProject, FileItem.ModelItems, FileItem);
 
             //После того как составили дерево объектов к нему добавляем таблицы
             foreach (BaseModelReferenceIFC tableItem in tempReferenceObjectSet)
@@ -431,9 +440,9 @@ namespace RZDP_IFC_Viewer.IFC.Model
         }
 
 
-        public void DeleteReferenceCommand(BaseModelReferenceIFC ModelReference)
+        public void SetPropertyIsHideToAllElements(bool isHide)
         {
-           
+            ModelItemIFCObject.SelectionNestedItems(FileItem.ModelProject).ForEach(it => it.IsHidden = isHide);
         }
 
         /// <summary>

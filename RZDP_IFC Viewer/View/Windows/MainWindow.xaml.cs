@@ -248,7 +248,7 @@ namespace RZDP_IFC_Viewer
                 ModelItemIFCObject? project = collectionObjectModel[0].ModelItems.OfType<ModelItemIFCObject>().FirstOrDefault();
                 var findObj = ModelItemIFCObject.SelectionNestedItems(project).FirstOrDefault(it => it.GetIFCObjectDefinition().Equals(item));
 
-                if (findObj != null)
+                if (findObj != null)//???
                 {
                     treeViewIFC.SelectedItemChanged -= treeViewIFC_SelectedItemChanged;
                     findObj.ExpandOver();

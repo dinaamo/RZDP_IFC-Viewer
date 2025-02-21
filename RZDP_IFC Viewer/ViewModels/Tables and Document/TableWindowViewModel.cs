@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections.ObjectModel;
+using System.Data;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -15,6 +16,29 @@ namespace RZDP_IFC_Viewer.ViewModels
         public DataTable dataTable => ModelTable.dataTable;
 
         private ModelItemIFCTable ModelTable { get; set; }
+
+        private ObservableCollection<(DataGridCell, TextBlock)> _findedCells;
+
+        private int _IndexCurrentCell;
+
+        public int IndexCurrentCell
+        {
+            get => _IndexCurrentCell;
+            set => Set(ref _IndexCurrentCell, value);
+        }
+
+        public int CountFoundElements
+        {
+            get
+            {
+                return _findedCells.Count();
+            }
+        }
+
+        private void FindedCells_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            OnPropertyChanged("CountFoundElements");
+        }
 
         public string NameTable
         {
@@ -44,6 +68,8 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         #endregion Заголовок
 
+
+
         private int _FontSizeTable = 12;
 
         public int FontSizeTable
@@ -65,6 +91,7 @@ namespace RZDP_IFC_Viewer.ViewModels
                 }
             }
         }
+
 
         #region Комманды
 
@@ -116,97 +143,62 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         #region Поиск
 
-        public ICommand SearchCellsCommand { get; }
 
-        private void OnSearchCellsCommandExecuted(object o)
+        public void SearchCells(DataGrid dataGrid, bool? isFullText, bool? isIgnorRegister, string seachString)
         {
-            object[] ControlArray = (object[])o;
-
-            DataGrid dataGrid = ControlArray[0] as DataGrid;
-            bool isFullText = (bool)ControlArray[1];
-            bool isIgnorRegister = (bool)ControlArray[2];
-            string seachString = (string)ControlArray[3];
-
             if (seachString.Equals(string.Empty))
             { return; }
-
-            int CountFound = 0;
-
+            
             foreach (DataRowView rowView in dataGrid.Items)
             {
                 DataGridRow row = dataGrid.ItemContainerGenerator.ContainerFromItem(rowView) as DataGridRow;
 
                 foreach (var column in dataGrid.Columns)
                 {
-                    TextBlock cell = column.GetCellContent(row) as TextBlock;
-                    string cellstring = cell?.Text ?? "";
+                    TextBlock textBlock = column.GetCellContent(row) as TextBlock;
+                    
+                    string cellString = textBlock?.Text ?? "";
 
-                    if (!isIgnorRegister)
+                    if (isIgnorRegister == false)
                     {
-                        cellstring = cellstring.ToLower();
+                        cellString = cellString.ToLower();
                         seachString = seachString.ToLower();
                     }
 
-                    if (isFullText)
+                    if (isFullText == true)
                     {
-                        if (cellstring.Equals(seachString))
+                        if (cellString.Equals(seachString))
                         {
-                            cell.Background = Brushes.Tomato;
-                            ++CountFound;
+                            textBlock.Background = Brushes.Tomato;
+                            _findedCells.Add(((DataGridCell)textBlock.Parent, textBlock));  
                         }
                     }
                     else
                     {
-                        if (cellstring.Contains(seachString))
+                        if (cellString.Contains(seachString))
                         {
-                            cell.Background = Brushes.Tomato;
-                            ++CountFound;
+                            textBlock.Background = Brushes.Tomato;
+                            _findedCells.Add(((DataGridCell)textBlock.Parent, textBlock));
                         }
                     }
                 }
             }
-            ((TextBlock)ControlArray[4]).Text = $"Найдено ячеек: {CountFound}";
+
         }
 
-        private bool CanSearchCellsCommandExecute(object o)
-        {
-            return true;
-        }
+
 
         #endregion Поиск
 
         #region Сброс
 
-        public ICommand ResetSearchCommand { get; }
 
-        private void OnResetSearchCommandExecuted(object o)
+        public void ResetSearch()
         {
-            object[] ControlArray = (object[])o;
-
-            DataGrid dataGrid = ControlArray[0] as DataGrid;
-            ((CheckBox)ControlArray[1]).IsChecked = false;
-            ((CheckBox)ControlArray[2]).IsChecked = false;
-            ((TextBox)ControlArray[3]).Text = string.Empty;
-
-            foreach (DataRowView rowView in dataGrid.Items)
-            {
-                DataGridRow row = dataGrid.ItemContainerGenerator.ContainerFromItem(rowView) as DataGridRow;
-
-                foreach (var column in dataGrid.Columns)
-                {
-                    TextBlock cell = column.GetCellContent(row) as TextBlock;
-
-                   if(cell != null)  cell.Background = null;
-                }
-            }
-
-            ((TextBlock)ControlArray[4]).Text = string.Empty;
+            _findedCells.Clear();
+            IndexCurrentCell = 0;
         }
 
-        private bool CanResetSearchCommandExecute(object o)
-        {
-            return true;
-        }
 
         #endregion Сброс
 
@@ -236,6 +228,67 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         #endregion Экспорт в Excel
 
+        #region Шаг по найденным ячейкам
+
+        public ICommand MoveNextToCellCommand { get; }
+
+        private void OnMoveNextToCellCommandExecuted(object o)
+        {
+            _findedCells.ToList().ForEach(it => { 
+                it.Item2.Background = Brushes.Tomato;
+            });
+
+            if (o is bool isNext)
+            {
+                if (isNext)
+                {
+                    ++IndexCurrentCell;
+                }
+                else
+                {
+                    --IndexCurrentCell;
+                }
+            }
+            DataGridCell cell;
+            if (IndexCurrentCell == 0)
+            {
+                _findedCells[IndexCurrentCell].Item2.Background = Brushes.BlueViolet;
+                cell = _findedCells[IndexCurrentCell].Item1;
+                IndexCurrentCell = 1;
+            }
+            else
+            {
+                _findedCells[IndexCurrentCell - 1].Item2.Background = Brushes.BlueViolet;
+                cell = _findedCells[IndexCurrentCell - 1].Item1;
+            }
+
+            
+            cell.IsSelected = true;
+            cell.Focus();
+
+
+
+        }
+
+        private bool CanMoveNextToCellCommandExecute(object o)
+        {
+            if (o is bool isNext)
+            {
+                if(isNext)
+                {
+                    return _findedCells.Count() > 0 && IndexCurrentCell <= _findedCells.Count()-1;
+                }
+                else
+                {
+                    return _findedCells.Count() > 0 && IndexCurrentCell > 1;
+                }
+            }
+            return false;
+
+        }
+
+        #endregion Шаг по найденным ячейкам
+
         #endregion Комманды
 
         public TableWindowViewModel()
@@ -245,7 +298,8 @@ namespace RZDP_IFC_Viewer.ViewModels
         public TableWindowViewModel(ModelItemIFCTable modelTable)
         {
 
-
+            _findedCells = new();
+            _findedCells.CollectionChanged += FindedCells_CollectionChanged;
             this.ModelTable = modelTable;
 
             Title = this.dataTable.TableName;
@@ -260,19 +314,29 @@ namespace RZDP_IFC_Viewer.ViewModels
                 OnLessSizeFontCommandExecuted,
                 CanLessSizeFontCommandExecute);
 
-            SearchCellsCommand = new ActionCommand(
-                OnSearchCellsCommandExecuted,
-                CanSearchCellsCommandExecute);
+            //SearchCellsCommand = new ActionCommand(
+            //    OnSearchCellsCommandExecuted,
+            //    CanSearchCellsCommandExecute);
 
-            ResetSearchCommand = new ActionCommand(
-                OnResetSearchCommandExecuted,
-                CanResetSearchCommandExecute);
+            //ResetSearchCommand = new ActionCommand(
+            //    OnResetSearchCommandExecuted,
+            //    CanResetSearchCommandExecute);
 
             ExportToExcelCommand = new ActionCommand(
                 OnExportToExcelCommandExecuted,
                 CanExportToExcelCommandExecute);
 
+            MoveNextToCellCommand = new ActionCommand(
+                OnMoveNextToCellCommandExecuted,
+                CanMoveNextToCellCommandExecute);
+
+            //MoveBackToCellCommand = new ActionCommand(
+            //    OnMoveBackToCellCommandExecuted,
+            //    CanMoveBackToCellCommandExecute);
+
             #endregion Комманды
         }
+
+
     }
 }

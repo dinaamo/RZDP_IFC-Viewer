@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using RZDP_IFC_Viewer.IFC.ModelItem;
 using RZDP_IFC_Viewer.ViewModels;
 
@@ -110,6 +111,39 @@ namespace RZDP_IFC_Viewer.View.Windows
         private void Win_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             instance = null;
+        }
+
+
+        private void Button_Click_Search(object sender, RoutedEventArgs e)
+        {
+            ResetOnlyDataGrid();
+            ((TableWindowViewModel)DataContext).SearchCells(dgTable, CHBFullText.IsChecked, CHBIgnorRegister.IsChecked, TBСonditionsSearch.Text);
+        }
+
+        private void Button_Click_Reset_Search_Full(object sender, RoutedEventArgs e)
+        {
+            ResetOnlyDataGrid();
+            CHBFullText.IsChecked = false;
+            CHBIgnorRegister.IsChecked = false;
+            TBСonditionsSearch.Text = string.Empty;
+        }
+
+
+        void ResetOnlyDataGrid()
+        {
+            ((TableWindowViewModel)DataContext).ResetSearch();
+            foreach (DataRowView rowView in dgTable.Items)
+            {
+                DataGridRow row = dgTable.ItemContainerGenerator.ContainerFromItem(rowView) as DataGridRow;
+
+                foreach (var column in dgTable.Columns)
+                {
+                    TextBlock cell = column.GetCellContent(row) as TextBlock;
+
+                    if (cell != null)
+                        cell.Background = null;
+                }
+            }
         }
     }
 }

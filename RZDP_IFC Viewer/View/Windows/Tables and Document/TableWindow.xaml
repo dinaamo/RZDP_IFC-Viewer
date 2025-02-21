@@ -6,16 +6,31 @@
     xmlns:fa="http://schemas.fontawesome.io/icons/"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:RZDP_IFC_Viewer.ViewModels"
+    xmlns:wind="clr-namespace:RZDP_IFC_Viewer"
     xmlns:cnv="clr-namespace:RZDP_IFC_Viewer.Infracrucrure.Converter"
+    xmlns:s="clr-namespace:System;assembly=mscorlib"
     Name="Win"
     Title="{Binding Path=Title}"
     SizeToContent="WidthAndHeight"
-    mc:Ignorable="d" MinWidth="1100" MinHeight="300" Closing="Win_Closing">
+    mc:Ignorable="d" MinWidth="1200" MinHeight="300" Closing="Win_Closing">
 
     <Window.Resources>
         <Style  TargetType="GroupBox">
             <Setter Property="Margin" Value="0,0,5,0" />
             <Setter Property="Padding" Value="0,3,0,0" />
+        </Style>
+        <Style TargetType="DataGridCell">
+            <Style.Triggers>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsSelected" Value="True"/>
+                    </MultiTrigger.Conditions>
+                    <MultiTrigger.Setters>
+                        <Setter Property="BorderThickness" Value="1"/>
+                    </MultiTrigger.Setters>
+ 
+                </MultiTrigger>
+            </Style.Triggers>
         </Style>
     </Window.Resources>
 
@@ -34,8 +49,7 @@
                             Height="20"
                             Margin="0,0,0,0"
                             VerticalAlignment="Center"
-                            Command="{Binding LessSizeFontCommand}"
-                            Click="Button_Click">
+                            Command="{Binding LessSizeFontCommand}">
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="10" />
@@ -49,15 +63,15 @@
                                 Icon="ArrowLeft" />
                         </Button>
                         <TextBox
-                    Margin="10,0,10,0"
-                    BorderThickness="0"
-                    VerticalAlignment="Center"
-                    Text="{Binding Path=FontSizeTable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            Margin="10,0,10,0"
+                            BorderThickness="0"
+                            VerticalAlignment="Center"
+                            Text="{Binding Path=FontSizeTable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />        
                         <Button
                         Width="20"
                         Height="20"
                         Command="{Binding MoreSizeFontCommand}"
-                        Click="Button_Click">
+                        CommandParameter="True">
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="10" />
@@ -74,14 +88,14 @@
                 </GroupBox>
 
                 <GroupBox Header="Наименование таблицы"  Margin="0,0,5,0" HorizontalAlignment="Left">
-                    <TextBox Text="{Binding Path=NameTable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    <TextBox Text="{Binding Path=NameTable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding Path=(wind:MainWindow.IsReadOnly)}"
                              Height="auto" MinWidth="300" MaxWidth="300" Margin="5,0,5,0"  TextWrapping="Wrap"/>
                 </GroupBox>
 
                 <GroupBox Header="Поиск" Grid.Column="2" Margin="5,0,5,0" Padding="5,0,5,0" >
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
                         <StackPanel Orientation="Vertical">
-                            <CheckBox Name="CHBСonditionsFilter" Content="Текст целиком"  HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,5,5,0" />
+                            <CheckBox Name="CHBFullText" Content="Текст целиком"  HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,5,5,0" />
                             <CheckBox Name="CHBIgnorRegister" Content="Учитывать регистр"  HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,5,5,0" />
                         </StackPanel>
                         <TextBox x:Name="TBСonditionsSearch" Height="22" MinWidth="200" Margin="5,0,5,0" HorizontalAlignment="Left" />
@@ -90,35 +104,81 @@
                         Height="22"
                         Content="Найти"
                         Margin="5,0,5,0"
-                        Command="{Binding SearchCellsCommand}">
-                            <Button.CommandParameter>
-                                <MultiBinding Converter="{StaticResource ConvertParametersMultibuilding}">
-                                    <Binding ElementName="dgTable" />
-                                    <Binding Path="IsChecked" ElementName="CHBСonditionsFilter" />
-                                    <Binding Path="IsChecked" ElementName="CHBIgnorRegister" />
-                                    <Binding Path="Text" ElementName="TBСonditionsSearch" />
-                                    <Binding ElementName="TBCountFound" />
-                                </MultiBinding>
-                            </Button.CommandParameter>
-                        </Button>
+                        Click="Button_Click_Search"/>
 
                         <Button Width="60"
                             Height="22"
                             Content="Сброс"
                             Margin="5,0,5,0"
-                            Command="{Binding ResetSearchCommand}">
-                            <Button.CommandParameter>
-                                <MultiBinding Converter="{StaticResource ConvertParametersMultibuilding}">
-                                    <Binding ElementName="dgTable" />
-                                    <Binding ElementName="CHBСonditionsFilter" />
-                                    <Binding ElementName="CHBIgnorRegister" />
-                                    <Binding ElementName="TBСonditionsSearch" />
-                                    <Binding ElementName="TBCountFound" />
-                                </MultiBinding>
-                            </Button.CommandParameter>
-                        </Button>
-                        <TextBlock x:Name="TBCountFound" HorizontalAlignment="Left" Margin="5,0,5,0" VerticalAlignment="Center" />
+                            Click="Button_Click_Reset_Search_Full"/>
+                        <StackPanel>
+                            
+                            <TextBlock 
+                                       x:Name="TBCountFound" 
+                                       HorizontalAlignment="Center" 
+                                       Margin="5,0,5,0" 
+                                       VerticalAlignment="Center">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0}/{1}">
+                                        <Binding Path="IndexCurrentCell"/>
+                                        <Binding Path="CountFoundElements"/>
+                                    </MultiBinding>
+
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button
+                                    Width="20"
+                                    Height="20"
+                                    Margin="0,0,10,0"
+                                    VerticalAlignment="Center"
+                                    Command="{Binding MoveNextToCellCommand}">
+                                    <Button.CommandParameter>
+                                        <s:Boolean>False</s:Boolean> 
+                                    </Button.CommandParameter>
+                                    <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="10"/>
+                                    </Style>
+                                </Button.Resources>
+                                    <fa:ImageAwesome
+                                            Width="15"
+                                            Height="15"
+                                            Margin="0,0,1,0"
+                                            Foreground="Black"
+                                            Icon="ArrowUp" />
+                                </Button>
+                                <Button
+                                Width="20"
+                                Height="20" Command="{Binding MoveNextToCellCommand}">
+                                    <Button.CommandParameter>
+                                        <s:Boolean>True</s:Boolean>
+                                    </Button.CommandParameter>
+                                    <Button.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="10"/>
+                                        </Style>
+                                    </Button.Resources>
+                                    <fa:ImageAwesome
+                                    Width="15"
+                                    Height="15"
+                                    Margin="0,0,0,0"
+                                    Foreground="Black"
+                                    Icon="ArrowDown" />
+                                </Button>
+                            </StackPanel>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=CountFoundElements}" Value="0">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                        </StackPanel>
                     </StackPanel>
+                    
                 </GroupBox>
 
                 <GroupBox Header="Экспорт в Excel" Grid.Column="4" Margin="5,0,0,0" HorizontalAlignment="Right">
@@ -152,14 +212,14 @@
                     VerticalAlignment="Stretch"
                     AutoGenerateColumns="True"
                     CanUserSortColumns="False"
-
+                    IsSynchronizedWithCurrentItem="True"
                     DockPanel.Dock="Top"
                     FontSize="{Binding Path=FontSizeTable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                     HorizontalGridLinesBrush="#FFC8C8C8"
                     IsReadOnly="True"
                     ItemsSource="{Binding Path=dataTable}"
-                    SelectionMode="Extended"
-                    SelectionUnit="FullRow"
+                    SelectionMode="Single"
+                    SelectionUnit="Cell"
                     VerticalGridLinesBrush="#FFC9C9C9"
 
                     LoadingRow="dgTable_LoadingRow">

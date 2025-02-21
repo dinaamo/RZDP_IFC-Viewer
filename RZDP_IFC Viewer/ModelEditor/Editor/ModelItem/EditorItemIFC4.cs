@@ -82,7 +82,7 @@ namespace IFC_Viewer.IFC.ModelItem
                 //Если в наборе уже есть такая ссылка то пропускаем цикл
                 if ((ifcPropSetReference.HasProperties.
                                     OfType<IfcPropertyReferenceValue>().
-                                    FirstOrDefault(it => it.PropertyReference == modelReference.GetReference())) != null)
+                                    FirstOrDefault(it => it.PropertyReference.Equals(modelReference.GetReference()))) != null)
                 {
                     continue;
                 }

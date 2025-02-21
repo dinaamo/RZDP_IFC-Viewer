@@ -110,7 +110,6 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-
                     <Border
                         x:Name="border"
                         Background="WhiteSmoke">
@@ -213,19 +212,22 @@
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding Path=IsFocusReference}" Value="True">
-                                <Setter Property="Foreground" Value="DarkBlue" />
-                                <Setter Property="Background" Value="SkyBlue" />
-                                <Setter Property="TextDecorations" Value="Underline" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Path=IsPaint, Mode=OneWay}" Value="True">
-                                <Setter Property="Background" Value="Tomato" />
-                            </DataTrigger>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Foreground" Value="DarkBlue" />
                                 <Setter Property="Background" Value="SkyBlue" />
                                 <Setter Property="TextDecorations" Value="Underline" />
                             </Trigger>
+                            <DataTrigger Binding="{Binding Path=IsFocusReference}" Value="True">
+                                <Setter Property="Foreground" Value="DarkBlue" />
+                                <Setter Property="Background" Value="SkyBlue" />
+                                <Setter Property="TextDecorations" Value="Underline" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=IsHidden}" Value="True">
+                                <Setter Property="Foreground" Value="Gray" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=IsPaint, Mode=OneWay}" Value="True">
+                                <Setter Property="Background" Value="Tomato" />
+                            </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </TextBlock.Style>

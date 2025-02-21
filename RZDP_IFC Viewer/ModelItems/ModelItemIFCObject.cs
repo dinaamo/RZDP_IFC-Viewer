@@ -308,7 +308,9 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 
         private void OnHideSelectedModelObjectCommand(object o)
         {
-            Model.HideSelected(SelectionNestedItems(this).Select(it => it.IFCObjectDefinition));
+            var HiddenElements = SelectionNestedItems(this);
+            HiddenElements.ForEach(it => it.IsHidden = true);
+            Model.HideSelected(HiddenElements.Select(it => it.IFCObjectDefinition));
         }
 
         private bool CanHideSelectedModelObjectCommand(object o)
@@ -324,7 +326,9 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 
         private void OnSelectedModelObjectCommand(object o)
         {
-            Model.ShowSelected(SelectionNestedItems(this).Select(it=> it.IFCObjectDefinition));
+            var showElements = SelectionNestedItems(this);
+            showElements.ForEach(it => it.IsHidden = false);
+            Model.ShowSelected(showElements.Select(it => it.IFCObjectDefinition));
         }
 
         private bool CanSelectedModelObjectCommand(object o)
@@ -340,7 +344,10 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 
         private void OnIsolateSelectedModelObjectCommand(object o)
         {
-            Model.IsolateSelected(SelectionNestedItems(this).Select(it => it.IFCObjectDefinition));
+            Model.SetPropertyIsHideToAllElements(true);
+            var isolateElements = SelectionNestedItems(this);
+            isolateElements.ForEach(it => it.IsHidden = false);
+            Model.IsolateSelected(isolateElements.Select(it => it.IFCObjectDefinition));
         }
 
         private bool CanIsolateSelectedModelObjectCommand(object o)
@@ -363,7 +370,14 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
             //Вариант для выбора под элементов
             //Model.SelectObjects(SelectionNestedItems(this).Select(it => it.IFCObjectDefinition));
 
-            Model.SelectObjects(new List<IIfcRoot>() { IFCObjectDefinition });
+            if (IsHidden)
+            {
+                Model.RefreshSelect();
+            }
+            else
+            {
+                Model.SelectObjects(new List<IIfcRoot>() { IFCObjectDefinition });
+            }
         }
 
         #endregion Выделить элемент
@@ -722,12 +736,24 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
             }
         }
 
+        private bool _IsHidden;
+
+        public bool IsHidden
+        {
+            get { return _IsHidden; }
+            set
+            {
+                _IsHidden = value;
+                OnPropertyChanged("IsHidden");
+            }
+        }
+
         private Dictionary<string, HashSet<object>> _PropertyElement;
+
         /// <summary>
         /// Свойства элемента
         /// </summary>
         ///
-
         public override Dictionary<string, HashSet<object>> PropertyElement
         {
             get
@@ -749,17 +775,8 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
         ///// <summary>
         ///// Наборы характеристик
         ///// </summary>
-        public ObservableCollection<BasePropertySetDefinition> CollectionPropertySet => new ObservableCollection<BasePropertySetDefinition>(ModelObjectEditor.FillCollectionPropertySet());
-        //{
-            //get
-            //{
-            //    if (_CollectionPropertySet is null)
-            //    {
-            //        _CollectionPropertySet = modelEditor.FillCollectionPropertySet();
-            //    }
-            //    return _CollectionPropertySet;
-            //}
-        //}
+        public ObservableCollection<BasePropertySetDefinition> CollectionPropertySet => new (ModelObjectEditor.FillCollectionPropertySet());
+
 
         private ObservableCollection<BaseModelItemIFC> _ModelItems;
 

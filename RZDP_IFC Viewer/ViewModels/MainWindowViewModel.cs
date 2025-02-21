@@ -272,7 +272,8 @@ namespace RZDP_IFC_Viewer.ViewModels
                                                         HideAfterDelete,
                                                         HideSelected,
                                                         IsolateSelected, 
-                                                        ShowSelected);
+                                                        ShowSelected,
+                                                        RefreshSelect);
 
                 //Ждем создания геометрии из задачи 
                 task.Wait();
@@ -336,7 +337,6 @@ namespace RZDP_IFC_Viewer.ViewModels
             {
                 _deleteEntity.AddRange(persistEntitiesAfterDelete);
                 HideAndUpdate();
-
             });
         }
 
@@ -349,7 +349,9 @@ namespace RZDP_IFC_Viewer.ViewModels
             HideAndUpdate();
         }
 
-
+        /// <summary>
+        /// Скрыть объекты и обновить окно
+        /// </summary>
         private void HideAndUpdate()
         {
             _hideEntity.AddRange(_deleteEntity);
@@ -375,20 +377,23 @@ namespace RZDP_IFC_Viewer.ViewModels
                     }
                 }
             }
-
             HideAndUpdate();
         }
-
 
         /// <summary>
         /// Изолировать выбранные
         /// </summary>
         private void IsolateSelected(IEnumerable<IPersistEntity> persistEntitiesForIsolate)
         {
+            ShowSelected(persistEntitiesForIsolate);
             _DrawingControl.IsolateInstances = persistEntitiesForIsolate.ToList();
-            //_DrawingControl.HiddenInstances = _deleteEntity.ToList();
-            //_DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
             HideAndUpdate();
+        }
+
+        private void RefreshSelect()
+        {
+            _DrawingControl.Selection.Clear();
+            _DrawingControl.HighlighSelected(null);
         }
 
         /// <summary>
@@ -398,14 +403,11 @@ namespace RZDP_IFC_Viewer.ViewModels
         {
             _hideEntity = new HashSet<IPersistEntity>();
             _DrawingControl.IsolateInstances = null;
-            //_DrawingControl.HiddenInstances = _deleteEntity.ToList();
-            //_DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
             HideAndUpdate();
         }
 
         #region Фокус на элемент
 
-        private bool _simpleFastExtrusion = false;
         private bool _camChanged;
 
         private void ZoomSelected(IEnumerable<IPersistEntity> persistEntityForSelect)
@@ -463,11 +465,11 @@ namespace RZDP_IFC_Viewer.ViewModels
             
             //_DrawingControl.Selection.AddRange(persistEntityForSelectDistinct);
 
-            HightSelectElementAsync(persistEntityForSelect.Distinct());
+            HightSelectElement(persistEntityForSelect.Distinct());
         }
 
 
-        private void HightSelectElementAsync(IEnumerable<IPersistEntity> persistEntityForSelect)
+        private void HightSelectElement(IEnumerable<IPersistEntity> persistEntityForSelect)
         {
 
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
@@ -485,7 +487,7 @@ namespace RZDP_IFC_Viewer.ViewModels
                     _DrawingControl.HighlighSelected(persistEntity);
                 });
             });
-            cancellationTokenSource.CancelAfter(10);
+            cancellationTokenSource.CancelAfter(50);
 
         }
 
@@ -955,6 +957,7 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         private void OnRestoreViewCommand(object o)
         {
+            Model.SetPropertyIsHideToAllElements(false);
             RestoreView();
         }
 
@@ -971,11 +974,11 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         private void OnHideSelectedModelObjectCommand(object o)
         {
-            ModelItemIFCObject ifcProject = Model.ModelItems[0].ModelItems[0] as ModelItemIFCObject;
-
-            HideSelected(ModelItemIFCObject.SelectionNestedItems(ifcProject).
-                                                    Where(it => it.IsPaint).
-                                                    Select(it => it.GetIFCObjectDefinition()));
+            var hiddenElements = ModelItemIFCObject.SelectionNestedItems(Model.FileItem.ModelProject).
+                                                            Where(it => it.IsPaint).ToList();
+            Model.SetPropertyIsHideToAllElements(false);
+            hiddenElements.ForEach(it => it.IsHidden = true);
+            HideSelected(hiddenElements.Select(it => it.GetIFCObjectDefinition()));
         }
 
         private bool CanHideSelectedModelObjectCommand(object o)
@@ -991,11 +994,11 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         private void OnIsolateSelectedModelObjectCommand(object o)
         {
-            ModelItemIFCObject ifcProject = Model.ModelItems[0].ModelItems[0] as ModelItemIFCObject;
-
-            IsolateSelected(ModelItemIFCObject.SelectionNestedItems(ifcProject). 
-                                                    Where(it => it.IsPaint).
-                                                    Select(it => it.GetIFCObjectDefinition()));
+            Model.SetPropertyIsHideToAllElements(true);
+            var isolateElements = ModelItemIFCObject.SelectionNestedItems(Model.FileItem.ModelProject).
+                                                    Where(it => it.IsPaint).ToList();
+            isolateElements.ForEach(it => it.IsHidden = false);
+            IsolateSelected(isolateElements.Select(it => it.GetIFCObjectDefinition()));
         }
 
         private bool CanIsolateSelectedModelObjectCommand(object o)
