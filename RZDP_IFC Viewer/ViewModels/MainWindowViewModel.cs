@@ -1,8 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
@@ -18,7 +16,6 @@ using Xbim.Ifc;
 using Xbim.IO;
 using Xbim.ModelGeometry.Scene;
 using Xbim.Presentation;
-using static Xbim.Presentation.DrawingControl3D;
 
 namespace RZDP_IFC_Viewer.ViewModels
 {
@@ -254,7 +251,7 @@ namespace RZDP_IFC_Viewer.ViewModels
                 ifcStore.FileName = path;
                 */
 
-                //Открываем ifcStore
+                //Загружаем ifcStore
                 IfcStore ifcStore = IfcStore.Open(path, null, 5000, _worker.ReportProgress, XbimDBAccess.ReadWrite);
 
                 //Запускаем создание геометрии
@@ -296,7 +293,7 @@ namespace RZDP_IFC_Viewer.ViewModels
                     else
                     {
                         tempModel.Dispose();
-                        throw new FileLoadException("Ошибка загрузки файла");
+                        throw new FileLoadException("Отсутствует геометрия");
                     }
                 }
                 else
@@ -390,7 +387,7 @@ namespace RZDP_IFC_Viewer.ViewModels
             HideAndUpdate();
         }
 
-        private void RefreshSelect()
+        public void RefreshSelect()
         {
             _DrawingControl.Selection.Clear();
             _DrawingControl.HighlighSelected(null);
@@ -975,7 +972,8 @@ namespace RZDP_IFC_Viewer.ViewModels
         private void OnHideSelectedModelObjectCommand(object o)
         {
             var hiddenElements = ModelItemIFCObject.SelectionNestedItems(Model.FileItem.ModelProject).
-                                                            Where(it => it.IsPaint).ToList();
+                                                            Where(it => it.IsPaint).
+                                                            SelectMany(it => ModelItemIFCObject.SelectionNestedItems(it)).Distinct().ToList();
             Model.SetPropertyIsHideToAllElements(false);
             hiddenElements.ForEach(it => it.IsHidden = true);
             HideSelected(hiddenElements.Select(it => it.GetIFCObjectDefinition()));
@@ -996,7 +994,8 @@ namespace RZDP_IFC_Viewer.ViewModels
         {
             Model.SetPropertyIsHideToAllElements(true);
             var isolateElements = ModelItemIFCObject.SelectionNestedItems(Model.FileItem.ModelProject).
-                                                    Where(it => it.IsPaint).ToList();
+                                                        Where(it => it.IsPaint).
+                                                        SelectMany(it => ModelItemIFCObject.SelectionNestedItems(it)).Distinct().ToList();
             isolateElements.ForEach(it => it.IsHidden = false);
             IsolateSelected(isolateElements.Select(it => it.GetIFCObjectDefinition()));
         }

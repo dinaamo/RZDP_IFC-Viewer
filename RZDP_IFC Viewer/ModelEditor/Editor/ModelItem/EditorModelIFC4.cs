@@ -6,6 +6,7 @@ using Xbim.Ifc4.ExternalReferenceResource;
 using Xbim.Ifc4.Interfaces;
 using Xbim.Ifc4.MeasureResource;
 using Xbim.Ifc4.UtilityResource;
+using Xbim.Ifc4.Kernel;
 
 namespace IFC_Viewer.IFC.Editor
 {
@@ -68,5 +69,23 @@ namespace IFC_Viewer.IFC.Editor
 
             return ifcDocumentReference;
         }
+
+        public override IIfcRelAssociatesDocument CreateAssociateDocument(IIfcDocumentReference ifcDocumentReference, IEnumerable<IIfcObjectDefinition> ifcObjectDefinitionSet)
+        {
+            IIfcRelAssociatesDocument ifcRelAssociatesDocument = ModelIFC.IfcStore.Instances.New<IfcRelAssociatesDocument>();
+
+            ifcRelAssociatesDocument.RelatingDocument = ifcDocumentReference;
+
+            foreach (IIfcObjectDefinition ifcObjectDefinition in ifcObjectDefinitionSet)
+            {
+                if (!ifcRelAssociatesDocument.RelatedObjects.Contains(ifcObjectDefinition))
+                {
+                    ifcRelAssociatesDocument.RelatedObjects.Add(ifcObjectDefinition);
+                }
+            }
+            return ifcRelAssociatesDocument;
+        }
+
+
     }
 }

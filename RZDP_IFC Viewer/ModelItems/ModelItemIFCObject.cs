@@ -649,7 +649,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
         {
             get
             {
-                return IFCObjectDefinition.Name;
+                return IFCObjectDefinition.Name ?? string.Empty;
             }
             set
             {

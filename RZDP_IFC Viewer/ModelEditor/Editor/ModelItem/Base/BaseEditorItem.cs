@@ -87,7 +87,6 @@ namespace IFC_Viewer.IFC.Base
 
                     //Удаляем из набора характеристик
                     ifcPropertySet.HasProperties.Remove(propertyToDelete);
-                    //ModelIFC.DeleteIFCEntity(propertyToDelete);
 
                     //Если набор пустой то его удаляем 
                     if (ifcPropertySet.HasProperties.Count == 0)

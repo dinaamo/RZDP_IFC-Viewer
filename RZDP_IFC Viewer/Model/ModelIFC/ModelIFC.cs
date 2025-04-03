@@ -156,7 +156,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
                                                                         RefreshSelect);
         }
 
-        private BaseEditorModel baseEditorModel;
+        private BaseEditorModel _editorModel;
 
         /// <summary>
         /// Загружаем базу данных
@@ -199,7 +199,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
                 }
                 trans.Commit();
             }
-            baseEditorModel = BaseEditorModel.CreateEditor(this);
+            _editorModel = BaseEditorModel.CreateEditor(this);
             IsEditModel = false;
             return this;
         }
@@ -343,6 +343,15 @@ namespace RZDP_IFC_Viewer.IFC.Model
                 }
                 #endregion
 
+                #region Если документ то удаляем объект ассоциации 
+
+                if (modelReference is ModelItemDocumentReference modelItemDocumentReference)
+                {
+                    _editorModel.RelAssociatesDocument((IIfcDocumentReference)modelItemDocumentReference.GetReference());
+                }
+
+                #endregion
+
                 #region Удаляем объект из дерева
                 BaseModelReferenceIFC modelItemToDelete = ModelItems[0].ModelItems.OfType<BaseModelReferenceIFC>().FirstOrDefault(it =>
                 {
@@ -390,7 +399,6 @@ namespace RZDP_IFC_Viewer.IFC.Model
 
         public void DeleteModelObjects(ICollection<ModelItemIFCObject> modelItemIFCObjectSet)
         {
-            var tt = DeleteModelObjectsBackground;
             backgroundWorker.DoWork += DeleteModelObjectsBackground;
             backgroundWorker.RunWorkerAsync(modelItemIFCObjectSet);
         }
@@ -407,10 +415,16 @@ namespace RZDP_IFC_Viewer.IFC.Model
                     //Получаем все таблицы и документы в файле
                     IEnumerable<BaseModelReferenceIFC> allModelReference = ModelItems[0].ModelItems.OfType<BaseModelReferenceIFC>();
 
+                    //Получаем все документы
+                    IEnumerable<IIfcDocumentReference> allIfcDocumentReferenceSet = allModelReference.
+                                                                                    OfType<ModelItemDocumentReference>().
+                                                                                    Select(it => it.GetReference()).
+                                                                                    Cast<IIfcDocumentReference>();
+
                     //Определяем количество всех элементов
                     countToPresent = 100d / modelItemIFCObjectSet.Count;
                     counter = 0;
-                    foreach (var modelItemIFCObject in modelItemIFCObjectSet)
+                    foreach (ModelItemIFCObject? modelItemIFCObject in modelItemIFCObjectSet)
                     {
                         if (modelItemIFCObject is null || modelItemIFCObject.TopElement is null)
                         {
@@ -418,7 +432,13 @@ namespace RZDP_IFC_Viewer.IFC.Model
                         }
                         //Удаляем ссылки на таблицы и документы от объекта
                         modelItemIFCObject.DeleteReferenceToTheObject(allModelReference);
-                        
+
+                        //Удаляем ассоциации
+                        foreach (var ifcDocumentReference in allIfcDocumentReferenceSet)
+                        {
+                            _editorModel.RemoveAssociationObjectWithDocument(modelItemIFCObject.GetIFCObjectDefinition(), ifcDocumentReference);
+                        }
+
                         //Удаляем объект из дерева
                         Application.Current.Dispatcher.BeginInvoke(() =>
                         {
@@ -453,7 +473,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
         {
             using (ITransaction trans = IfcStore.Model.BeginTransaction("CreateNewIFCTable"))
             {
-                IIfcTable ifcTable = baseEditorModel.CreateNewIFCTable(dataTable);
+                IIfcTable ifcTable = _editorModel.CreateNewIFCTable(dataTable);
 
                 BaseModelReferenceIFC tempTableItem = CreateNewModelReference(ifcTable);
 
@@ -472,7 +492,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
         {
             using (ITransaction trans = IfcStore.Model.BeginTransaction("CreateNewIFCDocumentInformation"))
             {
-                IIfcDocumentReference ifcDocumentReference = baseEditorModel.CreateNewIFCDocumentInformation(modelDocument);
+                IIfcDocumentReference ifcDocumentReference = _editorModel.CreateNewIFCDocumentInformation(modelDocument);
 
                 BaseModelReferenceIFC tempDocumentItem = CreateNewModelReference(ifcDocumentReference);
 
@@ -491,9 +511,21 @@ namespace RZDP_IFC_Viewer.IFC.Model
         {
             using (ITransaction trans = IfcStore.Model.BeginTransaction("AddReferenceToTheObject"))
             {
+                //Добавляем ссылки на ссылочные объекты через наборы свойств
                 foreach (ModelItemIFCObject modelItem in modelObjects)
                 {
                     modelItem.AddReferenceToTheObject(referenceObjects);
+                }
+
+                //Создаем ассоциации с объектами
+                IEnumerable<IIfcDocumentReference> ifcDocumentReferenceSet = referenceObjects.
+                                                                                    OfType<ModelItemDocumentReference>().
+                                                                                    Select(it => it.GetReference()).
+                                                                                    Cast<IIfcDocumentReference>();
+
+                foreach (IIfcDocumentReference ifcDocumentReference in ifcDocumentReferenceSet)
+                {
+                    _editorModel.CreateAssociateDocument(ifcDocumentReference, modelObjects.Select(it => it.GetIFCObjectDefinition()));
                 }
 
                 trans.Commit();
@@ -512,6 +544,17 @@ namespace RZDP_IFC_Viewer.IFC.Model
                 foreach (ModelItemIFCObject modelItem in modelObjects)
                 {
                     modelItem.DeleteReferenceToTheObject(referenceObjects);
+
+                    //Удаляем ассоциации с объектами
+                    IEnumerable<IIfcDocumentReference> ifcDocumentReferenceSet = referenceObjects.
+                                                                                        OfType<ModelItemDocumentReference>().
+                                                                                        Select(it => it.GetReference()).
+                                                                                        Cast<IIfcDocumentReference>();
+
+                    foreach (IIfcDocumentReference ifcDocumentReference in ifcDocumentReferenceSet)
+                    {
+                        _editorModel.RemoveAssociationObjectWithDocument(modelItem.GetIFCObjectDefinition(), ifcDocumentReference);
+                    }
                 }
 
                 trans.Commit();
@@ -538,6 +581,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
                     }
                     else if (tuple.Item1 is IIfcApplication application)
                     {
+                        IfcStore.Header.FileName.OriginatingSystem = tuple.Item2;
                         application.ApplicationFullName= tuple.Item2;
                         application.ApplicationDeveloper.Name = tuple.Item2;
                         application.ApplicationIdentifier = tuple.Item2;
@@ -549,6 +593,10 @@ namespace RZDP_IFC_Viewer.IFC.Model
                     }
                     else if (tuple.Item1 is IIfcOrganization organisation)
                     {
+                        for (int i = 0; i < IfcStore.Header.FileName.Organization.Count; i++)
+                        {
+                            IfcStore.Header.FileName.Organization[i] = tuple.Item2;
+                        }
                         organisation.Name = tuple.Item2;
                     }
                     else if (tuple.Item1 is IIfcPhysicalQuantity physicalQuantity)

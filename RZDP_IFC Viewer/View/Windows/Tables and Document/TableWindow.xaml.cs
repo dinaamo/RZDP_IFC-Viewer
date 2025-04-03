@@ -129,7 +129,7 @@ namespace RZDP_IFC_Viewer.View.Windows
         }
 
 
-        void ResetOnlyDataGrid()
+        private void ResetOnlyDataGrid()
         {
             ((TableWindowViewModel)DataContext).ResetSearch();
             foreach (DataRowView rowView in dgTable.Items)

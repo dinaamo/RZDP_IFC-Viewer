@@ -57,7 +57,7 @@ namespace Editor_IFC
         {
             get
             {
-                return IFCPropertySetDefinition.Name;
+                return IFCPropertySetDefinition.Name ?? string.Empty;
             }
             set
             {

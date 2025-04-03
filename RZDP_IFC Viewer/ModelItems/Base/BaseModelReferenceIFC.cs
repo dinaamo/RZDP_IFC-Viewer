@@ -114,7 +114,9 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 
         public void DeleteReferenceToTheElement(ModelItemIFCObject deleteReferenceObject)
         {
-            PropertyElement["Ссылки на объекты"].Remove(deleteReferenceObject);
+            ReferenceObjectCollection.Remove(deleteReferenceObject);
+            //PropertyElement["Ссылки на объекты"].Remove(deleteReferenceObject);
+            //OnPropertyChanged("PropertyElement");
         }
 
 

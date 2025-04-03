@@ -456,7 +456,7 @@
                 Visibility="{Binding Path=IsFileExists, Converter={StaticResource ConverterImageVisibilityInverse}, UpdateSourceTrigger=PropertyChanged}"
                 Icon="Times" />
             <fa:ImageAwesome
-                Height="25"
+                Height="10"
                 Margin="0,0,3,0"
                 Foreground="SteelBlue"
                 Visibility="{Binding Path=IsFileExists, Converter={StaticResource ConverterImageVisibilityInverse}, UpdateSourceTrigger=PropertyChanged}"

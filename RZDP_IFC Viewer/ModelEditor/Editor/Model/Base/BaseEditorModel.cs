@@ -33,32 +33,44 @@ namespace IFC_Viewer.IFC.Base
 
         public abstract IIfcDocumentReference CreateNewIFCDocumentInformation(ModelDocument modelDocument);
 
-        //public void DeleteIFCObjectReferenceSelect(IIfcObjectReferenceSelect objectReferenceSelect)
-        //{
-        //    ModelIFC.IfcStore.Delete(objectReferenceSelect);
+        public abstract IIfcRelAssociatesDocument CreateAssociateDocument(IIfcDocumentReference ifcDocumentReference, IEnumerable<IIfcObjectDefinition> ifcObjectDefinitionSet);
 
-            
-        //}
+        /// <summary>
+        /// Удалить ассоциацию документа с объектом
+        /// </summary>
+        public void RemoveAssociationObjectWithDocument(IIfcObjectDefinition iIfcObjectDefinition, IIfcDocumentReference ifcDocumentReference)
+        {
+            IEnumerable<IIfcRelAssociatesDocument> ifcRelAssociatesDocument = ModelIFC.IfcStore.Instances.
+                                                                                    OfType<IIfcRelAssociatesDocument>().
+                                                                                    Where(it => it.RelatingDocument.Equals(ifcDocumentReference)).
+                                                                                    Where(it => it.RelatedObjects.Contains(iIfcObjectDefinition));
 
-        //public void DeleteReferenceToDocument(IIfcDocumentReference documentReference)
-        //{
-        //    ModelIFC.IfcStore.Delete(documentReference);
+            foreach (IIfcRelAssociatesDocument ifcRelAssociatesDocumentSet in ifcRelAssociatesDocument)
+            {
+                ifcRelAssociatesDocumentSet.RelatedObjects.Remove(iIfcObjectDefinition);
+                if (ifcRelAssociatesDocumentSet.RelatedObjects.Count == 0)
+                {
+                    ModelIFC.IfcStore.Delete(ifcRelAssociatesDocumentSet);
+                }
+            }
+        }
 
-        //    IEnumerable<IIfcPropertySet> PropertySetCollection = ModelIFC.IfcStore.Instances.OfType<IIfcObject>().
-        //        SelectMany(it => it.IsDefinedBy.
-        //        Select(obj => obj.RelatingPropertyDefinition).
-        //        OfType<IIfcPropertySet>()).
-        //        Where(it => it.HasProperties.Select(pr => pr.GetType() == typeof(IIfcPropertyReferenceValue)) != null).
-        //        Where(it => it.HasProperties.Select(pr => ((IIfcPropertyReferenceValue)pr).PropertyReference == documentReference) != null);
 
-        //    foreach (IIfcPropertySet PropertySet in PropertySetCollection)
-        //    {
-        //        IIfcProperty deletedProperty = PropertySet.HasProperties.
-        //            Where(it => it.GetType() == typeof(IIfcPropertyReferenceValue)).
-        //            FirstOrDefault(pr => ((IIfcPropertyReferenceValue)pr).PropertyReference == documentReference);
+        /// <summary>
+        /// Удалить ассоциацию при удалении документа
+        /// </summary>
+        public void RelAssociatesDocument(IIfcDocumentReference ifcDocumentReference)
+        {
+            IEnumerable<IIfcRelAssociatesDocument> ifcRelAssociatesDocumentSet = ModelIFC.IfcStore.Instances.
+                                                                                   OfType<IIfcRelAssociatesDocument>().
+                                                                                   Where(it => it.RelatingDocument.Equals(ifcDocumentReference));
+            foreach (IIfcRelAssociatesDocument ifcRelAssociatesDocument in ifcRelAssociatesDocumentSet)
+            {
+                ModelIFC.IfcStore.Delete(ifcRelAssociatesDocument);
+            }
+        
+        }
 
-        //        PropertySet.HasProperties.Remove(deletedProperty);
-        //    }
-        //}
+
     }
 }

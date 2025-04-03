@@ -77,7 +77,7 @@ namespace RZDP_IFC_Viewer.ViewModels
                 foreach (string propertySetSelect in selectNamePropertySets)
                 {
                     //Проходим по наборам объекта с таким же именем
-                    foreach (BasePropertySetDefinition targetPropertySetModelObject in propertySetsModelObject.Where(it => it.NamePropertySet.Equals(propertySetSelect)))
+                    foreach (BasePropertySetDefinition targetPropertySetModelObject in propertySetsModelObject.Where(it => it.NamePropertySet == propertySetSelect))
                     {
                         foreach (IPropertyModel<IIfcResourceObjectSelect> propertyModelObject in targetPropertySetModelObject.PropertyCollection)
                         {
@@ -106,7 +106,23 @@ namespace RZDP_IFC_Viewer.ViewModels
             Status = $"Количество добавленных наборов: {countAddPropertySet}\n" +
                         $"Количество пропущенных элементов: {countMissedPropertySet}";
         }
- 
+
+        //bool SelectPropertySetByName(string currentNamePropertySet ,string propertySetSelect)
+        //{
+        //    if (currentNamePropertySet == null && propertySetSelect == null)
+        //    {
+        //        return true;
+        //    }
+        //    else if(currentNamePropertySet == null)
+        //    {
+        //        return false;
+        //    }
+        //    else
+        //    {
+        //        return currentNamePropertySet.Equals(propertySetSelect);
+        //    }
+        //}
+
 
         /// <summary>
         /// Получаем имена наборов которые выбрал пользователь
@@ -118,7 +134,7 @@ namespace RZDP_IFC_Viewer.ViewModels
                 object stateCell = controlItem[0];
                 if (stateCell != null && (bool)stateCell)
                 {
-                    yield return controlItem[1].ToString();
+                    yield return Convert.ToString(controlItem[1]);
                 }
             }
         }

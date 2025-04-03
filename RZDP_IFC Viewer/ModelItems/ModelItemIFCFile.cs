@@ -63,7 +63,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
         {
             get
             {
-                return IFCProject.OwnerHistory?.OwningUser?.TheOrganization.Name;
+                return GetOrganisation();
             }
             set
             {
@@ -120,8 +120,21 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
                 { "Время создания файла", new HashSet<object>() { Convert.ToString(Model.IfcStore.Header.TimeStamp) } },
                 { "Приложение", new HashSet<object>() { Convert.ToString(IFCProject.OwnerHistory?.OwningApplication.ApplicationFullName) } },
                 { "Автор проекта", new HashSet<object>() { Convert.ToString(IFCProject.OwnerHistory?.OwningUser?.ThePerson?.GivenName) }},
-                { "Организация", new HashSet<object>() { Convert.ToString(IFCProject.OwnerHistory?.OwningUser?.TheOrganization?.Name) }},
+                { "Организация", new HashSet<object>() { GetOrganisation() } }
             };
+        }
+
+        string GetOrganisation()
+        {
+            string organisation = Convert.ToString(IFCProject.OwnerHistory?.OwningUser?.TheOrganization?.Name);
+            if(string.IsNullOrEmpty(organisation))
+            {
+                return string.Join("; ", Model.IfcStore.Header.FileName.Organization.ToArray());
+            }
+            else
+            {
+                return organisation;
+            }
         }
 
         private ObservableCollection<BaseModelItemIFC> _ModelItems;

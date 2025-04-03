@@ -248,13 +248,22 @@ namespace RZDP_IFC_Viewer
                 ModelItemIFCObject? project = collectionObjectModel[0].ModelItems.OfType<ModelItemIFCObject>().FirstOrDefault();
                 var findObj = ModelItemIFCObject.SelectionNestedItems(project).FirstOrDefault(it => it.GetIFCObjectDefinition().Equals(item));
 
-                if (findObj != null)//???
+                if (findObj != null)
                 {
-                    treeViewIFC.SelectedItemChanged -= treeViewIFC_SelectedItemChanged;
+                    //treeViewIFC.SelectedItemChanged -= treeViewIFC_SelectedItemChanged;
                     findObj.ExpandOver();
                     findObj.IsSelected = true;
                     findObj.IsFocusReference = false;
-                    treeViewIFC.SelectedItemChanged += treeViewIFC_SelectedItemChanged;
+                    //treeViewIFC.SelectedItemChanged += treeViewIFC_SelectedItemChanged;
+                }
+                else
+                {
+                    if (treeViewIFC.SelectedItem is ModelItemIFCObject modelItemIFCObject)
+                    {
+                        modelItemIFCObject.IsSelected = false;
+                        viewModel.RefreshSelect();
+                    }
+                    
                 }
             }
         }
@@ -288,6 +297,11 @@ namespace RZDP_IFC_Viewer
                 if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.F)
                 {
                     modelItemIFCObject.ZoomElementsCommand.Execute(null);
+                }
+                if (e.Key == Key.Escape)
+                {
+                    modelItemIFCObject.IsSelected = false;
+                    viewModel.RefreshSelect();
                 }
             }
         }
