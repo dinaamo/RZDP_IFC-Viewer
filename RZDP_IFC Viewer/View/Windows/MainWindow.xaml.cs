@@ -298,11 +298,17 @@ namespace RZDP_IFC_Viewer
                 {
                     modelItemIFCObject.ZoomElementsCommand.Execute(null);
                 }
+                
                 if (e.Key == Key.Escape)
                 {
                     modelItemIFCObject.IsSelected = false;
                     viewModel.RefreshSelect();
                 }
+            }
+
+            if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.S)
+            {
+                viewModel.SaveFileCommand.Execute(null);
             }
         }
     }

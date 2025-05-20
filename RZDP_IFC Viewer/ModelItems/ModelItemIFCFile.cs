@@ -38,7 +38,11 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
             }
             set
             {
-                Model.ChangeName(new List<(IIfcApplication, string)> { (IFCProject.OwnerHistory.OwningApplication, value) });
+                foreach (IIfcApplication ifcApplication in Model.IfcStore.Instances.OfType<IIfcApplication>())
+                {
+                    Model.ChangeName(new List<(IIfcApplication, string)> { (ifcApplication, value) });
+                }
+
                 OnPropertyChanged("Application");
                 OnPropertyChanged("PropertyElement");
                 
@@ -58,7 +62,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
                 OnPropertyChanged("PropertyElement");
             }
         }
-
+        
         public string Organization
         {
             get
@@ -70,6 +74,14 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
                 Model.ChangeName(new List<(IIfcOrganization, string)> { (IFCProject.OwnerHistory?.OwningUser?.TheOrganization, value) });
                 OnPropertyChanged("Person");
                 OnPropertyChanged("PropertyElement");
+            }
+        }
+
+        public string FilePath
+        {
+            get
+            {
+                return Model.IfcStore.Header.FileName.Name;
             }
         }
 
@@ -109,7 +121,6 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
             }
         }
 
-        //private Dictionary<string, HashSet<object>> _PropertyElement => GetPropertyObject();
 
         private Dictionary<string, HashSet<object>> GetPropertyObject()
         {

@@ -296,24 +296,21 @@ namespace RZDP_IFC_Viewer.ViewModels
             string FilterSearchValuePropertyValue = (string)ControlArray[10];
             string textPropertyValue = (string)ControlArray[11];
 
-            //DataGrid dataGrid = ControlArray[12] as DataGrid;
+            StringComparison caseSensitive = ((bool)ControlArray[12]) ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
-            //dataGrid.ItemsSource = null;
-
-
-            var col1 = SearchItems.Where(it => IsFilterString(new List<string>() { it.IFCObjectGUID }, textGUID, FilterSearchValueGUID));
-            var col2 = col1.Where(it => IsFilterString(new List<string>() { it.IFCClass }, textClassElement, FilterSearchValueClassElement));
-            var col3 = col2.Where(it => IsFilterString(new List<string>() { it.IFCObjectName }, textNameElement, FilterSearchValueNameElement));
-            var col4 = col3.Where(it => IsFilterString(it.CollectionPropertySet.Select(it => it.NamePropertySet), textPropertySet, FilterSearchValuePropertySet));
-            var col5 = col4.Where(it => IsFilterString(it.CollectionPropertySet.SelectMany(it => it.PropertyCollection).Select(it => it.NameProperty), textPropertyName, FilterSearchValuePropertyName));
-            var col6 = col5.Where(it => IsFilterString(it.CollectionPropertySet.SelectMany(it => it.PropertyCollection).Select(it => it.ValueString), textPropertyValue, FilterSearchValuePropertyValue));
+            var col1 = SearchItems.Where(it => IsFilterString(new List<string>() { it.IFCObjectGUID }, textGUID, FilterSearchValueGUID, StringComparison.Ordinal));
+            var col2 = col1.Where(it => IsFilterString(new List<string>() { it.IFCClass }, textClassElement, FilterSearchValueClassElement, StringComparison.Ordinal));
+            var col3 = col2.Where(it => IsFilterString(new List<string>() { it.IFCObjectName }, textNameElement, FilterSearchValueNameElement, caseSensitive));
+            var col4 = col3.Where(it => IsFilterString(it.CollectionPropertySet.Select(it => it.NamePropertySet), textPropertySet, FilterSearchValuePropertySet, caseSensitive));
+            var col5 = col4.Where(it => IsFilterString(it.CollectionPropertySet.SelectMany(it => it.PropertyCollection).Select(it => it.NameProperty), textPropertyName, FilterSearchValuePropertyName, caseSensitive));
+            var col6 = col5.Where(it => IsFilterString(it.CollectionPropertySet.SelectMany(it => it.PropertyCollection).Select(it => it.ValueString), textPropertyValue, FilterSearchValuePropertyValue, caseSensitive));
 
             FilteredSearchItems = new ObservableCollection<ModelItemIFCObject>(col6);
 
-            //dataGrid.ItemsSource = FilteredSearchItems;
+            
         }
 
-        private bool IsFilterString(IEnumerable<string> stringCollection, string seachString, string seachingFilter)
+        private bool IsFilterString(IEnumerable<string> stringCollection, string seachString, string seachingFilter, StringComparison caseSensitive)
         {
             if (seachString == string.Empty)
             {
@@ -323,19 +320,19 @@ namespace RZDP_IFC_Viewer.ViewModels
             {
                 if (seachingFilter == "Равно")
                 {
-                    return stringCollection.Any(str => str.Equals(seachString));
+                    return stringCollection.Any(str => str.Equals(seachString, caseSensitive));
                 }
                 else if (seachingFilter == "Не равно")
                 {
-                    return !stringCollection.Any(str => str.Equals(seachString));
+                    return !stringCollection.Any(str => str.Equals(seachString, caseSensitive));
                 }
                 else if (seachingFilter == "Содержит")
                 {
-                    return stringCollection.Any(str => str.Contains(seachString));
+                    return stringCollection.Any(str => str.Contains(seachString, caseSensitive));
                 }
                 else if (seachingFilter == "Не содержит")
                 {
-                    return !stringCollection.Any(str => str.Contains(seachString));
+                    return !stringCollection.Any(str => str.Contains(seachString, caseSensitive));
                 }
                 else
                 {

@@ -41,6 +41,7 @@
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
@@ -52,20 +53,14 @@
                         <RowDefinition Height="22"/>
                     </Grid.RowDefinitions>
 
-                    <TextBlock Text="Свойство" HorizontalAlignment="Center" FontWeight="Bold" Grid.Row="0" Grid.Column="0" />
-                    <TextBlock Text="Условие" HorizontalAlignment="Center" FontWeight="Bold" Grid.Row="0" Grid.Column="1" />
-                    <TextBlock Text="Значение" HorizontalAlignment="Center" FontWeight="Bold" Grid.Row="0" Grid.Column="2" />
+                    <TextBlock Text="Свойство" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Grid.Row="0" Grid.Column="0" />
+                    <TextBlock Text="Условие" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Grid.Row="0" Grid.Column="1" />
+                    <TextBlock Text="Значение" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Grid.Row="0" Grid.Column="2" />
 
                     <TextBlock HorizontalAlignment="Left" Text="GUID" Grid.Row="1" Grid.Column="0" />
                     <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource ConditionsSearch}" Name="CBGUIDFilter"  Grid.RowSpan="2" VerticalAlignment="Top" />
                     <TextBox Grid.Row="1" Grid.Column="2" 
                                     Name="CBGUIDValue"/>
-                    <!--<ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding}"  ToolTip="{Binding}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>-->
-
 
                     <TextBlock HorizontalAlignment="Left" Text="Класс IFC" Grid.Row="2" Grid.Column="0" />
                     <ComboBox Grid.Row="2" Grid.Column="1" Style="{StaticResource ConditionsSearch}" Name="CBClassElementFilter" />
@@ -83,44 +78,22 @@
                     <ComboBox Grid.Row="3" Grid.Column="1" Style="{StaticResource ConditionsSearch}" Name="CBNameElementFilter" />
                     <TextBox Grid.Row="3" Grid.Column="2"
                                     Name="CBNameElementValue"/>
-                    <!--<ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding}" ToolTip="{Binding}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>-->
-
 
                     <TextBlock HorizontalAlignment="Left" Text="Набор характкристик" Grid.Row="4" Grid.Column="0" Margin="0,0,3,0" />
                     <ComboBox Grid.Row="4" Grid.Column="1" Style="{StaticResource ConditionsSearch}" Name="CBPropertySetFilter" />
                     <TextBox Grid.Row="4" Grid.Column="2"
                                         Name="CBPropertySetValue"/>
-                    <!--<ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding}" ToolTip="{Binding}" MaxWidth="200"/>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>-->
 
 
                     <TextBlock HorizontalAlignment="Left" Text="Параметр" Grid.Row="5" Grid.Column="0" />
                     <ComboBox Grid.Row="5" Grid.Column="1" Style="{StaticResource ConditionsSearch}" Name="CBPropertyNameFilter" />
                     <TextBox Grid.Row="5" Grid.Column="2"
                                         Name="CBPropertyNameValue"/>
-                    <!--<ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding}" ToolTip="{Binding}" MaxWidth="200"/>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>-->
-
 
                     <TextBlock HorizontalAlignment="Left" Text="Значение" Grid.Row="6" Grid.Column="0" />
                     <ComboBox Grid.Row="6" Grid.Column="1" Style="{StaticResource ConditionsSearch}" Name="CBPropertyValueFilter" />
                     <TextBox Grid.Row="6" Grid.Column="2"
                                             Name="CBPropertyValue"/>
-                    <!--<ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding}" ToolTip="{Binding}" MaxWidth="200"/>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>-->
 
                 </Grid>
             </GroupBox>
@@ -131,6 +104,11 @@
                     <TextBlock Text="{Binding ElementName=lwSearchElements, Path=Items.Count}" VerticalAlignment="Center" DockPanel.Dock="Left" />
                 </StackPanel>
                 <StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,5,5">
+                        
+                        <TextBlock Text="Учитывать регистр" Margin="0,0,5,0"/>
+                        <CheckBox x:Name="chCaseSensitive" IsChecked="True"/>
+                    </StackPanel>
 
                     <Button Width="60"
                             Height="20"
@@ -153,6 +131,7 @@
                                 <Binding ElementName="CBPropertyNameValue" Path="Text" />
                                 <Binding ElementName="CBPropertyValueFilter" Path="Text" />
                                 <Binding ElementName="CBPropertyValue" Path="Text" />
+                                <Binding ElementName="chCaseSensitive" Path="IsChecked" />
                             </MultiBinding>
                         </Button.CommandParameter>
                     </Button>

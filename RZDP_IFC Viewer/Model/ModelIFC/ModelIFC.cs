@@ -582,10 +582,11 @@ namespace RZDP_IFC_Viewer.IFC.Model
                     else if (tuple.Item1 is IIfcApplication application)
                     {
                         IfcStore.Header.FileName.OriginatingSystem = tuple.Item2;
-                        application.ApplicationFullName= tuple.Item2;
+                        application.ApplicationFullName = tuple.Item2;
                         application.ApplicationDeveloper.Name = tuple.Item2;
                         application.ApplicationIdentifier = tuple.Item2;
                         application.Version = "";
+
                     }
                     else if (tuple.Item1 is IIfcPerson person)
                     {

@@ -276,25 +276,21 @@ namespace RZDP_IFC_Viewer.ViewModels
                 task.Wait();
                 if (tempModel != null)
                 {
-                    if (!ifcStore.GeometryStore.IsEmpty)
+                    Application.Current.Dispatcher.BeginInvoke(() =>
                     {
-                        Application.Current.Dispatcher.BeginInvoke(() =>
+                        Model?.Dispose();
+                        Model = tempModel;
+                        if (!ifcStore.GeometryStore.IsEmpty)
                         {
-                            if (Model != null)
-                            {
-                                Model.Dispose();
-                            }
-                            Model = tempModel;
                             mainWindow.WPFDrawingControl.ModelProvider.ObjectInstance = ifcStore;
-                            _deleteEntity = new HashSet<IPersistEntity>();
-                            _hideEntity = new HashSet<IPersistEntity>();
+                        }
+                        else
+                        {
+                            mainWindow.WPFDrawingControl.ModelProvider.ObjectInstance = null;
+                        }
+                        _deleteEntity = new HashSet<IPersistEntity>();
+                        _hideEntity = new HashSet<IPersistEntity>();
                     });
-                    }
-                    else
-                    {
-                        tempModel.Dispose();
-                        throw new FileLoadException("Отсутствует геометрия");
-                    }
                 }
                 else
                 {

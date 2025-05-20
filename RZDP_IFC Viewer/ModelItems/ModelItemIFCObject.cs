@@ -591,7 +591,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
         {
             List<ModelItemIFCObject> list = new List<ModelItemIFCObject>{modelItem};
 
-            foreach (ModelItemIFCObject nestModelItem in modelItem.ModelItems)
+            foreach (ModelItemIFCObject nestModelItem in modelItem.ModelItems.ToArray())
             {
                 list.AddRange(SelectionNestedItems(nestModelItem));
             }
