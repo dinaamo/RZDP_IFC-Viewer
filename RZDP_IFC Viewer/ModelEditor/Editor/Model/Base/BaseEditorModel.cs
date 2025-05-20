@@ -59,7 +59,7 @@ namespace IFC_Viewer.IFC.Base
         /// <summary>
         /// Удалить ассоциацию при удалении документа
         /// </summary>
-        public void RelAssociatesDocument(IIfcDocumentReference ifcDocumentReference)
+        public void DeleteAssociatesDocument(IIfcDocumentReference ifcDocumentReference)
         {
             IEnumerable<IIfcRelAssociatesDocument> ifcRelAssociatesDocumentSet = ModelIFC.IfcStore.Instances.
                                                                                    OfType<IIfcRelAssociatesDocument>().

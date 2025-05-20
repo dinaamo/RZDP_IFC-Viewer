@@ -347,11 +347,21 @@ namespace RZDP_IFC_Viewer.IFC.Model
 
                 if (modelReference is ModelItemDocumentReference modelItemDocumentReference)
                 {
-                    _editorModel.RelAssociatesDocument((IIfcDocumentReference)modelItemDocumentReference.GetReference());
+                    _editorModel.DeleteAssociatesDocument((IIfcDocumentReference)modelItemDocumentReference.GetReference());
                 }
 
                 #endregion
 
+                #region Если таблица то удаляем все строчки (при удалении таблицы остаются в файле)
+                if (modelReference is ModelItemIFCTable modelItemTable)
+                {
+                    foreach (IIfcTableRow? ifcTableRow in modelItemTable.IFCTable.Rows.ToArray())
+                    {
+                        IfcStore.Delete(ifcTableRow);
+                    }
+                }
+                #endregion
+                
                 #region Удаляем объект из дерева
                 BaseModelReferenceIFC modelItemToDelete = ModelItems[0].ModelItems.OfType<BaseModelReferenceIFC>().FirstOrDefault(it =>
                 {
@@ -365,7 +375,8 @@ namespace RZDP_IFC_Viewer.IFC.Model
                 ModelItems[0].ModelItems.Remove(modelItemToDelete);
                 #endregion
 
-                # region Удаляем элемент ObjectReferenceSelect
+                # region Удаляем элемент из базы данных
+
                 IfcStore.Delete(modelReference.GetReference());
                 #endregion
 
