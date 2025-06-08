@@ -46,18 +46,42 @@ namespace RZDP_IFC_Viewer.View.Controls
 
         private void MenuItemDelete_Click(object sender, RoutedEventArgs e)
         {
-            //Получаем контекст ячейки datagrid
+
+            //Получаем контекст ячейки datagrid на которой вызвано меню
             MenuItem menuItem = sender as MenuItem;
-            //Если набор
-            if (menuItem?.DataContext is BasePropertySetDefinition propertySetDefinitionModel) 
+
+            //Если набор свойств
+            if (menuItem?.DataContext is BasePropertySetDefinition propertySetDefinitionModel)
             {
-                DeleteProperySet(propertySetDefinitionModel);
+                List<BasePropertySetDefinition> deleteElements = new List<BasePropertySetDefinition>();
+
+                foreach (BasePropertySetDefinition item in dgPropertySet.SelectedItems)
+                {
+                    deleteElements.Add(item);
+                }
+
+                foreach (BasePropertySetDefinition deletePropertySet in deleteElements)
+                {
+                    DeleteProperySet(deletePropertySet);
+                }
             }
             //Если свойство
-            else if (menuItem.DataContext is IPropertyModel<IIfcResourceObjectSelect> propertyModel) 
+            else if (menuItem.DataContext is IPropertyModel<IIfcResourceObjectSelect> propertyModel)
             {
-                DeleteProperty(propertyModel);
+                List<IPropertyModel<IIfcResourceObjectSelect>> deleteElements = new List<IPropertyModel<IIfcResourceObjectSelect>>();
+
+                foreach (IPropertyModel<IIfcResourceObjectSelect> item in dgProperty.SelectedItems)
+                {
+                    deleteElements.Add(item);
+                }
+
+                foreach (IPropertyModel<IIfcResourceObjectSelect> deleteProperty in deleteElements)
+                {
+                    DeleteProperty(deleteProperty);
+                }
             }
+
+
         }
 
         void DeleteProperySet(BasePropertySetDefinition propertySetDefinitionModel)
@@ -101,11 +125,23 @@ namespace RZDP_IFC_Viewer.View.Controls
         {
             //Получаем контекст ячейки datagrid
             MenuItem menuItem = sender as MenuItem;
+
             //Если набор
             if (menuItem?.DataContext is BasePropertySetDefinition propertySetDefinitionModel)
             {
+                List<BasePropertySetDefinition> duplicateElements = new List<BasePropertySetDefinition>();
+
+                foreach (BasePropertySetDefinition item in dgPropertySet.SelectedItems)
+                {
+                    duplicateElements.Add(item);
+                }
+
                 //Создаем дубликат
-                 (DataContext as ModelItemIFCObject)?.AddDublicatePropertySet(propertySetDefinitionModel);
+                foreach (BasePropertySetDefinition duplicatePropertySet in duplicateElements)
+                {
+                    (DataContext as ModelItemIFCObject)?.AddDublicatePropertySet(duplicatePropertySet);
+                }
+
             }
         }
 
@@ -117,8 +153,19 @@ namespace RZDP_IFC_Viewer.View.Controls
             //Если набор
             if (menuItem?.DataContext is BasePropertySetDefinition propertySetDefinitionModel)
             {
-                //Открепляем
-                 (DataContext as ModelItemIFCObject)?.UnpinPropertySet(propertySetDefinitionModel);
+                List<BasePropertySetDefinition> unpinElements = new List<BasePropertySetDefinition>();
+
+                foreach (BasePropertySetDefinition item in dgPropertySet.SelectedItems)
+                {
+                    unpinElements.Add(item);
+                }
+
+                //Создаем дубликат
+                foreach (BasePropertySetDefinition unpinPropertySet in unpinElements)
+                {
+                    //Открепляем
+                    (DataContext as ModelItemIFCObject)?.UnpinPropertySet(unpinPropertySet);
+                }
             }
         }
 

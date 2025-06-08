@@ -161,7 +161,7 @@
                     CanUserDeleteRows="False"
                     IsSynchronizedWithCurrentItem="True"
                     ItemsSource="{Binding Path=CollectionPropertySet, UpdateSourceTrigger=LostFocus}"
-                    SelectionMode="Single">
+                    SelectionMode="Extended">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn
                             Width="*"
@@ -262,8 +262,7 @@
                     Width="auto"
                     AutoGenerateColumns="False"
                     ItemsSource="{Binding ElementName=dgPropertySet, Path=SelectedItem.PropertyCollection, UpdateSourceTrigger=LostFocus}"
-                    SelectionMode="Single"
-                    SelectionUnit="Cell">
+                    SelectionMode="Extended">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn
                             Width="*"
