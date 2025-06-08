@@ -7,11 +7,11 @@ using Xbim.Ifc4.Interfaces;
 
 namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
 {
+
     public abstract class BaseEditorProperty<T> : BaseItemModel, IPropertyModel<T>
     {
         protected BaseEditorProperty(T value, ModelIFC modelIFC, BasePropertySetDefinition propertySetDefinition) : base(modelIFC)
         {
-
             this.PropertySetDefinition = propertySetDefinition;
             this.Property = value;
         }
@@ -25,6 +25,7 @@ namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
                 PropertyChanged(this, new PropertyChangedEventArgs(PropertyName));
             }
         }
+
 
         public string NameProperty
         {
@@ -91,6 +92,7 @@ namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
 
         public abstract object Value { get; }
 
+        
         public string ValueString
         {
             get
@@ -222,6 +224,7 @@ namespace RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base
 
         protected abstract IIfcPhysicalSimpleQuantity SetNewPhysicalSimpleQuantityValue(string newValueString, IIfcPhysicalSimpleQuantity ifcPhisSimpQuantity);
     }
+
 
     public interface IPropertyModel<out T> : INotifyPropertyChanged 
     {

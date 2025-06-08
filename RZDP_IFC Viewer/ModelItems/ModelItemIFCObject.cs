@@ -14,12 +14,16 @@ using RZDP_IFC_Viewer.View.Windows;
 using Xbim.Ifc4.Interfaces;
 using static Microsoft.Isam.Esent.Interop.EnumeratedColumn;
 using Xbim.Common;
+using RZDP_IFC_Viewer.Exporter;
 
 namespace RZDP_IFC_Viewer.IFC.ModelItem
 {
     public class ModelItemIFCObject : BaseModelItemIFC
     {
         public BaseModelItemIFC TopElement {  get; set; }
+        public BaseEditorItem ModelObjectEditor { get; private set; }
+        private ParametersProvider _parametersProvider;
+
         /// <summary>
         /// Конструктор
         /// </summary>
@@ -357,7 +361,6 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 
         #endregion Изолировать элемент
 
- 
 
         #endregion Комманды
 
@@ -421,8 +424,11 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
         /// </summary>
         private void InitializationModelObject()
         {
+            //Инициализация редактора объекта
             ModelObjectEditor = BaseEditorItem.CreateEditor(this, ModelIFC, IFCObjectDefinition);
 
+            //Инициализация экспортера и импортера параметров
+            _parametersProvider = new ParametersProvider(this);
 
             PropertyElement = ModelObjectEditor.GetPropertyObject();
 
@@ -480,7 +486,6 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
             PropertyReferenceChanged?.Invoke(this, new PropertyReferenceChangedEventArg(IsContainPropertyReferenceDownTree));
         }
 
-        public BaseEditorItem ModelObjectEditor { get; private set; }
 
         /// <summary>
         /// Удаление ссылок
@@ -615,6 +620,44 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
         {
             return IFCObjectDefinition.GetHashCode();
         }
+
+
+        #region Экспорт параметров в XML
+
+        public void ExportParametersToXML()
+        {
+            try
+            {
+                _parametersProvider.ExportParametersToXML();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+        }
+
+        #endregion Экспорт параметров в XML
+
+        #region Импорт параметров в XML
+
+        public void ImportParametersFromXML()
+        {
+            try
+            {
+                _parametersProvider.ImportParametersFromXML();
+                //ModelObjectEditor.
+            }
+            catch(ExitOperationException)
+            {}
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+        }
+
+        #endregion Импорт параметров в XML
 
         #endregion Методы
 

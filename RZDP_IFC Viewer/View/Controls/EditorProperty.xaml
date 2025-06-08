@@ -1,69 +1,65 @@
 ﻿<UserControl
     x:Class="RZDP_IFC_Viewer.View.Controls.EditorProperty"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:fa="http://schemas.fontawesome.io/icons/"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:fa="http://schemas.fontawesome.io/icons/"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wind="clr-namespace:RZDP_IFC_Viewer"
     Height="auto"
     MinWidth="200"
-    
+    DataContextChanged="UserControl_DataContextChanged"
     Loaded="UserControl_Loaded"
-    mc:Ignorable="d" DataContextChanged="UserControl_DataContextChanged">
+    mc:Ignorable="d">
     <UserControl.Resources>
         <Style TargetType="Button">
             <Setter Property="Margin" Value="0,0,5,0" />
             <Setter Property="Padding" Value="1" />
         </Style>
-        
+
         <Style TargetType="{x:Type TextBox}">
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FontSize" Value="12" />
         </Style>
 
         <ContextMenu x:Key="TextBoxMenuPropertySet">
-            <MenuItem Header="Дублировать"
-                            Click="MenuItemDublicate_Click">
+            <MenuItem Click="MenuItemDublicate_Click" Header="Дублировать">
                 <MenuItem.Icon>
                     <fa:ImageAwesome
-                                    Height="12"
-                                    Margin="0,0,3,0"
-                                    Foreground="DarkGreen"
-                                    Icon="Copy" />
+                        Height="12"
+                        Margin="0,0,3,0"
+                        Foreground="DarkGreen"
+                        Icon="Copy" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Header="Открепить"
-                            Click="MenuItemUnpin_Click">
+            <MenuItem Click="MenuItemUnpin_Click" Header="Открепить">
                 <MenuItem.Icon>
                     <fa:ImageAwesome
-                                    Height="12"
-                                    Margin="0,0,3,0"
-                                    Foreground="DarkBlue"
-                                    Icon="Scissors" />
+                        Height="12"
+                        Margin="0,0,3,0"
+                        Foreground="DarkBlue"
+                        Icon="Scissors" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Header="Удалить"
-                            Click="MenuItemDelete_Click">
-                        <MenuItem.Icon>
-                        <fa:ImageAwesome
-                                    Height="12"
-                                    Margin="0,0,3,0"
-                                    Foreground="DarkRed"
-                                    Icon="Remove" />    
+            <MenuItem Click="MenuItemDelete_Click" Header="Удалить">
+                <MenuItem.Icon>
+                    <fa:ImageAwesome
+                        Height="12"
+                        Margin="0,0,3,0"
+                        Foreground="DarkRed"
+                        Icon="Remove" />
                 </MenuItem.Icon>
             </MenuItem>
         </ContextMenu>
 
         <ContextMenu x:Key="TextBoxMenuProperty">
-            <MenuItem Header="Удалить"
-                            Click="MenuItemDelete_Click">
+            <MenuItem Click="MenuItemDelete_Click" Header="Удалить">
                 <MenuItem.Icon>
                     <fa:ImageAwesome
-                                    Height="12"
-                                    Margin="0,0,3,0"
-                                    Foreground="DarkRed"
-                                    Icon="Remove" />
+                        Height="12"
+                        Margin="0,0,3,0"
+                        Foreground="DarkRed"
+                        Icon="Remove" />
                 </MenuItem.Icon>
             </MenuItem>
         </ContextMenu>
@@ -72,7 +68,7 @@
     </UserControl.Resources>
     <Grid Margin="5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.8*" MinWidth="220"/>
+            <ColumnDefinition Width="0.8*" MinWidth="220" />
             <ColumnDefinition Width="2" />
             <ColumnDefinition Width="*" MinWidth="300" />
         </Grid.ColumnDefinitions>
@@ -91,13 +87,13 @@
                 <TextBlock Text="Наименование элемента: " />
                 <TextBox
                     x:Name="tbName"
+                    MinWidth="300"
+                    BorderThickness="1"
+                    Focusable="False"
                     IsEnabled="{Binding Path=(wind:MainWindow.IsEnabled)}"
                     IsReadOnly="{Binding Path=(wind:MainWindow.IsReadOnly)}"
-                    Focusable="False"
                     LostFocus="tbName_LostFocus"
                     MouseDoubleClick="TextBox_MouseDoubleClick"
-                    BorderThickness="1"
-                    MinWidth="300"
                     Text="{Binding Path=IFCObjectName, Mode=TwoWay}" />
             </StackPanel>
 
@@ -109,6 +105,24 @@
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Класс IFC: " />
                 <TextBlock Text="{Binding Path=IFCClass}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button
+                    Name="ExportParametersToXML"
+                    Width="auto"
+                    Padding="5,0,5,0"
+                    HorizontalAlignment="Left"
+                    Click="Button_ExportParametersToXML_Click"
+                    Content="Экспорт"
+                    ToolTip="Экспорт параметров в XML файл" />
+                <Button
+                    Name="ImportParametersToXML"
+                    Width="auto"
+                    Padding="5,0,5,0"
+                    HorizontalAlignment="Left"
+                    Click="Button_ImportParametersToXML_Click"
+                    Content="Импорт"
+                    ToolTip="Импорт параметров из XML файла" />
             </StackPanel>
         </StackPanel>
 
@@ -123,10 +137,14 @@
                     <RowDefinition Height="auto" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <StackPanel Margin="3" Orientation="Horizontal" Grid.Row="0">
-                    <Button ToolTip="Добавить новый набор"
-                            IsEnabled="{Binding Path=(wind:MainWindow.IsEnabled)}"
-                            Command="{Binding AddPropertySetCommand}">
+                <StackPanel
+                    Grid.Row="0"
+                    Margin="3"
+                    Orientation="Horizontal">
+                    <Button
+                        Command="{Binding AddPropertySetCommand}"
+                        IsEnabled="{Binding Path=(wind:MainWindow.IsEnabled)}"
+                        ToolTip="Добавить новый набор">
                         <fa:ImageAwesome
                             Width="25"
                             Height="25"
@@ -139,65 +157,63 @@
                     x:Name="dgPropertySet"
                     Grid.Row="1"
                     Width="auto"
-                    CanUserDeleteRows="False"
-
-                    SelectionMode="Single" 
                     AutoGenerateColumns="False"
+                    CanUserDeleteRows="False"
                     IsSynchronizedWithCurrentItem="True"
-                    ItemsSource="{Binding Path=CollectionPropertySet, UpdateSourceTrigger=LostFocus}">
+                    ItemsSource="{Binding Path=CollectionPropertySet, UpdateSourceTrigger=LostFocus}"
+                    SelectionMode="Single">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn
                             Width="*"
                             MinWidth="100"
-                            SortMemberPath="{Binding Path=NamePropertySet}"
                             CanUserSort="False"
                             Header="Наименование"
+                            SortMemberPath="{Binding Path=NamePropertySet}"
                             Visibility="Visible">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBox
-                                        Text="{Binding Path=NamePropertySet, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        ContextMenu="{StaticResource TextBoxMenuPropertySet}"
                                         Focusable="False"
-                                        IsReadOnly="{Binding Path=(wind:MainWindow.IsReadOnly)}"
                                         Foreground="Black"
+                                        IsReadOnly="{Binding Path=(wind:MainWindow.IsReadOnly)}"
+                                        LostFocus="tbName_LostFocus"
                                         MouseDoubleClick="TextBox_MouseDoubleClick"
-                                        LostFocus="tbName_LostFocus" 
-                                        ContextMenu="{StaticResource TextBoxMenuPropertySet}">
-                                    </TextBox>
+                                        Text="{Binding Path=NamePropertySet, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTemplateColumn
                             Width="70"
                             MinWidth="70"
-                            SortMemberPath="{Binding Path=CountRelatedObjectsInstanse}"
                             CanUserSort="False"
                             Header="Экземпляр"
+                            SortMemberPath="{Binding Path=CountRelatedObjectsInstance}"
                             Visibility="Visible">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBox
-                                         Text="{Binding Path=CountRelatedObjectsInstanse, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                         Focusable="False"
-                                         IsReadOnly="True"    
-                                         ContextMenu="{StaticResource TextBoxMenuPropertySet}"/>
+                                        ContextMenu="{StaticResource TextBoxMenuPropertySet}"
+                                        Focusable="False"
+                                        IsReadOnly="True"
+                                        Text="{Binding Path=CountRelatedObjectsInstance, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTemplateColumn
-                           Width="35"
-                           MinWidth="35"
-                           SortMemberPath="{Binding Path=CountRelatedObjectsType}"
-                           CanUserSort="False"
-                           Header="Тип"
-                           Visibility="Visible">
+                            Width="35"
+                            MinWidth="35"
+                            CanUserSort="False"
+                            Header="Тип"
+                            SortMemberPath="{Binding Path=CountRelatedObjectsType}"
+                            Visibility="Visible">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBox
-                                        Text="{Binding Path=CountRelatedObjectsType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        ContextMenu="{StaticResource TextBoxMenuPropertySet}"
                                         Focusable="False"
-                                        IsReadOnly="True"    
-                                        ContextMenu="{StaticResource TextBoxMenuPropertySet}"/>
+                                        IsReadOnly="True"
+                                        Text="{Binding Path=CountRelatedObjectsType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -227,10 +243,11 @@
                     Grid.Row="0"
                     Margin="3"
                     Orientation="Horizontal">
-                    <Button ToolTip="Добавить новое свойство"
-                            Command="{Binding AddPropertyCommand}" 
-                            IsEnabled="{Binding Path=(wind:MainWindow.IsEnabled)}"
-                            CommandParameter="{Binding ElementName=dgPropertySet, Path=SelectedItem}">
+                    <Button
+                        Command="{Binding AddPropertyCommand}"
+                        CommandParameter="{Binding ElementName=dgPropertySet, Path=SelectedItem}"
+                        IsEnabled="{Binding Path=(wind:MainWindow.IsEnabled)}"
+                        ToolTip="Добавить новое свойство">
                         <fa:ImageAwesome
                             Width="25"
                             Height="25"
@@ -243,49 +260,48 @@
                     x:Name="dgProperty"
                     Grid.Row="1"
                     Width="auto"
-
-                    SelectionMode="Single" 
-                    SelectionUnit="Cell"
                     AutoGenerateColumns="False"
-                    ItemsSource="{Binding ElementName=dgPropertySet, Path=SelectedItem.PropertyCollection, UpdateSourceTrigger=LostFocus}">
+                    ItemsSource="{Binding ElementName=dgPropertySet, Path=SelectedItem.PropertyCollection, UpdateSourceTrigger=LostFocus}"
+                    SelectionMode="Single"
+                    SelectionUnit="Cell">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn
                             Width="*"
                             MinWidth="100"
-                            IsReadOnly="False"
                             CanUserSort="False"
-                            SortMemberPath="{Binding Path=NameProperty}"
-                            Header="Наименование">
+                            Header="Наименование"
+                            IsReadOnly="False"
+                            SortMemberPath="{Binding Path=NameProperty}">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBox
-                                            Text="{Binding Path=NameProperty, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
-                                            Focusable="False"
-                                            IsReadOnly="{Binding Path=(wind:MainWindow.IsReadOnly)}"
-                                            Foreground="Black"
-                                            MouseDoubleClick="TextBox_MouseDoubleClick"
-                                            LostFocus="tbName_LostFocus" 
-                                            ContextMenu="{StaticResource TextBoxMenuProperty}"/>
+                                        ContextMenu="{StaticResource TextBoxMenuProperty}"
+                                        Focusable="False"
+                                        Foreground="Black"
+                                        IsReadOnly="{Binding Path=(wind:MainWindow.IsReadOnly)}"
+                                        LostFocus="tbName_LostFocus"
+                                        MouseDoubleClick="TextBox_MouseDoubleClick"
+                                        Text="{Binding Path=NameProperty, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTemplateColumn
                             Width="*"
                             MinWidth="100"
-                            IsReadOnly="False"
                             CanUserSort="False"
-                            SortMemberPath="{Binding Path=ValueString}"
-                            Header="Значение">
+                            Header="Значение"
+                            IsReadOnly="False"
+                            SortMemberPath="{Binding Path=ValueString}">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBox
-                                            Text="{Binding Path=ValueString, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
-                                            Focusable="False"
-                                            IsReadOnly="{Binding Path=(wind:MainWindow.IsReadOnly)}"
-                                            Foreground="Black"
-                                            MouseDoubleClick="TextBox_MouseDoubleClick"
-                                            LostFocus="tbName_LostFocus" 
-                                            ContextMenu="{StaticResource TextBoxMenuProperty}"/>
+                                        ContextMenu="{StaticResource TextBoxMenuProperty}"
+                                        Focusable="False"
+                                        Foreground="Black"
+                                        IsReadOnly="{Binding Path=(wind:MainWindow.IsReadOnly)}"
+                                        LostFocus="tbName_LostFocus"
+                                        MouseDoubleClick="TextBox_MouseDoubleClick"
+                                        Text="{Binding Path=ValueString, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -294,17 +310,17 @@
                             Width="*"
                             MinWidth="100"
                             MaxWidth="150"
-                            IsReadOnly="True"
                             CanUserSort="False"
-                            SortMemberPath="{Binding Path=DataType}"
-                            Header="Тип данных">
+                            Header="Тип данных"
+                            IsReadOnly="True"
+                            SortMemberPath="{Binding Path=DataType}">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBox
-                                            Text="{Binding Path=DataType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                            Focusable="False"
-                                            IsReadOnly="True"    
-                                            ContextMenu="{StaticResource TextBoxMenuProperty}"/>
+                                        ContextMenu="{StaticResource TextBoxMenuProperty}"
+                                        Focusable="False"
+                                        IsReadOnly="True"
+                                        Text="{Binding Path=DataType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

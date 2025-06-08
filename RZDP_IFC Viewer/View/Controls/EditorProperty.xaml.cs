@@ -29,25 +29,6 @@ namespace RZDP_IFC_Viewer.View.Controls
 
         }
 
-        //private void Window_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    if (e.Key == Key.Delete)
-        //    {
-        //        if (sender is DataGrid dataGrid)
-        //        {
-        //            if (dataGrid.CurrentCell.Item is BasePropertySetDefinition propertySetDefinitionModel)
-        //            {
-        //                DeleteProperySet(propertySetDefinitionModel);
-        //            }
-        //            else if (dataGrid.CurrentCell.Item is IPropertyModel<IIfcResourceObjectSelect> propertyModel)
-        //            {
-        //                DeleteProperty(propertyModel);
-        //            }
-        //        }
-        //    }
-        //}
-
-
         private void TextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             TextBox tb = sender as TextBox;
@@ -91,7 +72,7 @@ namespace RZDP_IFC_Viewer.View.Controls
                     { return; }
                 }
             }
-            if (propertySetDefinitionModel.CountRelatedObjectsInstanse > 1 || propertySetDefinitionModel.CountRelatedObjectsType > 1)
+            if (propertySetDefinitionModel.CountRelatedObjectsInstance > 1 || propertySetDefinitionModel.CountRelatedObjectsType > 1)
             {
                 MessageBoxResult result = MessageBox.Show("На данный набор характеристик ссылается более одного объекта?\n" +
                         "Продолжить?", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
@@ -153,5 +134,17 @@ namespace RZDP_IFC_Viewer.View.Controls
                 }
             });
         }
+
+        private void Button_ExportParametersToXML_Click(object sender, RoutedEventArgs e)
+        {
+            (DataContext as ModelItemIFCObject)?.ExportParametersToXML();
+        }
+
+        private void Button_ImportParametersToXML_Click(object sender, RoutedEventArgs e)
+        {
+            (DataContext as ModelItemIFCObject)?.ImportParametersFromXML();
+        }
+
+
     }
 }

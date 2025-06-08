@@ -49,7 +49,7 @@ namespace Editor_IFC
             OnPropertyChanged("PropertyCollection");
         }
 
-        public int CountRelatedObjectsInstanse => IFCPropertySetDefinition?.DefinesOccurrence.SelectMany(it => it.RelatedObjects).Count() ?? 0;
+        public int CountRelatedObjectsInstance => IFCPropertySetDefinition?.DefinesOccurrence.SelectMany(it => it.RelatedObjects).Count() ?? 0;
 
         public int CountRelatedObjectsType => IFCPropertySetDefinition?.DefinesType.Count() ?? 0;
 

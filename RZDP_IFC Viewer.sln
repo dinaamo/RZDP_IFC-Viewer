@@ -34,6 +34,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xbim.WinformsSample", "..\.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RZDP_IFC Viewer", "RZDP_IFC Viewer\RZDP_IFC Viewer.csproj", "{0BDBBCC7-23EA-4345-8C6B-58B655CE25A3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelxToolkitTestProject", "HelxToolkitTestProject\HelxToolkitTestProject.csproj", "{A91A439D-0BBC-4025-BAC8-6B50CEAE15A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -92,6 +94,10 @@ Global
 		{0BDBBCC7-23EA-4345-8C6B-58B655CE25A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0BDBBCC7-23EA-4345-8C6B-58B655CE25A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0BDBBCC7-23EA-4345-8C6B-58B655CE25A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A91A439D-0BBC-4025-BAC8-6B50CEAE15A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A91A439D-0BBC-4025-BAC8-6B50CEAE15A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A91A439D-0BBC-4025-BAC8-6B50CEAE15A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A91A439D-0BBC-4025-BAC8-6B50CEAE15A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

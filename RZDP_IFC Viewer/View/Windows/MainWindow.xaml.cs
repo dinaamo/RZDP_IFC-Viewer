@@ -8,6 +8,7 @@ using RZDP_IFC_Viewer.View.Windows;
 using RZDP_IFC_Viewer.ViewModels;
 using RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base;
 using Xbim.Ifc4.Interfaces;
+using Xbim.WinformsSample;
 
 namespace RZDP_IFC_Viewer
 {
@@ -23,8 +24,6 @@ namespace RZDP_IFC_Viewer
         public static bool IsReadOnly { get; private set; } = false;
         public static bool IsEnabled { get; private set; } = true;
         public static Visibility IsVisibility { get; private set; } = Visibility.Visible;
-
-
 
         public MainWindow()
         {

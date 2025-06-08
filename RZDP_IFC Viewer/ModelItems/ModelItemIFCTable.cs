@@ -68,7 +68,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
             for (int i = 0; i < ifcTable.Rows[0].RowCells.Count(); i++)
             {
                 string nameColumn = ifcTable.Rows[0].RowCells[i].Value.ToString();
-                HelreptReplaceSymbols.ReplacingSymbols(ref nameColumn);
+                HelperReplaceSymbols.ReplacingSymbols(ref nameColumn);
 
                 dataTable.Columns.Add(nameColumn);
             }

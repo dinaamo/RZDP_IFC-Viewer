@@ -1,6 +1,6 @@
 ﻿namespace RZDP_IFC_Viewer.HelperIFC
 {
-    internal static class HelreptReplaceSymbols
+    internal static class HelperReplaceSymbols
     {
         public static void ReplacingSymbols(ref string nameAssembl)
         {
@@ -13,7 +13,7 @@
                     nameAssembl = nameAssembl.Replace(characters[i], '_');
                 }
             }
-
+            nameAssembl = nameAssembl.Replace("\"","");
             nameAssembl = nameAssembl.Replace("__", "_");
 
             if (nameAssembl[nameAssembl.Length - 1] == '_')
