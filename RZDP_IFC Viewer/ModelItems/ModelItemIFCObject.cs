@@ -15,6 +15,7 @@ using Xbim.Ifc4.Interfaces;
 using static Microsoft.Isam.Esent.Interop.EnumeratedColumn;
 using Xbim.Common;
 using RZDP_IFC_Viewer.Exporter;
+using System.CodeDom;
 
 namespace RZDP_IFC_Viewer.IFC.ModelItem
 {
@@ -23,6 +24,7 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
         public BaseModelItemIFC TopElement {  get; set; }
         public BaseEditorItem ModelObjectEditor { get; private set; }
         private ParametersProvider _parametersProvider;
+        public event EventHandler<PropertyReferenceChangedEventArg> PropertyReferenceChanged;
 
         /// <summary>
         /// Конструктор
@@ -140,17 +142,18 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
 
         private void OnAddPropertySetCommandExecuted(object o)
         {
-            Model.ActionInTransaction(new List<Action> { AddPropertySet });
+            Model.ActionInTransaction(new List<Action> { AddEmptyPropertySet });
             OnPropertyChanged("CollectionPropertySet");
         }
 
 
         private bool CanAddPropertySetCommandExecute(object o)
         {
-            return this is not null;
+            //return this is not null;
+            return true;
         }
 
-        void AddPropertySet()
+        void AddEmptyPropertySet()
         {
             ModelObjectEditor.CreateNewPropertySet();
         }
@@ -449,7 +452,6 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
         //    await Task.Run(InitializationModelObject);
         //}
 
-        public event EventHandler<PropertyReferenceChangedEventArg> PropertyReferenceChanged;
 
         /// <summary>
         /// Прокидываем по дереву вверх наличие ссылок
@@ -645,8 +647,21 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
         {
             try
             {
-                _parametersProvider.ImportParametersFromXML();
-                //ModelObjectEditor.
+                if(!_parametersProvider.ImportParametersFromXML())
+                {
+                    MessageBox.Show("Ошибка чтения файла!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return; 
+                }
+
+                //Удаляем все наборы в объекте
+                //foreach (var propertySetDefinition in CollectionPropertySet)
+                //{
+                //    Model.DeleteIFCEntity(ModelObjectEditor.DeletePropertySet(propertySetDefinition.IFCPropertySetDefinition));
+                //}
+
+                //Добавляем импортированные параметры
+                ModelIFC.ActionInTransaction(new List<Action>() { AddImportingPropertySet });
+                OnPropertyChanged("CollectionPropertySet");
             }
             catch(ExitOperationException)
             {}
@@ -654,8 +669,29 @@ namespace RZDP_IFC_Viewer.IFC.ModelItem
             {
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+
+        void AddImportingPropertySet()
+        {
+            foreach (PropertySetProvider propertySetProvider in _parametersProvider.PropertySetsProvider)
+            {
+                //Готовим коллекцию параметров
+                List<(string, object)> properties = new();
+
+                foreach (PropertyProvider propertyProvider in propertySetProvider.PropertyProvider)
+                {
+                    //Добавляем параметр в общую коллекцию параметров
+                    properties.Add((propertyProvider.NamePropertyProvider, ModelObjectEditor.GetNewPropertyFromImportParameters(propertyProvider.ValueString, propertyProvider.DataType)));
+                }
+
+                ModelObjectEditor.CreateNewPropertySet(propertySetProvider.NamePropertySetProvider, properties);
+            }
+
+
 
         }
+
 
         #endregion Импорт параметров в XML
 

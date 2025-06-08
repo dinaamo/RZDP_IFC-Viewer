@@ -98,7 +98,7 @@ namespace RZDP_IFC_Viewer.ViewModels
                     }
                 }
                 ++countAddPropertySet;
-                //Запускаем добавляем набор
+                //Добавляем набор
                 modelObject.ModelObjectEditor.CreateNewPropertySet(NameNewPropertySet, properties);
                 modelObject.OnPropertyChanged("CollectionPropertySet");
 

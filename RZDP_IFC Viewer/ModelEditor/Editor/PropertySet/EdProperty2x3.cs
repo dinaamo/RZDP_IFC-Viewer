@@ -54,10 +54,6 @@ namespace Editor_IFC
                 {
                     ifcSingleValue.NominalValue = new IfcReal(newValueString);
                 }
-                if (simpleValue is IfcReal)
-                {
-                    ifcSingleValue.NominalValue = new IfcReal(newValueString);
-                }
                 else if (simpleValue is IfcInteger)
                 {
                     ifcSingleValue.NominalValue = new IfcInteger(newValueString);

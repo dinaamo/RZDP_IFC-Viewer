@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Serialization;
 using Editor_IFC;
+using Microsoft.Office.Interop.Excel;
 using Microsoft.Win32;
 using RZDP_IFC_Viewer.HelperIFC;
 using RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base;
@@ -21,11 +22,11 @@ namespace RZDP_IFC_Viewer.Exporter
     {
         string _ifcFilePath;
         ModelItemIFCObject _modelItemObject;
-        ParametersObjectToExportOrImport _parametersObject;
+        public IEnumerable<PropertySetProvider> PropertySetsProvider { get; private set; }
 
-        string GetOutputFilePath()
+        string GetOutputFilePath(ParametersObjectProvider parametersObject)
         {
-            string fileName = "Parameters: " + _parametersObject.ElementName;
+            string fileName = "Parameters: " + parametersObject.ElementName;
             HelperReplaceSymbols.ReplacingSymbols(ref fileName);
             string outputFilePath = Path.Combine(Path.GetDirectoryName(_ifcFilePath), fileName);
             int index = 1;
@@ -40,35 +41,38 @@ namespace RZDP_IFC_Viewer.Exporter
         {
             _modelItemObject = modelItemObject;
             _ifcFilePath = modelItemObject.Model.FilePath;
-            _parametersObject = new ParametersObjectToExportOrImport(modelItemObject);
         }
 
         public void ExportParametersToXML()
         {
-            XmlSerializer xml = new XmlSerializer(typeof(ParametersObjectToExportOrImport));
-            string outputFilePath = GetOutputFilePath();
+            ParametersObjectProvider parametersObject = new ParametersObjectProvider(_modelItemObject);
+            
+            string outputFilePath = GetOutputFilePath(parametersObject);
+
+            XmlSerializer xml = new XmlSerializer(typeof(ParametersObjectProvider));
 
             using (FileStream fs = new FileStream(outputFilePath, FileMode.Create))
             {
-                xml.Serialize(fs, _parametersObject);
+                xml.Serialize(fs, parametersObject);
             }
 
             MessageBox.Show("Параметры экспортированы в файл:\n" + outputFilePath);
         }
 
-        public ParametersObjectToExportOrImport ImportParametersFromXML()
+        public bool ImportParametersFromXML()
         {
-            XmlSerializer xmlDesterilize = new XmlSerializer(typeof(ParametersObjectToExportOrImport));
+            XmlSerializer xmlDesterilize = new XmlSerializer(typeof(ParametersObjectProvider));
 
             using (FileStream fs = new FileStream(SelectOutputXMLFile(), FileMode.OpenOrCreate))
             {
-                if (xmlDesterilize.Deserialize(fs) is ParametersObjectToExportOrImport _parametersObject)
+                if (xmlDesterilize.Deserialize(fs) is ParametersObjectProvider parametersObject)
                 {
-                    return _parametersObject;
+                    PropertySetsProvider = parametersObject.PropertySets;
+                    return true;
                 }
                 else
                 {
-                    throw new NullReferenceException("Ошибка чтения файла!");
+                    return false;
                 }
             }
         }

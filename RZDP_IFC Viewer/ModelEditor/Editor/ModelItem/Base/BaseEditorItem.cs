@@ -26,19 +26,41 @@ namespace IFC_Viewer.IFC.Base
 
         #region Методы
 
+
         public abstract bool AddReferenceToTheObject(List<BaseModelReferenceIFC> modelReferenceSet);
 
         public abstract IIfcPropertySetDefinition CreateNewPropertySet(string namePropertySet = "Новый набор");
 
+        /// <summary>
+        /// Создать новый набор
+        /// </summary>
+        /// <param name="namePropertySet"></param>
+        /// <param name="collectionParameters"></param>
+        /// <returns></returns>
         public abstract IIfcPropertySetDefinition CreateNewPropertySet(string namePropertySet, List<(string, object)> collectionParameters);
 
+
+        public abstract object GetNewPropertyFromImportParameters(string value, string dataType);
+        /// <summary>
+        /// Удалить набор свойств
+        /// </summary>
+        /// <param name="ifcPropertySetDefinition"></param>
+        /// <returns></returns>
         public abstract IEnumerable<IPersistEntity> DeletePropertySet(IIfcPropertySetDefinition ifcPropertySetDefinition);
 
+        /// <summary>
+        /// Создать дубликат 
+        /// </summary>
+        /// <param name="propertySetDefinition"></param>
         public void AddDublicatePropertySet(BasePropertySetDefinition propertySetDefinition)
         {
             AddPropertySet(propertySetDefinition.GetCopyPropertySet());
         }
 
+        /// <summary>
+        /// Открепить набор свойств лт объекта
+        /// </summary>
+        /// <param name="PropertySetDefinition"></param>
         public void UnpinPropertySet(BasePropertySetDefinition PropertySetDefinition)
         {
             foreach (IIfcRelDefinesByProperties RelDef in PropertySetDefinition.IFCPropertySetDefinition.DefinesOccurrence)
@@ -102,7 +124,15 @@ namespace IFC_Viewer.IFC.Base
             
         }
 
+
+        /// <summary>
+        /// Добавить набор свойств
+        /// </summary>
+        /// <param name="iIfcPropertySet"></param>
+        /// <returns></returns>
         protected abstract IIfcPropertySetDefinition AddPropertySet(IIfcPropertySetDefinition iIfcPropertySet);
+
+
 
         #region Заполнение характеристик элемента
 

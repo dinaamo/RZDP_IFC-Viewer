@@ -193,6 +193,29 @@ namespace IFC_Viewer.IFC.ModelItem
     }
 
         #endregion Добавить набор характеристик
+
+        #region Создание нового параметра по данным из импортированного файла
+
+        public override object GetNewPropertyFromImportParameters(string value, string dataType)
+        {
+            if (dataType.Equals("Double"))
+            {
+                return new IfcReal(value);
+            }
+            else if (dataType.Equals("Integer"))
+            {
+                return new IfcInteger(value);
+            }
+            else if (dataType.Equals("Boolean"))
+            {
+                return new IfcBoolean(value);
+            }
+            else
+            {
+                return new IfcText(value);
+            }
+        }
+        #endregion Создание нового параметра по данным из импортированного файла
     }
 }
 

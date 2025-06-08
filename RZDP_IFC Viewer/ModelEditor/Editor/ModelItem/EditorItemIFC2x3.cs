@@ -148,52 +148,29 @@ namespace IFC_Viewer.IFC.Fabric
 
         #endregion Добавить набор характеристик
 
-        #region Заполнение характеристик элемента
+        #region Создание нового параметра по данным из импортированного файла
 
-        //public bool FillCollectionPropertySet(ObservableCollection<IIfcPropertySetDefinition> CollectionPropertySet)
-        //{
-        //    if (this.ifcObjectDefinition == null)
-        //    {
-        //        return false;
-        //    }
-
-        //    CollectionPropertySet.Clear();
-        //    if (ifcObjectDefinition is IIfcObject obj)
-        //    {
-        //        var collectionProperty = obj.IsDefinedBy.Select(it => it.RelatingPropertyDefinition)
-        //            .OfType<IfcPropertySetDefinition>();
-
-        //        foreach (IfcPropertySetDefinition propSetIsObj in collectionProperty)
-        //        {
-        //            CollectionPropertySet.Add(propSetIsObj);
-        //        }
-
-        //        IEnumerable<IfcPropertySetDefinition> collectionTypeProperty = obj.IsTypedBy.SelectMany(it => it.RelatingType.HasPropertySets).Cast<IfcPropertySetDefinition>();
-
-        //        if (collectionTypeProperty != null)
-        //        {
-        //            foreach (IfcPropertySetDefinition propSetIsType in collectionTypeProperty)
-        //            {
-        //                CollectionPropertySet.Add(propSetIsType);
-        //            }
-        //        }
-        //    }
-            //else if (ifcObjectDefinition is IIfcContext context)
-            //{
-            //    IEnumerable<IfcPropertySetDefinition> collectionProperty = context.IsDefinedBy.Select(it => it.RelatingPropertyDefinition).OfType<IfcPropertySetDefinition>();
-
-            //    foreach (IfcPropertySetDefinition propSetIsObj in collectionProperty)
-            //    {
-            //        CollectionPropertySet.Add(propSetIsObj);
-            //    }
-            //}
-
-        //    return true;
-        //}
+        public override object GetNewPropertyFromImportParameters(string value, string dataType)
+        {
+            if (dataType.Equals("Double"))
+            {
+                return new IfcReal(value);
+            }
+            else if (dataType.Equals("Int64"))
+            {
+                return new IfcInteger(value);
+            }
+            else if (dataType.Equals("Boolean"))
+            {
+                return new IfcBoolean(value);
+            }
+            else
+            {
+                return new IfcText(value);
+            }
+        }
+        #endregion Создание нового параметра по данным из импортированного файла
 
 
-
-
-        #endregion Заполнение характеристик элемента
     }
 }

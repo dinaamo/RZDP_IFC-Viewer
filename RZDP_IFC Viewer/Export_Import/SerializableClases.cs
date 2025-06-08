@@ -11,58 +11,58 @@ using Xbim.Ifc4.Interfaces;
 namespace RZDP_IFC_Viewer.Exporter
 {
     [Serializable]
-    public class ParametersObjectToExportOrImport
+    public class ParametersObjectProvider
     {
         public string ElementName { get; set; }
         public string GUUID { get; set; }
         public string IFCClass { get; set; }
-        public List<PropertySetToExportOrImport> PropertySets { get; set; }
+        public List<PropertySetProvider> PropertySets { get; set; }
 
-        public ParametersObjectToExportOrImport()
+        public ParametersObjectProvider()
         { }
 
-        public ParametersObjectToExportOrImport(ModelItemIFCObject modelItemObject)
+        public ParametersObjectProvider(ModelItemIFCObject modelItemObject)
         {
             ElementName = modelItemObject.IFCObjectName;
             GUUID = modelItemObject.IFCObjectGUID;
             IFCClass = modelItemObject.IFCClass;
-            PropertySets = modelItemObject.CollectionPropertySet.Select(it => new PropertySetToExportOrImport(it)).ToList();
+            PropertySets = modelItemObject.CollectionPropertySet.Select(it => new PropertySetProvider(it)).ToList();
         }
     }
 
 
     [Serializable]
-    public class PropertySetToExportOrImport
+    public class PropertySetProvider
     {
-        public string NamePropertySetToExport { get; set; }
-        public List<PropertyToExportOrImport> PropertyToExportCollection { get; set; }
+        public string NamePropertySetProvider { get; set; }
+        public List<PropertyProvider> PropertyProvider { get; set; }
 
-        public PropertySetToExportOrImport()
+        public PropertySetProvider()
         { }
 
-        public PropertySetToExportOrImport(BasePropertySetDefinition propertySet)
+        public PropertySetProvider(BasePropertySetDefinition propertySet)
         {
-            NamePropertySetToExport = propertySet.NamePropertySet;
-            PropertyToExportCollection = propertySet.PropertyCollection.Select(it => new PropertyToExportOrImport(it)).ToList();
+            NamePropertySetProvider = propertySet.NamePropertySet;
+            PropertyProvider = propertySet.PropertyCollection.Select(it => new PropertyProvider(it)).ToList();
         }
 
     }
 
     [Serializable]
-    public class PropertyToExportOrImport
+    public class PropertyProvider
     {
         public string DataType { get; set; }
-        public string NameProperty { get; set; }
+        public string NamePropertyProvider { get; set; }
         public string ValueString { get; set; }
 
 
-        public PropertyToExportOrImport()
+        public PropertyProvider()
         { }
 
-        public PropertyToExportOrImport(IPropertyModel<IIfcResourceObjectSelect> propertyModel)
+        public PropertyProvider(IPropertyModel<IIfcResourceObjectSelect> propertyModel)
         {
             DataType = propertyModel.DataType;
-            NameProperty = propertyModel.NameProperty;
+            NamePropertyProvider = propertyModel.NameProperty;
             ValueString = propertyModel.ValueString;
         }
     }
