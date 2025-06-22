@@ -1,6 +1,6 @@
 ﻿using Microsoft.Win32;
 
-internal class HelperFileIFC
+internal class HelperFile
 {
     private static string path;
 
@@ -21,7 +21,23 @@ internal class HelperFileIFC
             return null;
         }
     }
+    public static string? OpenDWG_File()
+    {
+        OpenFileDialog openFileDialog = new OpenFileDialog();
 
+        openFileDialog.Filter = "DWG(DXF) Files|*.dwg;*.dxf";
+
+        bool? dialog = openFileDialog.ShowDialog();
+
+        if (dialog == true)
+        {
+            return openFileDialog.FileName;
+        }
+        else
+        {
+            return null;
+        }
+    }
     public static string[] SelectDocument()
 
     {

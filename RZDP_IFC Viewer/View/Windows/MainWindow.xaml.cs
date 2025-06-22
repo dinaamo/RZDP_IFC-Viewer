@@ -9,6 +9,8 @@ using RZDP_IFC_Viewer.ViewModels;
 using RZDP_IFC_Viewer.IFC.Model.ModelObjectPropertySet.Base;
 using Xbim.Ifc4.Interfaces;
 using Xbim.WinformsSample;
+using HelixToolkit.Wpf;
+using Xbim.Presentation;
 
 namespace RZDP_IFC_Viewer
 {
@@ -29,9 +31,16 @@ namespace RZDP_IFC_Viewer
         {
             InitializeComponent();
             treeViewIFC.SelectedItemChanged += treeViewIFC_SelectedItemChanged;
+
+
         }
 
-        //IProgress<(double percente, string message)> progress;
+        //private void AddDWG()
+        //{
+        //WPFDrawingControl.DrawingControl.Viewport.Children.Add();
+        //}
+
+            //IProgress<(double percente, string message)> progress;
         private void MainWindowIFC_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (!viewModel.CloseApplication())

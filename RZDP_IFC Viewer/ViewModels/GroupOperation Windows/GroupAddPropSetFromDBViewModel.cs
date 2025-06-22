@@ -61,7 +61,7 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         private bool ConnectDataBase()
         {
-            string? path = HelperFileIFC.OpenFileAccess();
+            string? path = HelperFile.OpenFileAccess();
 
             if (string.IsNullOrEmpty(path))
             {

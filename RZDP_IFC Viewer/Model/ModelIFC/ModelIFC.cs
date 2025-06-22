@@ -14,6 +14,7 @@ using Xbim.Common;
 using Xbim.Ifc;
 using Xbim.Ifc4.Interfaces;
 using Xbim.Ifc4.PropertyResource;
+using System.Windows.Media.Media3D;
 
 namespace RZDP_IFC_Viewer.IFC.Model
 {
@@ -135,6 +136,11 @@ namespace RZDP_IFC_Viewer.IFC.Model
         public Action RefreshSelect;
 
         /// <summary>
+        /// Очистить вьюерд от dwg подложек
+        /// </summary>
+        public Action<ModelVisual3D> СlearViewPort;
+
+        /// <summary>
         /// Создаем модель
         /// </summary>
         public static ModelIFC Create(IfcStore ifcStore, BackgroundWorker backgroundWorker, 
@@ -144,7 +150,8 @@ namespace RZDP_IFC_Viewer.IFC.Model
                                 Action<IEnumerable<IPersistEntity>> HideSelected, 
                                 Action<IEnumerable<IPersistEntity>> IsolateSelected,
                                 Action<IEnumerable<IPersistEntity>> ShowSelected,
-                                Action RefreshSelect)
+                                Action RefreshSelect,
+                                Action<ModelVisual3D> ClearViewPort)
         {
             return new ModelIFC(ifcStore).LoadDataBase(ifcStore, backgroundWorker, 
                                                                         ZoomObject,
@@ -153,7 +160,8 @@ namespace RZDP_IFC_Viewer.IFC.Model
                                                                         HideSelected,
                                                                         IsolateSelected,
                                                                         ShowSelected,
-                                                                        RefreshSelect);
+                                                                        RefreshSelect,
+                                                                        ClearViewPort);
         }
 
         private BaseEditorModel _editorModel;
@@ -168,7 +176,8 @@ namespace RZDP_IFC_Viewer.IFC.Model
                                 Action<IEnumerable<IPersistEntity>> HideSelected,
                                 Action<IEnumerable<IPersistEntity>> IsolateSelected,
                                 Action<IEnumerable<IPersistEntity>> ShowSelected,
-                                Action RefreshSelect)
+                                Action RefreshSelect,
+                                Action<ModelVisual3D> СlearViewPort)
         {
 
             this.backgroundWorker = backgroundWorker;
@@ -179,6 +188,7 @@ namespace RZDP_IFC_Viewer.IFC.Model
             this.IsolateSelected = IsolateSelected;
             this.ShowSelected = ShowSelected;
             this.RefreshSelect = RefreshSelect;
+            this.СlearViewPort = СlearViewPort;
 
             FilePath = ifcStore.FileName;
 

@@ -57,8 +57,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="ACadSharp" Version="3.0.0" />
     <PackageReference Include="CSharp.OleDb" Version="1.5.2" />
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
+    <PackageReference Include="HelixToolkit.Wpf" Version="2.27.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Tedd.HashSetExtensions" Version="1.0.2" />
     <PackageReference Include="Xbim.Geometry" Version="5.1.796" />

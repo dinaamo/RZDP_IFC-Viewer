@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
+using RZDP_IFC_Viewer.DWG;
 using IFC_Viewer.View.Windows;
 using RZDP_IFC_Viewer.IFC.Model;
 using RZDP_IFC_Viewer.IFC.ModelItem;
@@ -16,6 +17,7 @@ using Xbim.Ifc;
 using Xbim.IO;
 using Xbim.ModelGeometry.Scene;
 using Xbim.Presentation;
+using Xbim.Common.Geometry;
 
 namespace RZDP_IFC_Viewer.ViewModels
 {
@@ -27,7 +29,8 @@ namespace RZDP_IFC_Viewer.ViewModels
         HashSet<IPersistEntity> _hideEntity;
         private readonly MainWindow mainWindow;
         private DrawingControl3D _DrawingControl { get { return mainWindow.WPFDrawingControl.DrawingControl; } }
-
+        private Vector3D _vectorOffset;
+        //AddDWGFilesCommand
 
         #region Свойства
 
@@ -128,7 +131,7 @@ namespace RZDP_IFC_Viewer.ViewModels
 
 
         #endregion ProgressValue
-
+        
         #region StatusMsg
 
         private string _StatusMsg;
@@ -162,16 +165,44 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         #region Окно
 
+        //Блокировка окна
         private bool _IsEnableWindow = true;
-
-        ///<summary>Заголовок окна</summary>
         public bool IsEnableWindow
         {
             get => _IsEnableWindow;
             set => Set(ref _IsEnableWindow, value);
         }
 
+        //Ортографический вид
+        private bool _IsOrthographic = false;
+        public bool IsOrthographic
+        {
+            get => _DrawingControl.Viewport.Orthographic;
+            set
+            {
+                _DrawingControl.Viewport.Orthographic = value;
+                Set(ref _IsOrthographic, value);
+            }
+        }
+        
+
+        private bool _IsShowGridLines = true;
+        public bool IsShowGridLines
+        {
+            get 
+            { 
+                return _DrawingControl.ShowGridLines;
+            } 
+            set
+            {
+                _DrawingControl.ShowGridLines = value;
+                Set(ref _IsShowGridLines, value);
+            }
+        }
+
+
         #endregion Окно
+
 
         #endregion Свойства
 
@@ -224,22 +255,46 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         }
 
+        public void ClearViewPortFull(IEnumerable<ModelVisual3D> visual3Ds)
+        {
+            foreach (ModelVisual3D vs3d in visual3Ds)
+            {
+                var tt = _DrawingControl.Viewport.Children.FirstOrDefault(it => it.GetHashCode() == vs3d.GetHashCode());
+                bool result = _DrawingControl.Viewport.Children.Remove(vs3d);
+            }
+            _DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
+        }
+
+
+        public void ClearViewPort(ModelVisual3D visual3D)
+        {
+            ClearViewPortFull(new List<ModelVisual3D>() { visual3D });
+        }
+
         private void LoadModel(object sender, DoWorkEventArgs args)
         {
-            //Закрываем все дочерние окна
-            Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                foreach (Window window in Application.Current.Windows)
-                {
-                    if (window != mainWindow)
-                    {
-                        window.Close();
-                    }
-                }
 
-                RefreshMeasure();
-   
-            });
+                Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    //Закрываем все дочерние окна
+                    foreach (Window window in Application.Current.Windows)
+                    {
+                        if (window != mainWindow)
+                        {
+                            window.Close();
+                        }
+                    }
+
+                    //Сброс измерений
+                    RefreshMeasure();
+
+                    //Очищаем от подложек
+                    if (Model != null)
+                    {
+                        ClearViewPortFull(Model.ModelItems.OfType<ModelItemDWGFile>().Select(it => it.EntityVisual3D));
+                    }
+                });
+       
 
             try
             {
@@ -270,7 +325,8 @@ namespace RZDP_IFC_Viewer.ViewModels
                                                         HideSelected,
                                                         IsolateSelected, 
                                                         ShowSelected,
-                                                        RefreshSelect);
+                                                        RefreshSelect,
+                                                        ClearViewPort);
 
                 //Ждем создания геометрии из задачи 
                 task.Wait();
@@ -283,7 +339,13 @@ namespace RZDP_IFC_Viewer.ViewModels
                         if (!ifcStore.GeometryStore.IsEmpty)
                         {
                             mainWindow.WPFDrawingControl.ModelProvider.ObjectInstance = ifcStore;
+                            var tt = _DrawingControl.ModelPositions.ViewSpaceBounds;
+                            XbimPoint3D _vectorOffsetXbim = _DrawingControl.ModelPositions.GetPointInverse(new XbimPoint3D(0, 0, 0));
+                            _vectorOffset = new Vector3D(_vectorOffsetXbim.X, _vectorOffsetXbim.Y, _vectorOffsetXbim.Z);
+                            //MessageBox.Show(_DrawingControl.ModelPositions.Report());
+                        
                         }
+
                         else
                         {
                             mainWindow.WPFDrawingControl.ModelProvider.ObjectInstance = null;
@@ -608,7 +670,7 @@ namespace RZDP_IFC_Viewer.ViewModels
 
             if (string.IsNullOrEmpty(path))
             {
-                path = HelperFileIFC.OpenIFC_File();
+                path = HelperFile.OpenIFC_File();
             }
 
             if (string.IsNullOrEmpty(path))
@@ -827,7 +889,7 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         private void OnSaveAsIFCFileCommandExecuted(object o)
         {
-            string path = HelperFileIFC.SaveAsIFC_File("ifc");
+            string path = HelperFile.SaveAsIFC_File("ifc");
 
             if (string.IsNullOrEmpty(path))
             {
@@ -858,7 +920,7 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         private void OnSaveAsIFCXMLFileCommandExecuted(object o)
         {
-            string path = HelperFileIFC.SaveAsIFC_File("ifcxml");
+            string path = HelperFile.SaveAsIFC_File("ifcxml");
 
             if (string.IsNullOrEmpty(path))
             {
@@ -1003,6 +1065,41 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         #endregion Изолировать выделенные
 
+        #region Добавить файлы dwg
+
+        public ICommand AddDWGFilesCommand { get; }
+
+        private void OnAddDWGFilesCommand(object o)
+        {
+            try
+            {
+                string? filePath = HelperFile.OpenDWG_File();
+                if (filePath == null)
+                    return;
+
+                ModelItemDWGFile modelItemDWGFile = new ModelItemDWGFile(Model, filePath, _vectorOffset);
+
+                Model.ModelItems.Add(modelItemDWGFile);
+
+                _DrawingControl.Viewport.Children.Add(modelItemDWGFile.EntityVisual3D);
+                
+                _DrawingControl.ReloadModel(DrawingControl3D.ModelRefreshOptions.ViewPreserveCameraPosition);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+
+        }
+
+        private bool CanAddDWGFilesCommand(object o)
+        {
+            return Model is not null;
+        }
+
+        #endregion Изолировать выделенные
+
         #endregion Комманды
 
         public MainWindowViewModel()
@@ -1094,6 +1191,10 @@ namespace RZDP_IFC_Viewer.ViewModels
             IsolateSelectedModelObjectCommand = new ActionCommand(
                     OnIsolateSelectedModelObjectCommand,
                     CanIsolateSelectedModelObjectCommand);
+
+            AddDWGFilesCommand = new ActionCommand(
+                    OnAddDWGFilesCommand,
+                    CanAddDWGFilesCommand);
 
             #endregion Комманды
         }

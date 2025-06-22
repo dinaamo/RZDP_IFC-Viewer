@@ -16,7 +16,7 @@ namespace RZDP_IFC_Viewer.ViewModels
 
         private void OnSelectDocumentCommandExecuted(object o)
         {
-            foreach (string path in HelperFileIFC.SelectDocument())
+            foreach (string path in HelperFile.SelectDocument())
             {
                 DocumentCollection.Add(new ModelDocument(path, IFCPath));
             }

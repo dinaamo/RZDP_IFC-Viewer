@@ -520,6 +520,56 @@
         </VirtualizingStackPanel>
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type mi:ModelItemDWGFile}">
+        <VirtualizingStackPanel Orientation="Horizontal">
+            <fa:ImageAwesome
+             Height="10"
+             Margin="0,0,3,0"
+             Foreground="OrangeRed"
+             Icon="Train" />
+            <TextBlock
+             MouseDown="TextBlock_MouseDown"
+             Text="{Binding DWGFileName}"
+             ToolTip="{Binding DWGFileName}">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=IsFocusReference}" Value="True">
+                                <Setter Property="Foreground" Value="DarkBlue" />
+                                <Setter Property="Background" Value="SkyBlue" />
+                                <Setter Property="FontSize" Value="12" />
+                                <Setter Property="TextDecorations" Value="Underline" />
+                            </DataTrigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="DarkBlue" />
+                                <Setter Property="Background" Value="SkyBlue" />
+                                <Setter Property="TextDecorations" Value="Underline" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            <VirtualizingStackPanel.ContextMenu>
+                <ContextMenu>
+
+
+                    <MenuItem
+                         Command="{Binding DeleteModelDWGFile}"
+                         CommandParameter="{Binding}"
+                         Header="Удалить dwg файл">
+                        <MenuItem.Icon>
+                            <fa:ImageAwesome
+                             Height="12"
+                             Margin="0,0,3,0"
+                             Foreground="DarkRed"
+                             Icon="Close" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </VirtualizingStackPanel.ContextMenu>
+        </VirtualizingStackPanel>
+    </DataTemplate>
+    <!--DWGFileName-->
     <Style TargetType="TabControl">
         <Style.Triggers>
 

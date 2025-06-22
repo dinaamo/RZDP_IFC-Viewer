@@ -62,7 +62,7 @@ namespace RZDP_IFC_Viewer.View.Controls
 
                 foreach (BasePropertySetDefinition deletePropertySet in deleteElements)
                 {
-                    DeleteProperySet(deletePropertySet);
+                    DeletePropertySet(deletePropertySet);
                 }
             }
             //Если свойство
@@ -84,13 +84,13 @@ namespace RZDP_IFC_Viewer.View.Controls
 
         }
 
-        void DeleteProperySet(BasePropertySetDefinition propertySetDefinitionModel)
+        void DeletePropertySet(BasePropertySetDefinition propertySetDefinitionModel)
         {
             if (propertySetDefinitionModel.IFCPropertySetDefinition is IIfcPropertySet ifcPropertySet)
             {
                 if (ifcPropertySet.HasProperties.Any(pr => pr is IIfcPropertyReferenceValue))
                 {
-                    MessageBoxResult result = MessageBox.Show("Удалить набор характеристик с ссылками?\n" +
+                    MessageBoxResult result = MessageBox.Show($"Удалить набор характеристик с ссылками:  \"{propertySetDefinitionModel.NamePropertySet}\"?\n" +
                         "Удаление следует производить через панель инструментов", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
                     if (result == MessageBoxResult.No)
                     { return; }
@@ -98,7 +98,7 @@ namespace RZDP_IFC_Viewer.View.Controls
             }
             if (propertySetDefinitionModel.CountRelatedObjectsInstance > 1 || propertySetDefinitionModel.CountRelatedObjectsType > 1)
             {
-                MessageBoxResult result = MessageBox.Show("На данный набор характеристик ссылается более одного объекта?\n" +
+                MessageBoxResult result = MessageBox.Show($"На набор характеристик \"{propertySetDefinitionModel.NamePropertySet}\" ссылается более одного объекта?\n" +
                         "Продолжить?", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.No)
                 { return; }
@@ -111,7 +111,7 @@ namespace RZDP_IFC_Viewer.View.Controls
         {
             if (propertyModel.Property is IIfcPropertyReferenceValue ifcProperty)
             {
-                MessageBoxResult result = MessageBox.Show("Удалить ссылку?\n" +
+                MessageBoxResult result = MessageBox.Show($"Удалить ссылку  \"{propertyModel.NameProperty}\"?\n" +
                     "Удаление следует производить через панель инструментов.", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.No)
                 { return; }

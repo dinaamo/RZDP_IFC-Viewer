@@ -15,7 +15,7 @@ namespace RZDP_IFC_Viewer.HelperExcel
             { return; }
 
             appExcel = new Excel.Application();
-            appExcel.Visible =false;
+            appExcel.Visible = false;
 
             workbook = appExcel.Workbooks.Add();
 
