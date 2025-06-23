@@ -79,7 +79,7 @@ namespace RZDP_IFC_Viewer.DWG
             foreach (IText baseText in _cadDoc.Entities.OfType<IText>())
             {
                 TextVisual3D textVisual3D = new TextVisual3D();
-                textVisual3D.Position = new Point3D(baseText.InsertPoint.X, baseText.InsertPoint.Y, (baseText.InsertPoint.Z) * _positionZ) - _vectorOffset;
+                textVisual3D.Position = new Point3D(baseText.InsertPoint.X - _vectorOffset.X, baseText.InsertPoint.Y - _vectorOffset.Y, _vectorOffset.Z);
                 textVisual3D.Height = baseText.Height;
                 textVisual3D.UpDirection = new Vector3D(0, 1, 0);
                 textVisual3D.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(baseText.Color.R, baseText.Color.G, baseText.Color.B));
@@ -125,8 +125,8 @@ namespace RZDP_IFC_Viewer.DWG
                         LinesVisual3D linesVisual3D = new LinesVisual3D();
                         linesVisual3D.Points = new Point3DCollection
                         { 
-                            new Point3D(point3dCollection[i].X, point3dCollection[i].Y, (point3dCollection[i].Z) * _positionZ) - _vectorOffset,
-                            new Point3D(point3dCollection[i+1].X, point3dCollection[i+1].Y, (point3dCollection[i+1].Z) * _positionZ) - _vectorOffset
+                            new Point3D(point3dCollection[i].X-_vectorOffset.X, point3dCollection[i].Y-_vectorOffset.Y, _vectorOffset.Z),
+                            new Point3D(point3dCollection[i+1].X-_vectorOffset.X, point3dCollection[i+1].Y-_vectorOffset.Y, _vectorOffset.Z)
                         };
 
                         linesVisual3D.Thickness = polyline.Thickness > 1 ? polyline.Thickness : 1;
@@ -145,8 +145,8 @@ namespace RZDP_IFC_Viewer.DWG
             {
                 Point3DCollection linePoints = new Point3DCollection
                 {
-                    new Point3D(line.StartPoint.X - _vectorOffset.X, line.StartPoint.Y - _vectorOffset.Y, line.StartPoint.Z * _positionZ - _vectorOffset.Z),
-                    new Point3D(line.EndPoint.X - _vectorOffset.X, line.EndPoint.Y - _vectorOffset.Y, line.EndPoint.Z * _positionZ - _vectorOffset.Z)
+                    new Point3D(line.StartPoint.X - _vectorOffset.X, line.StartPoint.Y - _vectorOffset.Y, _vectorOffset.Z),
+                    new Point3D(line.EndPoint.X - _vectorOffset.X, line.EndPoint.Y - _vectorOffset.Y, _vectorOffset.Z)
                 };
 
                 LinesVisual3D linesVisual3D = new LinesVisual3D();

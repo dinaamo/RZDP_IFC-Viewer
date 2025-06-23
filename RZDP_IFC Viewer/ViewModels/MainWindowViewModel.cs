@@ -18,9 +18,12 @@ using Xbim.IO;
 using Xbim.ModelGeometry.Scene;
 using Xbim.Presentation;
 using Xbim.Common.Geometry;
+using Xbim.Ifc4.Interfaces;
 
 namespace RZDP_IFC_Viewer.ViewModels
 {
+    
+
     internal class MainWindowViewModel : BaseViewModel
     {
         private BackgroundWorker _worker;
@@ -271,6 +274,50 @@ namespace RZDP_IFC_Viewer.ViewModels
             ClearViewPortFull(new List<ModelVisual3D>() { visual3D });
         }
 
+        private void SetVectorOffset(IfcStore ifcStore)
+        {
+            XbimPoint3D vectorOffsetXbim = _DrawingControl.ModelPositions.GetPoint(new XbimPoint3D(0, 0, 0));
+
+            var xbimRegionCol = ifcStore.Model.GeometryStore.BeginRead().ContextRegions.Where(cr => cr.MostPopulated() != null).Select(c => c.MostPopulated());
+            double onMeter = _DrawingControl.ModelPositions._modelPositionsCollection.Values.Select(it => it.OneMeter).First();
+
+            HelixToolkit.Wpf.GridLinesVisual3D? gridLines = _DrawingControl.Viewport.Children.OfType<HelixToolkit.Wpf.GridLinesVisual3D>().FirstOrDefault();
+            
+            _vectorOffset = new Vector3D();
+
+            if (gridLines != null)
+            {
+                _vectorOffset.Z = gridLines.Transform.Value.OffsetZ- 3;
+            }
+
+
+            foreach (XbimRegion? xbimRegion in xbimRegionCol)
+            {
+                double vecOffsetX = xbimRegion.WorldCoordinateSystem.OffsetX / onMeter;
+                double vecOffsetY = xbimRegion.WorldCoordinateSystem.OffsetY / onMeter;
+                double vecOffsetZ = xbimRegion.WorldCoordinateSystem.OffsetZ / onMeter;
+
+                if (vecOffsetX == 0)
+                {
+                    _vectorOffset.X = -vectorOffsetXbim.X;
+                    _vectorOffset.Y = -vectorOffsetXbim.Y;
+                    if (gridLines == null)
+                    {
+                        _vectorOffset.Z = -vectorOffsetXbim.Z;
+                    }
+                }
+                else
+                {
+                    _vectorOffset.X = vecOffsetX - vectorOffsetXbim.X;
+                    _vectorOffset.Y = vecOffsetY - vectorOffsetXbim.Y;
+                    if (gridLines == null)
+                    {
+                        _vectorOffset.Z = vecOffsetZ - vectorOffsetXbim.Z;
+                    }
+                }
+            }
+        }
+
         private void LoadModel(object sender, DoWorkEventArgs args)
         {
 
@@ -332,6 +379,8 @@ namespace RZDP_IFC_Viewer.ViewModels
                 task.Wait();
                 if (tempModel != null)
                 {
+
+                    //Разделить на методы
                     Application.Current.Dispatcher.BeginInvoke(() =>
                     {
                         Model?.Dispose();
@@ -339,11 +388,7 @@ namespace RZDP_IFC_Viewer.ViewModels
                         if (!ifcStore.GeometryStore.IsEmpty)
                         {
                             mainWindow.WPFDrawingControl.ModelProvider.ObjectInstance = ifcStore;
-                            var tt = _DrawingControl.ModelPositions.ViewSpaceBounds;
-                            XbimPoint3D _vectorOffsetXbim = _DrawingControl.ModelPositions.GetPointInverse(new XbimPoint3D(0, 0, 0));
-                            _vectorOffset = new Vector3D(_vectorOffsetXbim.X, _vectorOffsetXbim.Y, _vectorOffsetXbim.Z);
-                            //MessageBox.Show(_DrawingControl.ModelPositions.Report());
-                        
+                            SetVectorOffset(ifcStore);
                         }
 
                         else

@@ -148,7 +148,7 @@
                 </MenuItem>
                 <Separator />
                 <MenuItem
-                    Header="Ортографический вид"
+                    Header="Ортогональный вид"
                     IsCheckable="True"
                     IsChecked="{Binding Path=IsOrthographic, Mode=OneWayToSource}" />
                 <MenuItem
@@ -212,8 +212,8 @@
                         <fa:ImageAwesome
                             Height="12"
                             Margin="0,0,3,0"
-                            Foreground="DarkKhaki"
-                            Icon="Adn" />
+                            Foreground="DarkGoldenrod"
+                            Icon="File" />
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
